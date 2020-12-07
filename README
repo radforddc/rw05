@@ -1,0 +1,150 @@
+This is the source code of the Linux/Unix version of David Radford's Data Analysis Software.
+
+Latest update: 7 Dec 2020
+
+This release is portable between linux, Mac OS X, and many unix variants.
+For more details on installing in Mac OS X you may wish to look at README.macosx.
+
+A brief description of what each program does is in the file doc/aa_radware.lis.
+More documentation can also be found at http://radware.phy.ornl.gov/ and in other files in the doc directory.
+You can find demonstration data files in the demo directory.
+
+To compile rw05, you should be able to use almost any C compiler.
+
+==================================
+== To download the source code: ==
+==================================
+
+From github:
+============
+
+The rw05 git repository is on 
+	https://github.com/dcr-radware/rw05
+
+
+By svn:
+=======
+
+An less-frequently-updated version is available using Subversion (svn).
+If you have svn installed, you can use the command
+	svn co https://radware.phy.ornl.gov/rw05
+to check out the latest rw05 source tree.
+
+=============================================
+== Required Software Development Packages: ==
+=============================================
+
+Radware will be compiled from scratch. That means that you need to have
+some "development packages" installed on your system, or the compile will
+fail.
+
+You will always want to have readline and X11 installed. If you want to use
+GUI versions of gls, escl8r, levit8r and 4dg8r, then you will also need
+GTK2 and/or lesstif (or openmotif) packages installed.
+On some modern linux distributions, you will also need to install X11 fonts.
+
+On my Kubuntu system, I need at least to install the following:
+gcc   (C compiler)
+make  (to build the programs)
+libreadline-dev
+libgtk2.0-dev
+lesstif2-dev
+
+==================
+== To Compile:  ==
+==================
+
+There is a separate README files for Mac OS X, namely README.macosx.
+If you are installing on a mac, read that file too.
+
+1) Type:
+	cd rw05/src
+	cp Makefile.sys Makefile
+
+   where "sys" corresponds tpo your system, namely "linux", "macosx", "solaris", etc. 
+   Edit the top level Makefile (the one you just made with the cp command).
+   If needed, change any of the lines that depend specifically on your local
+   filesystem, for example the definitions of X_WIN_TOP and MOTIF_TOP.
+   Change INSTALL_DIR, INSTALL and INSTALL_BIN if you wish to install the
+   files in a separate directory (see step 4).
+
+2) RadWare can read spectra from ORNL-format .his histogram files.
+   Most users will not be interested in this feature; if this includes you,
+   skip to step 3.
+   If you want to be able to read .his files, your system needs to have the
+   ORPHLIB library installed, and you need to change your Makefile to link
+   some of the programs with orphlib.a and some FORTRAN run-time libraries.
+   Here is what you need to do:
+     Edit your top level Makefile, and uncomment the line that defines HISLIBS,
+        changing the FORTRAN libraries and the location of orphlib.a as needed.
+	If (and only if) orphlib.a was compiled with g77, you also need to 
+        uncomment the line redefining          FC = g77
+
+3) To make the standard (non-GUI) codes, type:
+	make all
+
+   If your system is missing development libraries, such as X11 or
+   readline, the make will fail. There will be compile errors, usually
+   beginning with something like
+     "error: readline/readline.h: No such file or directory"
+   If this happens, speak to your system administrator, and/or try to
+   find out whcih packages to install, and how to do it.
+
+   GTK versions: If your system has the GTK2 development libraries installed,
+   and you wish to use the GTK versions of gls, escl8r, etc., then type:
+ 	make GTK
+
+   Motif versions If your system has the Motif development libraries installed,
+   and you wish to use the Motif versions of gf3, gls, escl8r, etc., then type:
+ 	make XM
+
+
+4) You can install the executables and data files in a separate directory.
+   THIS IS NOT NECESSARY to run the programs; if you choose not to do the
+   install, you can just run them directly from the src directory of steps
+   1) and 3).
+ 
+   To install, check the definition of INSTALL_DIR, INSTALL and INSTALL_BIN
+   in the Makefile and type:
+	make install
+
+   If the install fails for some reason, try editing your top level Makefile,
+   to replace the line near the end:
+        include Makefile.install_sysv
+   or
+        include Makefile.install_ucb
+   by:
+        include Makefile.install_cp
+   and try again.
+
+5) Edit the .radwarerc file so that the pathname variables
+   are properly defined to $(INSTALL_DIR)/font, etc., or whatever.
+   These definitions will allow the various programs to find files that
+   they need, such as icc/icctbl.dat, font/font.dat, and doc/gfonline.hlp.
+   There are some other environment variables in there, too, that you
+   might like to play with.  See WHATS_NEW for details.
+
+   .radwarerc can be found in either the src directory, or in $(INSTALL_DIR).
+   There is also a bash version, .radware.bashrc, for those who prefer bash
+   to tcsh or csh.
+
+6) Make sure that your .login, .bashrc, or .cshrc, or the system .login, includes
+	source $(INSTALL_DIR)/.radwarerc
+   or copy the .radwarerc to your home directory and have it executed
+   from there.
+   Also make sure that $(INSTALL_DIR)/bin (or the src directory, if you 
+   didn't do the install) is in your path.
+   Then you are set to go; try gf3, gtkgls etc.
+   Have a look in the demo directory for sample files.
+   You should also copy demo/gfinit.dat into your home directory.
+
+7) To clean up the source directory:
+	make clean
+   To clean up the source and all subdirectories, leaving only the source code:
+	make very-clean
+
+-------------------------------------------------------------------
+Please send any bug reports and suggestions to radforddc@ornl.gov
+-------------------------------------------------------------------
+
+D.C. Radford  Dec 2020

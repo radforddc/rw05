@@ -1,0 +1,35 @@
+install: install-dir install-dat install-icc install-demo \
+         install-doc install-bin 
+
+install-dir:
+	-mkdir -p $(INSTALL_DIR)/bin
+	-mkdir -p $(INSTALL_DIR)/font
+	-mkdir -p $(INSTALL_DIR)/icc
+	-mkdir -p $(INSTALL_DIR)/demo
+	-mkdir -p $(INSTALL_DIR)/doc
+#	$(INSTALL_BIN) -d $(INSTALL_DIR)
+#	$(INSTALL_BIN) -d $(INSTALL_DIR)/font
+#	$(INSTALL_BIN) -d $(INSTALL_DIR)/icc
+#	$(INSTALL_BIN) -d $(INSTALL_DIR)/demo
+#	$(INSTALL_BIN) -d $(INSTALL_DIR)/doc
+#	$(INSTALL_BIN) -d $(INSTALL_DIR)/bin
+install-dat:
+	$(INSTALL) -f $(INSTALL_DIR) ./.radwarerc
+	$(INSTALL) -f $(INSTALL_DIR) ./.radware.bashrc
+	$(INSTALL) -f $(INSTALL_DIR)/font ../font/font.dat
+	$(INSTALL) -f $(INSTALL_DIR)/font ../font/font_ps.dat
+install-icc:
+	$(INSTALL) -f $(INSTALL_DIR)/icc ../icc/iccndx.dat
+	$(INSTALL) -f $(INSTALL_DIR)/icc ../icc/icctbl.dat
+install-demo:
+	for file in ../demo/* ; \
+	   do $(INSTALL_BIN) -f $(INSTALL_DIR)/demo $$file; \
+	done
+install-doc:
+#	$(INSTALL) -f $(INSTALL_DIR)/doc ../doc/*
+	cp -f ../doc/*.* $(INSTALL_DIR)/doc/
+#	chmod go+w $(INSTALL_DIR)/doc/*.*
+install-bin:
+	for program in $(EXE) ; \
+	   do $(INSTALL_BIN) -f $(INSTALL_DIR)/bin $$program; \
+	done

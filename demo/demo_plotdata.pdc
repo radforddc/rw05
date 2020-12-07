@@ -1,0 +1,134 @@
+c 4 5 2
+
+lin 100 200  309 100
+    3 71 0 2.5
+x,  "" 1 
+xt, "" 2 
+y,  "" 2
+yr, "" 1
+
+\RGB 1 0 0
+s 1 3 
+d 1 0 2 0
+7 2
+
+s 3 3
+d 1 0 2 0
+10  2
+
+s 5 3
+d 1 0 2 0
+13 2
+
+s 2 3
+d 1 0 2 0
+7 2.25
+
+s 4 3
+d 1 0 2 0
+10 2.25
+
+s 6 3
+d 1 0 2 0
+13 2.25
+
+s 1 3 1 1 2
+d 2 0 3 4 demo_plotdata 1
+s 4 3 1 1 3
+d 2 0 3 4 demo_plotdata 2
+s 3 3 1 1 3
+d 2 0 3 4 demo_plotdata 3
+
+\RGB 0 0 0
+lin 100 200  226  80
+    3 71 0 2.0
+x,  "" 1 
+xt, "" 1 
+y,  "({gm}{dN}/eb){u2}" 2
+yr, "" 1
+
+\RGB 1 0 0
+s 6 3 1 1 5
+d 2 0 3 4 demo_plotdata 4
+
+\RGB 0 0 0
+lin 100 200  183  40
+    3 71 0 1.0
+x,  "" 1 
+xt, "" 1 
+y,  "B(M1; J {su} J-1) / B(E2; J {su} J-2)" 2
+yr, "" 1
+
+\RGB 1 0 0
+s 1 3 1 1 2
+d 2 0 3 4 demo_plotdata 5
+\RGB 0 0 0
+
+lin 100 200  92  88
+    3 71 -0.2 2.2
+x,  "Spin (J)" 2 
+xt, "" 1 
+y,  "" 2
+yr, "" 1
+
+\RGB 1 0 0
+s 2 3 1 1 1
+d 2 0 3 4 demo_plotdata 6
+s 3 3 1 1 4
+d 2 0 3 4 demo_plotdata 7
+s 2 3 1 1 1
+d 2 0 3 4 demo_plotdata 8
+
+\RGB 0 0 1
+lw 1
+ls 4 2 0.1 2
+lin 100 200  309 100
+    3 71 0 2.5
+s 0 0 1 2
+d 1 0 4 0 demo_plotdata.tou 1
+s 0 0 1 2
+d 1 0 4 0 demo_plotdata.tou 2
+
+lin 100 200  226  80
+    3 71 0 2.0
+s 0 0 1 2
+d 1 0 4 0 demo_plotdata.tou 3
+
+lin 100 200  183  40
+    3 71 0 1.0
+s 0 0 1 2
+d 1 0 4 0 demo_plotdata.tou 4
+s 0 0 1 2
+d 1 0 4 0 demo_plotdata.tou 5
+
+lin 100 200  92  88
+    3 71 -0.2 2.2
+s 0 0 1 2
+d 1 0 4 0 demo_plotdata.tou 6
+s 0 0 1 2
+d 1 0 4 0 demo_plotdata.tou 7
+s 0 0 1 2
+d 1 0 4 0 demo_plotdata.tou 8
+s 0 0 1 2
+d 1 0 4 0 demo_plotdata.tou 9
+
+\RGB 0 0 0
+\TXT 158.3 397.8 3 3.6
+{ga} = +1/2 {su} -1/2
+\TXT 158.3 387.8 3 3.6
+{ga} = -1/2 {su} +1/2
+\TXT 140.1 342.3 3 3.6
+Band 1
+\TXT 206.4 375.6 3 3.6
+Band 2
+\TXT 191.3 284.0 3 3.6
+Band 3
+\TXT 132.6 203.6 3 3.6
+Band 4
+\TXT 237.8 149.3 3 3.6
+Band 5
+\TXT 145.4 108.0 3 3.6
+Band 6
+\TXT 122.7 152.9 3 3.6
+Band 8
+\ENDTXT

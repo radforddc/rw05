@@ -1,0 +1,168 @@
+README file for incub8r / incub8r3.c
+
+D.C. Radford     November 7 1997
+
+
+
+INTRODUCTION.
+
+RadWare97 introduces two new replay / tape scanning programs, namely
+4play (for compressed 4-dimensional hypercubes) and incub8r3 (for compressed
+3-dimensional cubes).  These programs are similar to the old incub8r; for
+example, they allow for non-linear gains through the use of look-up tables,
+etc.  However, they use a custom-designed compression algorithm to reduce the
+size of the files required to hold these huge histograms.
+
+The new incub8r (incub8r3.c) will create a cube that is fully symmetrized;
+that is, it is a 1/6 cube, with x <= y <= z.  Apart from the fact that it is 
+compressed, the format of the cube is similar in many ways to that of the 
+1/6 cubes from the older incub8r2.  One significant difference, however, is 
+that while the old uncompressed cubes had only two bytes per channel, the new 
+compressed cubes use up to four bytes per channel, thus avoiding the problem 
+of overflows for datasets with very high statistics.
+
+Levit8r and xmlev have been modified to be able to read and gate on the new 
+compressed 1/6-cube format, as well as the older uncompressed format 1/6 and 
+1/2-cube files.  However, as for the uncompressed formats, access to 
+gates in a compressed 1/6 cube is considerably slower than that for a 1/2 
+cube, where only two of the axes are symmetrized,  i.e. x <= y but z runs 
+over all values.  For this reason, a compressed 1/2-cube format has also been 
+developed.  Levit8r/xmlev automatically senses the type of cube (1/6 or 1/2, 
+compressed or uncompressed) when it opens the file, as well as whether or not
+the data in the file needs to be byte-swapped (which may occur if the file 
+was created on a different machine than the one reading it).
+
+In addition to incub8r, two other programs were (re)written, namely pro3d 
+and foldout.  These had previous FORTRAN incarnations for the uncompressed
+cube formats;  the new versions are in C, and accept both the compressed and 
+uncompressed format files.  Pro3d will read through any one of the four 
+possible RadWare cube format files, and create the two-dimensional and 
+one-dimensional projections.  The result of this projection is of course 
+independent of the cube format.  Foldout will take a 1/6 cube in either 
+compressed or uncompressed format, and create for you a compressed 1/2 cube.
+I recommend that you run the new foldout on all your old 1/6 cubes; the 
+resulting file will usually be smaller than the original, as well as much 
+faster for levit8r for read.
+
+The current default limits on the size of RadWare .cub files is 1400 channels 
+per side, or about 460 Mchs for a 1/6 cube.  You can change this limit by 
+editing the files incub8r3.h, pro3d.h and levit8r.h in the RadWare source 
+directory, and modifying the value of RW_MAXCH or MAXCHS.  In incub8r3.h,
+you will also have to change the values of RW_LB1, RW_LB2 and RW_DB2.
+
+
+
+HOW TO USE INCUB8R3.
+
+In order to map the ADC channel data on your tape to the cube channels, 
+incub8r will need a look-up table in the RadWare .tab format.  You can easily
+create such a file with the program lufwhm.  You will need to have some idea 
+of the range of ADC channels that you wish to incude in your cube.  If you 
+wish to use nonlinear gains, you should also have some idea of how the width 
+(FWHM) of the peaks varies with energy; you will need to specify this in terms 
+of parameters like those used to define the starting width in gf3, see gf3.hlp
+or the escl8r/levit8r NIM paper for details.
+
+Before using incub8r3.c with your data tapes, you may need to rewrite or 
+modify the file get_event.c.  This is a routine to extract event data 
+from the tape buffers.  Examples of get_event.c are included in the RadWare
+source directory for a few common event tape formats, as well as versions that 
+produce random-number-generated energies and a superdeformed-band-like grid.
+Reproduced below is a header comment from these examples that describes the
+requirements of a get_event.c source code file.
+
+/****************************************************************************
+ *    get_event routine for 4play or incub8r3                               *
+ *    get_event is called by the main program on an event-by-event basis    *
+ *      to extract the Ge energies from the global tape data buffer         *
+ *          char *tbuf    of size    gd.RecordSize.                         *
+ *    The Ge energies are returned in the array                             *
+ *          int *elist    of size    RW_MAXMULT.                            *
+ *    The returned value from get_event is the number of Ge energies,       *
+ *      i.e. the Ge multiplicity,                                           *
+ *      or -1 if the end of the data buffer is reached.                     *
+ *      Thus if get_event returns the value -1, the main program            *
+ *      will read the next tape buffer before calling get_event again.      *
+ ***************************************************************************/
+
+Please note that get_event.c is the only source code that you should need to 
+modify.  
+
+Once you have created your ADC-to-cube-channel lookup .tab file, and have 
+found or written an appropriate get_event.c file, you should compile the 
+program, using for example the command
+make incub8r
+from within the RadWare source directory.  You are then almost ready to
+begin sorting.
+
+In order to simplify the input of filenames and tape device names etc to 
+incub8r, the program asks for and reads a data file with the default filename
+incub8r.inc.  An example incub8r.inc is included in the RadWare source 
+directory and reproduced below:
+
+============= example incub8r.inc =============
+Er154,155  Eurogam2 presorted tapes
+/dev/rmt0h
+er.scr
+er.cub
+er.tab
+16384
+500
+n
+
+--------------------------------------------------
+The above lines provide the following information to incub8r3:
+line 1:  user-provided title for the replay task
+line 2:  name for the input tape drive device to be used
+line 3:  name to be used for the "scratch" disk file
+line 4:  name of the 3D cube file
+line 5:  name of the look-up table file to be used to map ADC chs to cube chs
+         (generally produced by running the program lufwhm)
+line 6:  block size for the records to be read from tape, in bytes
+line 7:  size to be used for the "scratch" disk file, in MB
+         (should generally be at least several hundred MB
+          in order to minimize scanning time)
+line 8:  y(es) or n(o) to specify whether the records read from tape need
+         to be byte-swapped
+
+============= end of example incub8r.inc =============
+
+So you need to edit the example .inc file provided, to match the device and 
+file names and sizes that you wish to use, etc.  You will then be ready to run 
+incub8r.
+
+When you run incub8r, you simply need to follow directions and answer 
+questions.  If the cube file does not yet exist, an empty one will be created; 
+otherwise, the cube will be checked to make sure that the number of channels 
+matches the .tab file etc.  The scratch file is used to store a large number 
+of increments, so that the cube file does not have to be read, decompressed, 
+incremented, recompressed and rewritten very often.  After you have finished 
+your replay, and successfully exited from incub8r, you may safely delete the 
+scratch file without losing any information.
+
+As each tape is scanned by incub8r, you are given options to change tape 
+drives, skip over data records, replay only a certain number of files or 
+records, etc.  The default action, however, obtained by pressing return to 
+each of the questions, is to replay the whole of each tape.  If at any time 
+you wish to interrupt the replay in the middle of a tape, press control-C; the 
+flow of the program will be interrupted before the next buffer is read from 
+tape, and you will be given the option of exiting gracefully from the program 
+or continuing with the replay.
+
+If, during the scan, you wish to check the one-dimensional spectrum of the Ge 
+energies (in ADC channels, i.e. before being transformed to the cube channels),
+use control-C to interrupt the scan and then look at the file incub8r3.spn
+with gf3.  Row 0 (sp 0) will contain the first 4096 channels of the ADC 
+spectrum.  In addition, Row 2 (sp 2) will contain a spectrum of the Ge 
+multiplicity.
+
+Whenever the scratch file becomes full, the cube is read and incremented; this 
+is also done as you exit from the program.  If the computer or the program 
+crashes during this update phase, all is not lost; the modified/incremented 
+version of the cube is saved in a different file, and then renamed after 
+all increments have been done.  Thus if something goes wrong, you can simply 
+restart the replay from the point at which any previous increment was 
+completed.
+
+
+PLEASE send reports of problems and/or bugs to radfordd@mail.phy.ornl.gov

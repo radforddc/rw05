@@ -1,0 +1,5 @@
+* limits for co60 2-point calib at ~0.35 keV/ch hires, 2keV/ch lores
+* splo sphi   eg1   chlo1 chhi1     eg2   chlo2 chhi2  approx.fwhm
+    1,   4, 1173.24, 3000, 3300,  1332.51, 3350, 3900,    7
+    9,  11, 1173.24,  500,  620,  1332.51,  620,  720,   15
+*

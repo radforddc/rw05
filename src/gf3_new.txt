@@ -1,0 +1,30 @@
+Commands added to gf3 since rw01:
+    /* DD ; toggle display of difference (data-fit) when plotting fits */
+    /* FW ; report actual FWHM of fit with tail etc */
+    /* IS <lo> <hi> ; integrate spectrum from ch <lo> to ch <hi> */
+    /* JH ; John Hardy's special peak integration method */
+    /* RS [<lo> <hi>]; remove linear slope from spectrum using chs <lo> and <hi> */
+    /* RS [<lo> <hi>]; remove linear slope from spectrum using chs <lo> and <hi> */
+    /* SF ; subtract fitted peaks from spectrum */
+    /* SH <cmd> ; issue command to shell (doesn't work?) */
+    /* S+ ; read next spectrum or row of matrix */
+    /* S- ; read previous spectrum or row of matrix */
+
+in gf3n:
+>   else if (!strncmp(ans, "BA", 2)) {
+>   } else if (!strncmp(ans, "GC", 2)) {
+>   } else if (!strncmp(ans, "GE", 2)) {
+>   } else if (!strncmp(ans, "\x1B[D", 3)) {
+>   } else if (!strncmp(ans, "\x1B[C", 3)) {
+>   } else if (!strncmp(ans, "\x1B[A", 3)) {
+>   } else if (!strncmp(ans, "\x1B[B", 3)) {
+>   } else if (!strncmp(ans, "SY", 2)) {
+>   } else if (!strncmp(ans, "DIm", 3)) {
+>   } else if (!strncmp(ans, "MAtr", 4)) {
+>   } else if (!strncmp(ans, "PRojx", 5)) {
+>   } else if (!strncmp(ans, "PRojy", 5)) {
+>   } else if (!strncmp(ans, "GAtex", 5)) {
+>   } else if (!strncmp(ans, "GAtey", 5)) {
+>   } else if (!strncmp(ans, "RA", 2) && ! !strncmp(ans, "RAn", 3)) {
+>   } else if (!strncmp(ans, "WA", 2)) {
+>   } else if (!strncmp(ans, "RAnd", 4)) {

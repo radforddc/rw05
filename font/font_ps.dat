@@ -1,0 +1,49 @@
+%
+%   define procedures to draw lines and characters
+/draw {newpath moveto lineto stroke} bind def
+/sline {newpath moveto lineto} bind def
+/cline {lineto lineto} bind def
+/eline {{lineto} repeat stroke} bind def
+/ecline {{lineto} repeat closepath stroke} bind def
+/efline {{lineto} repeat closepath gsave fill grestore stroke} bind def
+/m {newpath moveto} bind def
+/d {lineto} bind def
+/str {stroke} bind def
+/cstr {closepath stroke} bind def
+/initchar {gsave translate dup currentlinewidth exch div
+           setlinewidth scale rotate} bind def
+/donechar {stroke grestore} bind def
+/zero {initchar 386 1000 m 243 952 d 148 810 d 100 571 d 100 429 d 148 190 d
+ 243 48 d 386 0 d 481 0 d 624 48 d 719 190 d 767 429 d 767 571 d 719 810 d
+ 624 952 d 481 1000 d 386 1000 d donechar} bind def
+/one {initchar 100 810 m 195 857 d 338 1000 d 338 0 d donechar} bind def
+/two {initchar 148 762 m 148 810 d 195 905 d 243 952 d 338 1000 d 529 1000 d
+ 624 952 d 671 905 d 719 810 d 719 714 d 671 619 d 576 476 d 100 0 d 767 0 d
+ donechar} bind def
+/three {initchar 195 1000 m 719 1000 d 433 619 d 576 619 d 671 571 d
+ 719 524 d 767 381 d 767 286 d 719 143 d 624 48 d 481 0 d 338 0 d 195 48 d
+ 148 95 d 100 190 d donechar} bind def
+/four {initchar 814 333 m 100 333 d 576 1000 d 576 0 d donechar} bind def
+/five {initchar 671 1000 m 195 1000 d 148 571 d 195 619 d 338 667 d 481 667 d
+ 624 619 d 719 524 d 767 381 d 767 286 d 719 143 d 624 48 d 481 0 d 338 0 d
+ 195 48 d 148 95 d 100 190 d donechar} bind def
+/six {initchar 671 857 m 624 952 d 481 1000 d 386 1000 d 243 952 d 148 810 d
+ 100 571 d 100 333 d 148 143 d 243 48 d 386 0 d 433 0 d 576 48 d 671 143 d
+ 719 286 d 719 333 d 671 476 d 576 571 d 433 619 d 386 619 d 243 571 d
+ 148 476 d 100 333 d donechar} bind def
+/seven {initchar 290 0 m 767 1000 d 100 1000 d donechar} bind def
+/eight {initchar 338 1000 m 195 952 d 148 857 d 148 762 d 195 667 d 290 619 d
+ 481 571 d 624 524 d 719 429 d 767 333 d 767 190 d 719 95 d 671 48 d 529 0 d
+ 338 0 d 195 48 d 148 95 d 100 190 d 100 333 d 148 429 d 243 524 d 386 571 d
+ 576 619 d 671 667 d 719 762 d 719 857 d 671 952 d 529 1000 d 338 1000 d
+ donechar} bind def
+/nine {initchar 719 667 m 671 524 d 576 429 d 433 381 d 386 381 d 243 429 d
+ 148 524 d 100 667 d 100 714 d 148 857 d 243 952 d 386 1000 d 433 1000 d
+ 576 952 d 671 857 d 719 667 d 719 429 d 671 190 d 576 48 d 433 0 d 338 0 d
+ 195 48 d 148 143 d donechar} bind def
+% set Linecap and Linejoin to round caps and round joins
+ 1 setlinecap 1 setlinejoin
+/gsct {gsave currentpoint translate} bind def
+/sf {/Symbol findfont exch scalefont setfont} bind def
+/df {/Dingbats findfont exch scalefont setfont} bind def
+%

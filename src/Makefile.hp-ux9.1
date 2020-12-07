@@ -1,0 +1,65 @@
+#########################################
+#    Makefile for Radware on HP 9000 HP-UX
+#    What you need:
+#      1) C compiler         - Jacek used HP-UX Release 9.0: August 1992
+#########################################
+
+#   make all                to make all programs
+#   make install            to install, if all goes well
+#   make clean              to clean up this dir
+#   make very-clean         to clean up this and all subdirectories,
+#                               leaving only the source code
+
+#------------------------------------------------------------------------
+#    CHANGE  these next two lines if X11 and/or Motif are installed elsewhere 
+
+     X_WIN_TOP  = ${TOP}/src
+     MOTIF_TOP  = ${TOP}/src
+
+#------------------------------------------------------------------------
+
+    INSTALL_DIR = ${HOME}/rw_current
+        INSTALL = /usr/bin/install -m 0644 -o radfordd -g users
+    INSTALL_BIN = /usr/bin/install -m 0755 -o radfordd -g users
+
+#        INSTALL = cp -f -p
+#    INSTALL_BIN = mv -f
+
+#------------------------------------------------------------------------
+
+#             CC = gcc -O2 -Wall
+             CC = cc 
+             FC = $(CC)
+         CFLAGS = -Aa -D_HPUX_SOURCE -O
+# -DHAVE_GNU_READLINE
+
+         RANLIB = ranlib
+             AR = ar rv
+             RM = -rm -f
+         RM_CMD = $(RM) *.o core *[~%] *.trace
+
+           LIBS = -lX11 -lm
+# -lreadline -lncurses
+     MOTIF_LIBS = -lXm -lMrm -lUil -lXt
+
+# -----------------------------------------------------------------------
+#  UNCOMMENT and CHANGE (if necessary)  a line defining HISLIBS
+#  if you have orphlib.a on your system, and you want to be able to read .his files.
+#  UNCOMMENT the line defining FC as gcc if orphlib was compiled using gcc
+#        HISLIBS = -lcl /usr/hhirf/orphlib.a
+#        HISLIBS = /usr/hhirf/orphlib.a
+#             FC = g77
+
+#------------------------------------------------------------------------
+
+      LIB_PATHS = -L. -L$(X_WIN_TOP)/lib
+   XM_LIB_PATHS = -L$(MOTIF_TOP)/lib
+
+ SUB_MAKE_FLAGS = "CC = ${CC}" "CFLAGS = ${CFLAGS}" \
+                  "RANLIB = ${RANLIB}" "HISLIBS = ${HISLIBS}"
+
+##############  Methods  ##################
+
+include Makefile.common
+include Makefile.install_ucb
+include Makefile.static

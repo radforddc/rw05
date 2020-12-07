@@ -1,0 +1,80 @@
+ 
+    HOW TO SLICE THE 4k x 4k MATRIX
+    -------------------------------
+ 
+ 1. First generate the x- and y-projections using slice. Type:
+       slice
+ 
+      The program will first ask you for the name of the matrix you
+      want to work on.
+      The default name is mat1.mat.
+      The program will then ask you if you want to take slices.
+      Answer N for no.
+      The program will then ask you if you want to take projections.
+      Answer Y for yes, and the program will spend a minute or so
+      calculating the projections. When it has finished, it will ask
+      you for the spectrum file names. After the spectra are written,
+      it will go back to the question about the matrix file name.
+      Type E to exit.
+ 
+ 2. Next create your window (.win) file using gf3. Type:
+       gf3
+ 
+      You may type <rtn> to the seven questions you are asked.
+      Read in the projections you have just calculated. If they have the
+      same gain, add them together using the AS command.
+      If you wish to use an energy calibration (strongly recommended!)
+      then enter it using the EC command.
+ 
+      Now you may create your window file using the SL and WI commands.
+      SL defines the name of the .win file. If you give the name
+      of a file that already exists, it will tell you so and ask if you
+      want to add to it. If you wish to change the file you are
+      dealing with, type SL <filename>.
+ 
+      To define the window, display the relevant region of the spectrum,
+      and type WI. The cursor will appear. Use the x-cursor to enter the
+      two window limits. If you will be subtracting background from your
+      slices, then you must simultaneously use the y-cursor to define the
+      background level beneath the peak. The background will be taken as
+      a straight line between the two intersection points of the cursor.
+      When you have finished entering windows for that region of the
+      spectrum, type X, and go to the next region. You may also display
+      the windows using the DW command. When you have finished with gf3,
+      exit with the ST command.
+ 
+      If you have made any mistakes entering your windows, you may edit
+      the .win file using the standard text editor. There is one line in
+      the file for each window.
+ 
+ 3. Now generate the slice spectra using slice. Type:
+       slice
+ 
+      The program will first ask you for the name of the matrix you
+      want to work on.
+      The default name is mat1.mat.
+      The program will then ask you if you want to take slices.
+      Answer Y for yes.
+      You will now be asked for the name of your window (.win) file,
+      and whether you want slices taken projected onto the x-axis or
+      y-axis, or the sum of both. Also, you will be asked if you want
+      all slices to be added to make one spectrum, as you might,
+      for example, to get the sum of all ground band gates. But beware;
+      if you say Yes, you will NOT get the individual spectra in
+      addition to the summed spectrum.
+ 
+      The program will then ask for the file name(s) of the output spectrum
+      file(s), and whether you wish to make use of the general background
+      subtraction procedure. If so, you will then be asked for a "background
+      spectrum" to be used in the subtraction. This would generally be the
+      appropriate (or summed) projection spectrum. It will be normalised
+      according to the peak-to-total of your window definition before
+      being subtracted.
+ 
+      The program will now spend several minutes calculating the slice
+      spectra. It will then ask you if you want to take projections.
+      Answer N for no.
+      It will then go back to the question about the matrix file name.
+      You may type E to exit, or go back around the loop to change the
+      answer to one or more of the questions. Note that the default matrix
+      file name is now the name of the file that you gave last time.

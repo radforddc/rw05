@@ -1,0 +1,24 @@
+static: xmgf3_static xmgls_static xmesc_static xmlev_static xm4dg_static
+
+xmgf3_static: xmgf3.c gf3_subs.o caskx.o util.a minig.a
+	$(FC) $(CFLAGS) -o $@ xmgf3.c gf3_subs.o caskx.o util.a minig.a \
+         -Bstatic $(XM_LIB_PATHS) $(MOTIF_LIBS) $(LIB_PATHS) (HISLIBS) -Bdynamic $(LIBS)
+xmgls_static: xmgls.o caskx.o drawstring.o drawstr_ps.o gls.a util.a minig.a
+	$(CC) $(CFLAGS) -o $@ xmgls.o caskx.o drawstring.o \
+         drawstr_ps.o gls.a util.a minig.a \
+         -Bstatic $(XM_LIB_PATHS) $(MOTIF_LIBS) $(LIB_PATHS) -Bdynamic $(LIBS)
+xmesc_static: xmescc.o caskx.o xmminig2.o escl8ra.o esclev.o \
+         drawstring.o drawstr_ps.o esc_undo.o gls.a util.a minig.a
+	$(CC) $(CFLAGS) -o $@ xmescc.o caskx.o xmminig2.o escl8ra.o \
+         esclev.o drawstring.o drawstr_ps.o esc_undo.o gls.a util.a minig.a \
+         -Bstatic $(XM_LIB_PATHS) $(MOTIF_LIBS) $(LIB_PATHS) -Bdynamic $(LIBS)
+xmlev_static: xmlevc.o caskx.o xmminig2.o gate3d.o levit8ra.o esclev.o lev4d.o \
+         drawstring.o drawstr_ps.o lev4d_undo.o gls.a util.a minig.a
+	$(CC) $(CFLAGS) -o $@ xmlevc.o caskx.o gate3d.o xmminig2.o levit8ra.o \
+         esclev.o lev4d.o drawstring.o drawstr_ps.o lev4d_undo.o gls.a util.a minig.a \
+         -Bstatic $(XM_LIB_PATHS) $(MOTIF_LIBS) $(LIB_PATHS) -Bdynamic $(LIBS)
+xm4dg_static: xm4dgc.o 4dg8ra.o gate4d.o gate3d.o caskx.o xmminig2.o esclev.o \
+         lev4d.o drawstring.o drawstr_ps.o lev4d_undo.o gls.a util.a minig.a
+	$(CC) $(CFLAGS) -o $@ xm4dgc.o gate4d.o gate3d.o caskx.o xmminig2.o \
+         4dg8ra.o esclev.o lev4d.o drawstring.o drawstr_ps.o lev4d_undo.o gls.a util.a \
+         minig.a -Bstatic $(XM_LIB_PATHS) $(MOTIF_LIBS) $(LIB_PATHS) -Bdynamic $(LIBS)

@@ -1,0 +1,153 @@
+Automatic Calibration Routines in gf3
+=====================================
+
+In the 1996 release of RadWare (rw96), a new function was added to
+GF2, to automatically extract areas and centroids of peaks from Ge
+detector source calibration spectra.  By the 1999 release (rw99 and
+later), this feature had been expanded to allow the user a choice of
+at least three different ways to do semi-automatic detector
+calibrations.
+
+(1) CA command; Autocalibrate Spectrum (1)
+==========================================
+
+The first such routine is run by the CA command (autoCAlibrate), or
+Autocalibrate Spectrum (1) option in the info menu of xmgf3 or gf3x.
+
+This routine uses a source data (.sou) file to define what peaks are
+expected to be present in the spectrum.  It then automatically finds
+the peaks, defines backgrounds and integrates to get centroids and
+areas.  The results are stored in a Source INput (.sin) file, and
+energy calibration fits may be optionally saved in an energy
+calibration (.cal) file.  The command is intended to ease the
+extraction of energy and efficiency calibrations, and to assist in
+gain-matching detectors.  It operates on a single spectrum; energy
+calibrations for many spectra in multi-spectrum files can be
+automatically generated using CA3, see (3) below.
+
+To use the command, read in the spectrum you want to analyze and type
+CA.  You will be prompted for the name of a .sou source data file; you
+can use the standard .sou files that come with radware, although it is
+usually necessary to edit those for more complex sources (e.g. 152Eu,
+133Ba) to remove some doublets etc.  An example of such an edited file
+for 152Eu is given as demo/eu_autocal.sou.
+
+The program will then find several peaks, work out the energy
+dispersion and attempt to integrate over all the peaks listed in the
+.sou file.  The results will be displayed on the graphics window, and
+you will be requested to press <return> to proceed.  Next a plot of
+the centroids, less the value expected if the spectrum was perfectly
+linear in energy, will be displayed on an expanded scale.  Linear and
+quadratic fits will be performed to the results of the peak
+integration, and displayed on this plot; you will be given the
+opportunity to save the results in an energy calibration file with the
+same filename as the spectrum but with the filename extension changed
+to .aca.
+
+The program also automatically saves the results of the peak
+integration in a standard radware-type .sin file, again with the same
+filename as the spectrum but with the filename extension changed to
+.sin.  This file may be used to input the data to the programs effit
+and encal, or to deduce gain-correction coefficients for gain-matching
+different detectors.
+
+If the command seems to have trouble finding the peaks, or integrating
+over what you gauge to be the correct region, try playing with the
+PeakFind (PF) parameters.  It uses the FWHM parameter from PF to guess
+at the width of the region of the spectrum that it should inspect for
+peaks.  If you have strong contaminant peaks at high energies in your
+spectrum, that could also confuse the peak-matching routine; you could
+add the contaminant to your .sou file or simply use SC to remove the
+offending peak(s) from the spectrum.
+
+(3) CA3 command; Autocalibrate Spectrum (3)
+===========================================
+
+The second auto-calibration routine is run by the CA3 command, or
+Autocalibrate Spectrum (3) option in the info menu of xmgf3 or gf3x.
+
+Unlike the first routine (1) above, this mode of calibration is for
+energy calibrations only, and uses just a simple two-point
+calibration.  That is, it uses the energies and centroids of only two
+peaks to determine the energy dispersion and offset for each spectrum.
+Its main advantage is one of speed and reliability for
+multiple-spectrum files (such as .spk or .spn files); it is intended to
+produce calibrations for many spectra simultaneously.
+
+This routine uses a "peak limits and info" (.lim) file to define
+ranges of spectra numbers to be processed, the energy and a range of
+channels to search for each of two different peaks, and an approximate
+FWHM for the peaks.  An example of such a .lim file is given as 
+demo/demo.lim, and listed below:
+
+* limits for co60 2-point calib at ~0.35 keV/ch hires, 2keV/ch lores
+* splo sphi   eg1   chlo1 chhi1     eg2   chlo2 chhi2  approx.fwhm
+    1,   4, 1173.24, 3000, 3300,  1332.51, 3350, 3900,    7
+    9,  11, 1173.24,  500,  620,  1332.51,  620,  720,   15
+
+Here spectra IDs 1 through 4 will be searched for gamma 1173.24 keV
+over channels 3000 to 3300, and then for gamma 1332.51 keV over
+channels 3350 to 3900, with a FWHM of around 7 chs.  Likewise spectra
+IDs 9 through 11 will be searched for gamma 1173.24 keV over channels
+500 to 620, and for gamma 1332.51 keV over channels 620 to 720, with a
+FWHM of around 15 chs.  Any number of spectra, with different
+resolutions and energy dispersions, can be treated this way in a
+single .lim file.  Such .lim files must contain a minimum of one data
+line, but there is no maximum line count.  Also, lines beginning with
+an asterisk (*) are treated as comments.
+
+To run the CA3 routine, open the multiple-spectrum file you wish to
+process, by reading in at least one spectrum from it.  Then type CA3,
+or select the appropriate menu item.  The program will proceed through
+the peaks and through the .lim file data lines (spectrum ID ranges),
+displaying the integrated peaks and calculating the energy calibration
+coefficients for each spectrum.  The results will be stored in a
+text-format output file with the filename extension .ca3, and
+containing one line for each spectrum ID successfully processed.
+
+An example of a .ca3 output file follows:
+
+ * gf3 autocalibrate type-3 output,  01-Apr-99 15:54:05
+ * SP       A          B         CENT1   FWHM1     CENT2   FWHM2
+    1    -2.033    .25462615    486.266   1.63   5537.703   2.31
+    2     -.182    .26025367    468.639   1.68   5410.848   2.21
+    3    -2.612    .24683824    503.952   1.68   5714.766   2.26
+    4     1.876    .25990814    461.343   1.90   5410.122   2.40
+    5      .849    .24480446    494.003   1.61   5748.106   2.20
+    6    -2.091    .24093580    514.138   1.49   5852.606   2.41
+    7      .069    .24572888    495.318   1.52   5729.656   2.29
+    8    -2.861    .23925383    520.968   1.55   5896.966   2.35
+
+Here the columns correspond to spectrum ID, energy offset and
+dispersion (in keV and keV/ch), and centroid (in chs) and FWHM (in
+keV) for the two peaks.  This example was generated by processing
+152Eu spectra.
+
+(4) CA4 command; Autocalibrate Spectrum (4)
+===========================================
+
+A third type of auto-calibration routine is run by the CA4 command, or
+Autocalibrate Spectrum (4) option in the info menu of xmgf3 or gf3x.
+It is intended for an easy, simple two-point energy calibration of a
+single spectrum, when the user knows the energies of at least two
+peaks.
+
+To run the CA4 routine, read in and display the spectrum spectrum,
+then type CA4 or select the appropriate menu item.  You will be
+prompted to select two peaks with the graphics cursor; to select a
+peak, simply click on the spectrum within one FWHM of the centroid.
+You will then be asked to provide the energies of the two peaks.  The
+energy calibration is then deduced, and becomes the defined gf3
+calibration.
+
+In order to facilitate providing the energies of the two peaks, you
+can create a file called calib.sou, either in the current working
+directory or in your home directory.  Use the standard format for .sou
+files (see the demo directory for examples) and place in the file any
+gamma-ray lines that you wish to use for such calibrations.  If a
+calib.sou file is found by the CA4 routine, the energies of the gammas
+listed in it will be printed on the screen, together with one-letter
+IDs for each energy.  You can then use that ID to specify the energy,
+rather than typing the energy itself.
+
+An example calib.sou is given in the demo directory.

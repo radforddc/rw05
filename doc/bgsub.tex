@@ -1,0 +1,815 @@
+\documentstyle[12pt]{article}
+ \setlength{\textwidth}{16.5cm}
+ \setlength{\textheight}{24cm}
+ \hoffset = -1.3cm
+ \voffset = -2.6cm
+ \setlength{\parskip}{0.05in}
+ \setlength{\parindent}{1cm}
+ \setlength{\unitlength}{1mm}
+% \pagestyle{plain}
+ \pagestyle{myheadings}
+ \markright{}
+
+%  miscellaneous
+\newcommand{\gray}{$\gamma$ ray}
+\newcommand{\grays}{$\gamma$ rays}
+\newcommand{\ghray}{$\gamma$-ray}
+\newcommand{\ghg}{$\gamma$-$\gamma$}
+\newcommand{\ghghg}{$\gamma$-$\gamma$-$\gamma$}
+
+\begin{document}
+
+\begin{center}
+\large
+{\bf       Background subtraction from in-beam HPGe coincidence data sets}
+\normalsize
+\end{center}
+\vspace{5mm}
+\begin{center}
+                                D.C. Radford\\
+{\em                AECL Research, Chalk River Laboratories,\\
+                     Chalk River, Ontario, Canada K0J 1J0\\}
+\end{center}
+\vspace{8mm}
+\setlength{\baselineskip}{4mm}
+\begin{minipage}[t]{16.5cm}
+{\bf Abstract: }
+Algorithms for the subtraction of backgrounds from \ghg\ matrices and
+higher-fold data sets, obtained from in-beam HPGe coincidence experiments with
+heavy-ion-induced nuclear reactions, are described. The backgrounds are
+parameterized as the cross-products of lower-dimensional projections of the
+data and a one-dimensional background spectrum. A novel method of correcting
+for a mixture of different reaction channels in the complete data set, by
+making use of one or more gates on background channels in the energy region of
+the ``E2 bump'', is presented. In many cases, this new method provides a
+significantly better description of the background.
+
+\end{minipage}
+
+\newpage
+\setlength{\baselineskip}{6mm}
+\begin{center}
+{\bf                                1. Introduction}
+\end{center}
+
+Modern HPGe detector arrays have revolutionized in-beam \ghray\ studies,
+especially for high-spin nuclear structure physics with heavy-ion
+fusion-evaporation reactions. In the analysis of data from such arrays, one
+often creates two-dimensional histograms from double-coincidence data, or
+three-dimensional histograms from triple-coincidence data, and then proceeds to
+set ``gates'', {\em i.e.} specify energies for all but one of the axes and
+inspect the projection onto the remaining axis. More sophisticated procedures
+({\em e.g.} refs [1,2]) may attempt to perform least-squares fits directly to
+the multi-fold data to extract coincident peak areas and energies. In either
+case, it is usually necessary to correct the data for background counts
+underlying the peaks in the gate spectrum or fitted region, arising from both
+Compton-scattered \grays\ and quasicontinuum transitions.
+
+One common method for correcting for the background underlying a gate on a peak
+is to set additional gates on background regions near the peak, and subtract a
+normalized fraction of the resulting projection from that obtained with the
+primary gate. (In three- and higher-fold data, combinations of peak and
+background gates are used.) In practise, however, it is often not possible to
+find a background region free from weak contaminant peaks. This procedure also
+introduces more statistical uncertainty into the results than is strictly
+necessary, since the background spectrum has a similar number of counts to the
+primary (peak) spectrum. In addition, this method does not remove all of the
+background counts from the resulting spectrum; {\em i.e.} the result still
+contains counts from Compton-scattered \grays\ and quasicontinuum transitions
+in true coincidence with the peak. Therefore, when a direct least-squares
+analysis of the peaks in a multi-fold data set is desired, this procedure
+cannot be used, and some other method of determining the background must be
+found.
+
+A second method that is commonly used for two-dimensional data is to subtract a
+fraction of the total one-dimensional projection from the gated spectrum,
+normalized so that the total counts subtracted corresponds to an estimate of
+the background counts in the gate. This procedure does not have the problem of
+introducing additional statistical uncertainty, but still does not remove
+coincident background counts from the spectrum. Generalisations of this method
+to higher folds have also been made ({\em e.g.} ref. [3]).
+
+Palameta and Waddington [4] have reported a method of subtracting the
+background directly from two-dimensional \ghg\ histograms (``matrices''). The
+present paper reports a prescription similar to that of ref. [4] but somewhat
+simpler. The limitations of this and other prescriptions are discussed. In
+particular, for nuclei populated in heavy-ion fusion-evaporation reactions,
+correlations of the background with the reaction channel ({\em i.e.} different
+residual nuclei) can pose a significant problem. We therefore present an
+extension to the basic method which allows a correction for the different
+reaction channels typically present in a data set. Extensions to three- and
+higher-dimensional data sets are also given.
+
+
+\begin{center}
+{\bf                      2. Principles of the method}
+\end{center}
+
+In order to give a simple description of the method, we will begin by
+discussing two-dimensional (2D) \ghg\ data sets. Extensions to higher folds
+will be presented later.
+
+Analysis of a \ghg\ data set will typically begin with generating a ``matrix'',
+or 2D histogram of counts {\em vs.} energy {\em vs.} energy. This
+matrix is then usually symmetrised, so that the two energy axes are equivalent.
+
+Let the counts in such a data set be represented by $M_{ij}$, where $i$ and
+$j$ indices are the channels corresponding to the \ghray\ energies. The
+one-dimensional (1D) projection of the matrix is then
+\begin{eqnarray*}
+P_i  = \sum_j M_{ij} \ .
+\end{eqnarray*}
+Let us divide the counts in this projection into a ``background'' spectrum
+$b_i$ and a ``peak'' spectrum $p_i$, such that
+\begin{eqnarray*}
+P_i  = b_i + p_i \ .
+\end{eqnarray*}
+The details of how this is done need not greatly concern us here; the
+sensitivity of the resulting 2D background to this partition is addressed
+below. For now, it will be sufficient to imagine that an experimenter ``draws''
+the 1D background $b_i$ below the peaks in the projection in order to define
+the two spectra.
+
+The second procedure mentioned above in the introduction (subtracting part of
+the 1D projection) would then correspond to subtracting the 2D background
+\begin{eqnarray}
+B_{ij} & = & \frac {1}{T} b_i P_j                          \nonumber \\
+       & = & \frac {1}{T} (b_i b_j + b_i p_j) \ ,          \label{eq:m0} 
+\end{eqnarray}
+where
+\begin{eqnarray}
+T  =  \sum_{ij} M_{ij}  =  \sum_i P_i                      \label{eq:m0b} 
+\end{eqnarray}
+is the total number of counts in the matrix. This 2D background is not
+symmetric, and would be used for gates set on the $i$-axis and projected onto
+the $j$-axis.
+
+As mentioned above, this does not remove the background counts in coincidence
+with the peak of the gate. In order to do this, and to maintain symmetry,
+we extend the procedure and use the following 2D background:
+\begin{eqnarray}
+B_{ij} & = & \frac {1}{T} (b_i b_j + b_i p_j + p_i b_j)    \nonumber \\
+       & = & \frac {1}{T} (P_i P_j - p_i p_j) \ .          \label{eq:m1} 
+\end{eqnarray}
+
+Figure 1 illustrates the use of this background for data from the reaction
+$^{124}$Sn~+~$^{30}$Si at 158 MeV, studied with the EUROGAM 1 spectrometer [5].
+Shown are the total 1D projection and ``drawn'' background spectra, together
+with two background-subtracted gates on a 2D matrix.
+It is remarkable how well such a simple background is able to represent the
+true observed background.
+%especially for non-collective nuclei.
+Also shown is a background-subtracted spectrum generated by setting both of the
+two gates together on a 3D cube and projecting the result onto the third
+dimension; this is discussed in section 5, where the extension of
+equation~\ref{eq:m1} to three- and higher-folds is presented.
+%The two gates shown are on fairly weak peaks; they have peak-to-background
+%ratios of 0.44 and 0.58, respectively.
+
+For the study of $E_{\gamma} - E_{\gamma}$ correlations in \ghg\ coincidences,
+the COR [6] method can be used to generate a background with the same total
+number of counts ($T$) as the matrix; it corresponds to the simple 2D
+background
+\begin{eqnarray*}
+B_{ij}^{COR} = \frac {1}{T} P_i P_j \ .
+\end{eqnarray*} 
+No net counts remain in the matrix after this subtraction. The technique
+presented here removes from such a 2D background the peak-peak part of the
+projection cross-product, and can in that sense be considered a refinement of
+the COR treatment.
+
+Our method is also related to that of Palameta and Waddington [4].
+In our nomenclature, their 2D background can be rewritten as:
+\begin{eqnarray*}
+B_{ij}^{PW} = \frac {1}{S} (b_i P^{\prime}_j + P^{\prime}_i b_j
+                               - A b_i b_j) \ .
+\end{eqnarray*}
+Here the 1D spectrum $P^{\prime}_i$ is the projection of the matrix for the
+set $K$ of all channels for which $P_j - b_j$ is zero within statistical
+errors ({\em i.e.} all channels containing no significant peaks),
+\begin{eqnarray*}
+P^{\prime}_i = \sum_{j \in K} M_{ij} \ ,
+\end{eqnarray*}
+and the constants S and A are defined as
+\begin{eqnarray*}
+S & = & \sum_i P^{\prime}_i \ , \\
+A & = & \sum_{i \in K} P^{\prime}_i / S.
+\end{eqnarray*}
+If we expand the set $K$ to include {\em all} channels of the $j$-axis, then we
+get
+\begin{eqnarray*}
+P^{\prime}_i & = & P_i \ , \\
+             S & = & T \ , \\
+             A & = & 1 \ ,
+\end{eqnarray*}
+and the background of Palameta and Waddington reduces to that of
+equation~\ref{eq:m1}.
+
+
+\begin{center}
+{\bf           3. Sensitivity of the method to the background spectrum}
+\end{center}
+
+The use of equation \ref{eq:m1} requires the definition of the background
+spectrum $b_i$. One can define this spectrum simply by drawing a
+piecewise-linear curve below the visible peaks in the total projection. Since
+this is clearly a subjective procedure, it is important to examine the
+sensitivity of the final result to this 1D background spectrum.
+
+A simple way of doing this is to define an alternative background spectrum,
+$b^{\prime}_i$, for example by multiplying $b_i$ by a factor 0.9. Thus we
+obtain
+\begin{eqnarray}
+   b^{\prime}_i & = & 0.9 b_i                                     \nonumber \\
+   p^{\prime}_i & = & P_i - b^{\prime}_i                          \nonumber \\
+                & = & p_i + 0.1 b_i                               \nonumber \\
+B^{\prime}_{ij} & = & \frac {1}{T} (P_i P_j - p^{\prime}_i p^{\prime}_j)
+                                                                  \nonumber \\
+         & = & \frac {1}{T} (P_i P_j - p_i p_j - 0.1 p_i b_j
+                                   - 0.1 b_i p_j + 0.01 b_i b_j)  \nonumber \\
+         & = & B_{ij} - \frac {0.1}{T} (p_i b_j + b_i p_j - 0.1 b_i b_j) \ .
+                                                            \label{eq:m1r} 
+\end{eqnarray}
+
+Since the bulk of the counts are in the $P_i P_j$ term, rather than the $p_i
+p_j$ term, this renormalization of $b_i$ has only a relatively minor effect on
+the resulting 2D background. This can be illustrated by taking the same gates
+as in figure~1, but now using this renormalized background; these spectra are
+shown in figure~2. It can be seen that even a relatively large change in $b_i$
+has quite a small effect, especially for the triples spectrum.
+
+As can be seen from equation \ref{eq:m1r}, a change in $b_i$ has a very small
+effect on the $b_i b_j$ term of $B_{ij}$. However, the terms in $p_i b_j$ and
+$b_i p_j$ are more sensitive. Thus, for gates with very small
+peak-to-background ratios, a poorly-defined 1D background will result in strong
+peaks of the total projection being oversubtracted or undersubtracted.
+
+Attempts have been made to develop techniques to automatically generate $b_i$
+from $P_i$. These have not been very successful, in that the subjective
+technique of removing the peaks by hand generally gives results at least as
+reliable as the automatic methods.
+
+Experience has shown that including in $b_i$ the shoulders and/or peaks
+arising from $(n, n^{\prime}\gamma)$ events in the HPGe detector or surrounding
+material will generally result in an improved background subtraction.
+Similarly, some experiments produce X-rays in strong coincidence with
+virtually all peaks of the spectrum, due to internal conversion of \grays.
+In such cases, leaving the X-ray peaks in the $b_i$ spectrum will remove an
+average X-ray coincident intensity from the gated spectra.
+
+
+\begin{center}
+{\bf             4. Correction for multiple reaction channels}
+\end{center}
+
+When nuclei are produced at high spin with heavy-ion fusion-evaporation
+reactions, there are usually at least two or three strongly populated residues.
+For example, in the bombardment of $^{114}$Cd with 210 MeV $^{48}$Ca, the
+dominant reaction channels are $^{114}$Cd($^{48}$Ca,4n)$^{158}$Er and
+$^{114}$Cd($^{48}$Ca,5n)$^{157}$Er, while weaker reaction channels include 3n
+and 6n evaporation, and p$x$n evaporation.
+
+If a residue is produced at higher spin, then more of the total energy is
+carried as rotational energy, so that less of the energy brought in by the
+reaction was available for the evaporation of particles. Thus, in the above
+example, $^{158}$Er is generally produced with more angular momentum than
+$^{157}$Er. This extra angular momentum must then be removed by \ghray\
+emission subsequent to the neutron evaporation, resulting in a higher average
+\ghray\ multiplicity. For collectively-rotating nuclei, most of the extra
+\grays\ contribute to a quasicontinuum ``E2 bump'' in the energy region between
+1 and 1.5 MeV. Consequently, the shape of this quasicontinuum \ghray\ spectrum
+also differs between reaction channels. In the type of background subtraction
+described here, the quasicontinuum is considered to be part of the
+``background'' we are subtracting, and this will give rise to
+reaction-channel-dependent effects.
+
+This can be seen in figure~3, where spectra from gates on strong $^{156-159}$Er
+\ghray\ transitions are shown. The spectra on the left have been
+background-subtracted with the procedure of equation~\ref{eq:m1}. In the region
+between about 1000 and 1500 keV there are serious problems with the background;
+the 3n- and 4n-evaporation spectra are undersubtracted, while the 5n and 6n are
+oversubtracted. Since we are subtracting an average background, the
+reaction-channel dependence of the E2-bump strength is a serious problem.
+
+The effect that gives rise to this problem, however, also points the way to a
+solution. It is evident that setting a gate on background channels in the
+region of the E2-bump will effectively distinguish the reaction channel of
+strong peaks in the spectrum. It should then be possible to use this
+information to add a correction term to the background subtraction.
+
+This is illustrated in figure~4. The top panel shows the total 1D projection
+and background from the data set of figure~3. Also shown is a wide gate on the
+E2-bump region of the spectrum, from 1100 to 1600 keV, chosen to avoid strong
+peaks. When this gate is applied to the 2D data, the projection spectrum shown
+in the middle panel results. A 1D background can be drawn for this
+E2-bump-gated spectrum in the same way as for the total projection. In the
+bottom panel, the E2-bump projection has had a fraction of the total projection
+subtracted, with a normalization factor chosen to give a net counts of zero in
+the difference spectrum. The difference in the background spectra, with the
+same normalization coefficient, is also shown. The positive (negative) peaks in
+the difference spectrum correspond to transitions from the 3n and 4n (5n and
+6n) evaporation residues. It is also evident that the E2-bump is more intense
+in the E2-bump-gated projection than in the total projection.
+
+Let $E$ be the set of channels included in the E2-bump gate(s), so that the
+E2-bump projection spectrum is 
+\begin{eqnarray*}
+S_i  = \sum_{j \in E} M_{ij} \ ,
+\end{eqnarray*}
+with a total counts of 
+\begin{eqnarray*}
+C = \sum_i S_i = \sum_{i \in E} P_i \ .
+\end{eqnarray*}
+Let us divide the counts in the E2-bump projection into background and peaks,
+\begin{eqnarray*}
+S_i  = s_i + t_i \ ,
+\end{eqnarray*}
+and define the difference spectra of figure~4(c) as
+\begin{eqnarray*}
+D_i & = & S_i - \frac {C}{T} P_i \\
+e_i & = & t_i - \frac {C}{T} b_i \\
+d_i & = & D_i - e_i \\
+    & = & s_i - \frac {C}{T} p_i \ .
+\end{eqnarray*}
+
+In order to simplify the discussion which follows, we consider
+an experiment where the two primary reactions are (HI,$x$n) and
+(HI,($x+1$)n). Let the 2D data, total projection and background be:
+\begin{eqnarray*}
+M_{ij} & = & M^a_{ij} + M^b_{ij} \\
+P_{i}  & = & P^a_{i}  + P^b_{i} \\
+b_{i}  & = & b^a_{i}  + b^b_{i}
+\end{eqnarray*}
+where the superscripts $a$ and $b$ represent spectra that would be obtained
+from pure (HI,$x$n) and (HI,($x+1$)n) data sets, respectively. We define
+\begin{eqnarray*}
+T^n   & = & \sum_i P^n_{i} \\
+S^n_i & = & \sum_{j \in E} M^n_{ij} \\
+C^n   & = & \sum_i S^n_{i}
+\end{eqnarray*}
+where $n = a, b$. We also obtain
+\begin{eqnarray*}
+T   & = & T^a + T^b \\
+S_i & = & S^a_i + S^b_i
+\end{eqnarray*}
+{\em etc.}
+
+If the E2-bump gate on each of the individual reaction channels is
+well-reproduced by the background, then the spectra $S^n_i$ can be well
+represented by a fraction of the total projections $P^n_i$,
+\begin{eqnarray*}
+S^n_i = \frac {C^n}{T^n} P^n_i \ .
+\end{eqnarray*}
+We therefore obtain
+\begin{eqnarray}
+D_i & = & S_i - \frac {C}{T} P_i                              \nonumber \\
+    & = & S^a_i + S^b_i - \frac {C}{T} (P^a_i + P^b_i)        \nonumber  \\
+    & = & \frac {C^a}{T^a} P^a_i + \frac {C^b}{T^b} P^b_i -
+            \frac {C^a + C^b} {T^a + T^b} (P^a_i + P^b_i)     \nonumber \\
+    & = & \frac {C^a T^b - C^b T^a} {T T^a T^b}
+                          (T^b P^a_i - T^a P^b_i) \\
+    & = & (T^b P^a_i - T^a P^b_i) f                           \label{eq:aaa} \\
+d_i & = & (T^b p^a_i - T^a p^b_i) f                           \label{eq:bbb} \\ 
+e_i & = & (T^b b^a_i - T^a b^b_i) f \ ,                       \label{eq:eee}
+\end{eqnarray}
+where
+\begin{eqnarray}
+f & = & \frac {C^a T^b - C^b T^a} {T T^a T^b} \ .             \label{eq:fff}
+\end{eqnarray}
+
+For this two-reaction-channel data set, a more correct version of
+equation~\ref{eq:m1} would give the 2D background
+\begin{eqnarray}
+B^{\prime}_{ij} =
+         \frac {1}{T^a} (P^a_i P^a_j - p^a_i p^a_j) +
+         \frac {1}{T^b} (P^b_i P^b_j - p^b_i p^b_j) \ .       \label{eq:ccc} 
+\end{eqnarray}
+With some algebra (see Appendix) we can now combine equations \ref{eq:m1}, 
+\ref{eq:aaa}, \ref{eq:bbb} and \ref{eq:ccc} to get 
+\begin{eqnarray}
+B^{\prime}_{ij} = B_{ij} + \frac {1} {F} (D_i D_j - d_i d_j) \ ,  \label{eq:m2} 
+\end{eqnarray}
+where
+\begin{eqnarray}
+F = f^2 T T^a T^b = \frac {(C^aT^b - C^bT^a)^2} {TT^aT^b} \ .   \label{eq:FFF}
+\end{eqnarray}
+We can evaluate the constant $F$ by taking the sum of the difference spectrum
+$D_i$ over the E2-bump gate(s) $E$,
+\begin{eqnarray}
+\sum_{i \in E} D_i & = & \sum_{i \in E}
+          \frac {C^a T^b - C^b T^a} {T T^a T^b}
+                (T^b P^a_i - T^a P^b_i)           \nonumber \\
+    & = & \frac {C^a T^b - C^b T^a} {T T^a T^b}
+                (T^b C^a - T^a C^b)               \nonumber \\
+    & = & F \ .                                   \label{eq:m2b} 
+\end{eqnarray}
+Thus we are able to eliminate the need to know the individual
+evaporation-residue projections in order to make use of equation~\ref{eq:m2}.
+
+The effect of using this improved background subtraction procedure is shown on
+the right-hand side of figure~3. The new method does not yield perfect results,
+especially in this case for the 6n reaction channel, presumably due to the fact
+that we have more than two reaction channels populated in the experiment.
+Nevertheless, there is a very significant improvement, especially in the region
+of the E2 bump.
+
+When one sets gates on transitions in the energy range of the E2 bump, the
+effects of the new method are still more striking. Figure~5 presents spectra
+from a single gate at 1340 keV, and from a double gate at 1340 keV and the 3n
+\gray\ at 208 keV, with the background subtracted using the standard procedure
+((b),(d)) or the improved procedure ((a),(c)). The data set and backgrounds
+used are the same as those of figures~3 and 4. The 1340 keV transition belongs
+to the 4n reaction channel and not to the 3n channel, but it would be
+impossible to draw that conclusion based on figure~5~(b),(d).
+
+An alternative and perhaps more intuitive way of viewing this correction term
+is to consider the difference spectrum $D_i$ as a gate on a matrix where the
+background of equation~\ref{eq:m1} has already been subtracted. That is,
+\begin{eqnarray}
+D_i & = & \sum_{j \in E} ( M_{ij} - B_{ij} )                     \nonumber \\
+    & = & S_i - \frac {1}{T} \sum_{j \in E} (P_i P_j - p_i p_j)  \nonumber \\
+    & \approx & S_i - \frac {C}{T} P_i
+\end{eqnarray}
+since the gate $E$ is assumed to include only background channels. We then use
+this projection $D_i$ and its peak and background spectra $d_i, e_i$ in the
+same way as for equation~\ref{eq:m1}, except that we also need to replace the
+total counts
+\begin{eqnarray*}
+T = \sum_i P_i
+\end{eqnarray*}
+with 
+\begin{eqnarray*}
+F = \sum_{i \in E} D_i \ .
+\end{eqnarray*}
+This then corrects the matrix for background correlations remaining in the E2
+bump after the first background subtraction. Presumably, we could repeat this
+procedure for a second problem area, using the matrix which has been
+background-subtracted with equation~\ref{eq:m2} and a different gate.
+
+It should be emphasized that the problems presented by the E2-bump are not
+restricted to the background-subtraction method of equation~\ref{eq:m1}. Any
+method that treats the background as a fraction of some spectrum (such as the
+total 1D projection) is prone to this problem, unless that spectrum is derived
+directly from background gates set close to the gate of interest. It is also
+worth noting that the results presented here are not very sensitive to the
+actual gate(s) used to generate the E2-bump projection. The main criterion is
+simply a sensitivity to the reaction-channel dependence of the E2 bump
+strength. While it is a good idea to exclude strong peaks, weak peaks such as
+those in figure~4(a) can be included with no observable effects.
+
+For residual nuclei that do not exhibit strong collective rotation at the spins
+at which they are populated, there is no strong E2 bump. For these cases, the
+variation of the intensity of the E2 bump with reaction channel is not as
+evident, and may be absent altogether for some reactions. For example, a
+comparison of the gates shown in figure~1 with those in figure~3 shows that the
+effect is less pronounced for the noncollective nuclei $^{148,149}$Gd (although
+a close inspection reveals that spectrum figure~1(b) is slightly oversubtracted
+in the region 1.0 -- 1.6 MeV, and that of figure~1(c) slightly
+undersubtracted). In cases where no reaction-channel fractionation is observed,
+the use of equation~\ref{eq:m2} over that of equation~\ref{eq:m1} is not
+necessary, and may in fact degrade the overall quality of the background
+subtraction.
+
+
+\begin{center}
+{\bf                 5. Extension to triples and higher folds}
+\end{center}
+
+The new spectrometers such as GAMMASPHERE and EUROGAM gain increased
+sensitivity by making use of high-fold coincidences to increase the
+peak-to-background ratio for \ghray\ coincidences. Since the background is
+reduced by more than an order of magnitude over that of double coincidences,
+one might conclude that background subtraction of quadruple- or
+quintuple-coincidence data should be less important. It must be remembered,
+however, that the goal of these instruments is to make use of the increased
+sensitivity to search for and examine transitions or cascades which are an
+order of magnitude weaker than those observed with earlier instruments. Thus
+the peak-to-background ratio at the limit of sensitivity is approximately
+unchanged, and the background will have to be treated properly in order to
+correctly extract information from the new high-fold data sets.
+
+The procedures described here can be easily extended to triples and higher-fold
+coincidences. Figures~ 1, 2 and 3 show results for double gates on triples data
+sets, obtained with the extensions to equations~\ref{eq:m1} and \ref{eq:m2}
+that are given below. Extensions of the Palameta-Waddington technique to
+triples and higher folds are derived in reference [7]. Crowell {\em et al.} [3]
+have also developed a high-fold background-subtraction algorithm which is in
+some respects similar to that of equations~\ref{eq:m1t} and \ref{eq:m1q} below,
+except that they replace the spectrum $b_i$ with estimates of the background
+levels derived directly from the high-fold data in the region of the gate. They
+also do not subtract the background counts in coincidence with the (n-1)-fold
+peak portion of the gate on n-fold data.
+
+The extension of equation~\ref{eq:m1} is straightforward. We consider an
+n-fold cross-product of the 1D projection, keeping all terms that include at
+least one power of the spectrum $b$. For example,
+\begin{eqnarray*}
+P_i P_j P_k & = & p_i p_j p_k \\
+            & + & p_i p_j b_k + p_i b_j p_k + b_i p_j p_k \\
+            & + & p_i b_j b_k + b_i p_j b_k + b_i b_j p_k \\
+            & + & b_i b_j b_k \ .
+\end{eqnarray*}
+To get the three-dimensional background $B_{ijk}$, we drop the first term,
+replace the $pp$ terms with the corresponding background-subtracted 2D
+projection (in order to include the proper coincidence relationships) and
+divide by powers of $T$ (to get the correct dependence on the total number of
+events),
+\begin{eqnarray*}
+B_{ijk} =  \frac {1} {T} 
+  & [ & (M_{ij}-B_{ij}) b_k + (M_{ik}-B_{ik}) b_j + (M_{jk}-B_{jk}) b_i \ \ ] \\
++  \frac {1} {T^2} 
+  & [ & p_i b_j b_k + b_i p_j b_k + b_i b_j p_k \\
+  &   & + b_i b_j b_k \ \ ] \ .
+\end{eqnarray*}
+By expanding $B_{ij}$ {\em etc.} through equation~\ref{eq:m1}, we get
+\begin{eqnarray}
+B_{ijk} = \frac {1}{T}
+ & [ & M_{ij}b_k + M_{ik}b_j + M_{jk}b_i \ \ ]     \nonumber \\
++ \frac {1}{T^2} 
+ & [ & - P_i b_j b_k - b_i P_j b_k - b_i b_j P_k   \nonumber \\
+ &   & + b_i b_j b_k \ \ ] \ .                     \label{eq:m1t} 
+\end{eqnarray}
+
+Similarly, for quadruple coincidences, we obtain
+\begin{eqnarray}
+B_{ijkl} = \frac {1} {T} 
+ & [ & C_{ijk}b_l + C_{ijl}b_k + C_{ikl}b_j + C_{jlk}b_i \ \ ]  \nonumber \\
++ \frac {1} {T^2} 
+ & [ & - M_{ij} b_k b_l - M_{ik} b_j b_l - M_{jk} b_i b_l
+       - M_{il} b_j b_k - M_{jl} b_i b_k - M_{kl} b_i b_j \ \ ] \nonumber \\
++ \frac {1} {T^3} 
+ & [ & P_i b_j b_k b_l + b_i P_j b_k b_l +
+       b_i b_j P_k b_l + b_i b_j b_k P_l                        \nonumber \\
+ &   & - b_i b_j b_k b_l \ \ ] \ ,                              \label{eq:m1q}
+\end{eqnarray}
+where $C_{ijk}$ is the three-dimensional (3D) projection of the 4-dimensional
+(4D) data set.
+For completeness, we rewrite equation~\ref{eq:m1} in the same form as
+equations~\ref{eq:m1t} and \ref{eq:m1q},
+\begin{eqnarray*}
+B_{ij} = \frac {1} {T}
+  & [ & P_i b_j + b_i P_j \\
+  &   & - b_i b_j \ \ ] \ .
+\end{eqnarray*}
+
+We see that in order to calculate the background, we require all of the
+projections of order less than the coincidence fold, in addition to the 1D
+background spectrum. The same is true for the extension of
+equation~\ref{eq:m2}, except that in that method we also require all the
+E2-bump-gated projections and the corresponding 1D background spectrum.
+
+Using the format of equation~\ref{eq:m1t}, the triples version of
+equation~\ref{eq:m2} reduces to
+\begin{eqnarray}
+B^{\prime}_{ijk} = B_{ijk} + \frac {1}{F}
+ & [ & N_{ij}e_k + N_{ik}e_j + N_{jk}e_i \ \ ]     \nonumber \\
++ \frac {1}{F^2}
+ & [ & - Q_i e_j e_k - e_i Q_j e_k - e_i e_j Q_k   \nonumber \\
+ &   & +  \frac {U}{F} e_i e_j e_k \ \ ] \ .       \label{eq:m2t} 
+\end{eqnarray}
+where
+\begin{eqnarray}
+N_{ij} & = & \sum_{k \in E} (C_{ijk} - B_{ijk})               \nonumber \\
+       & = & \sum_{k \in E} C_{ijk} - \frac {C}{T} M_{ij}
+                       - \frac {1}{T} (D_i b_j + b_i D_j)     \\
+Q_i    & = & \sum_{j \in E} N_{ij}                            \nonumber \\
+       & = & \sum_{j \in E} \sum_{k \in E}  C_{ijk}
+                   - \frac {1}{T} (C S_i + C D_i + F b_j)     \nonumber \\
+       & = & \sum_{j \in E} \sum_{k \in E}  C_{ijk}
+       - \frac {1}{T} (2 C D_i + \frac {C^2}{T} P_i + F b_j)  \\
+U      & = & \sum_{i \in E} Q_i                               \nonumber \\
+       & = & \sum_{i \in E} \sum_{j \in E}
+             \sum_{k \in E}  C_{ijk} - \frac {1}{T} (3CF + \frac {C^3}{T})
+\end{eqnarray}
+are the E2-bump-gated projections of the background-subtracted cube.
+Using the arguments of the previous section and algebra similar to that of the
+Appendix, one can show that the correct 3D background for our data set with two
+reaction channels reduces to equation \ref{eq:m2t}.
+
+Similarly, the quadruples version of equation~\ref{eq:m2} is
+\begin{eqnarray}
+B^{\prime}_{ijkl} = B_{ijkl}
++ \frac {1} {F} 
+ & [ & G_{ijk}e_l + G_{ijl}e_k + G_{ikl}e_j + G_{jlk}e_i \ \ ]  \nonumber \\
++ \frac {1} {F^2} 
+ & [ & - O_{ij} e_k e_l - O_{ik} e_j e_l - O_{jk} e_i e_l
+       - O_{il} e_j e_k - O_{jl} e_i e_k - O_{kl} e_i e_j \ \ ] \nonumber \\
++ \frac {1} {F^3} 
+ & [ & R_i e_j e_k e_l + e_i R_j e_k e_l +
+       e_i e_j R_k e_l + e_i e_j e_k R_l                        \nonumber \\
+ &   & - \frac {V}{F} e_i e_j e_k e_l \ \ ] \ ,                 \label{eq:m2q}
+\end{eqnarray}
+where
+\begin{eqnarray*}
+G_{ijk} & = & \sum_{l \in E} (H_{ijkl} - B_{ijkl}) \\
+N_{ij}  & = & \sum_{k \in E} G_{ijk} \\
+Q_i     & = & \sum_{j \in E} N_{ij} \\
+V       & = & \sum_{i \in E} Q_i
+\end{eqnarray*}
+are the E2-bump-gated projections of the background-subtracted 4D data set
+(hypercube) $H_{ijkl}$.
+
+Hackman and Waddington [7] have developed a very elegant notation of using
+operators to describe the process of background subtraction. In our case, the
+operator for the standard background subtraction is
+\begin{eqnarray*}
+\beta_i = 1 - \frac {b_i}{T} \sum_i
+\end{eqnarray*}
+for each dimension. Thus, for example,
+\begin{eqnarray*}
+\beta_i \beta_j M_{ij}
+& = & (1 - \frac {b_i}{T} \sum_i)(1 - \frac {b_j}{T} \sum_j) M_{ij} \\
+& = & M_{ij} - \frac {b_i}{T} P_j - \frac {b_j}{T} P_i
+             + \frac {b_i}{T} \frac {b_j}{T} T \\
+& = & M_{ij} - B_{ij} \ .
+\end{eqnarray*}
+Similarly,
+\begin{eqnarray*}
+\beta_i \beta_j \beta_k C_{ijk} = C_{ijk} - B_{ijk}
+\end{eqnarray*}
+{\em etc.} The operator to apply the additional E2-bump correction is
+\begin{eqnarray*}
+\epsilon_i = 1 - \frac {e_i}{F} \sum_i
+\end{eqnarray*}
+for each dimension, so that
+\begin{eqnarray*}
+\epsilon_i \epsilon_j \beta_i \beta_j M_{ij} & = & M_{ij} - B^{\prime}_{ij} \\
+\epsilon_i \epsilon_j \epsilon_k \beta_i \beta_j \beta_k C_{ijk}
+& = & C_{ijk} - B^{\prime}_{ijk}
+\end{eqnarray*}
+{\em etc.}
+
+One final remark should be made about background subtraction for triples and
+higher-fold data. We have assumed throughout the discussion here that the
+quasicontinuum part of the background is uncorrelated, that is, that the 2D
+background-background coincidences are well-described by the tensor
+cross-product of the 1D background spectrum $b_i$ (with the exception of the E2
+bump). While this turns out to be a reasonable approximation, it has long been
+known ({\em e.g.} ref [6]) that there is often a valley along the diagonals of
+the data; events where $E_{\gamma1} \approx E_{\gamma2}$ are slightly less
+likely than expected from uncorrelated backgrounds. For 2D data, this problem
+can be alleviated to some extent by using local backgrounds.
+
+This valley is even deeper along the major diagonal ($E_{\gamma1} \approx
+E_{\gamma2} \approx  E_{\gamma3}$) in triples data, so at first it might be
+expected that the 3D background from the prescriptions described in this paper
+would be poorer in this respect than that for 2D data. This, however, turns out
+not to be the case. Referring to equation~\ref{eq:m1t}, one sees that the 2D
+correlations for $i \approx j$, $i \approx k$ and $j \approx k$ are included in
+the terms $M_{ij}b_k$, $M_{ik}b_j$ and $M_{jk}b_i$, respectively. Experience
+indicates that these terms tend to cancel the background correlations in the
+\ghghg\ cube.
+
+
+\begin{center}
+{\bf                              6. Conclusion}
+\end{center}
+
+Background-subtraction algorithms for in-beam HPGe coincidence data have been
+presented. The backgrounds are parameterized as the cross-products of
+lower-dimensional projections of the data and a one-dimensional background
+spectrum. A novel method of correcting for a mixture of different reaction
+channels in the complete data set is described. This method makes use of one or
+more gates on background channels in the energy region of the ``E2 bump'', and
+provides a significantly better description of the background for nuclei
+exhibiting strong collective rotation at high spins.
+
+The prescriptions for background subtraction described here are simple, fast
+and reliable. The results seem to be reasonably insensitive to the particulars
+of the chosen background spectra and to the gate used to generate the E2-bump
+correction terms.
+
+I thank John Simpson, Mark Riley and co-workers for the use of the EUROGAM 1
+data set from the reaction of $^{114}$Cd with 210 MeV $^{48}$Ca, and G.
+Hackman and J.C. Waddington for very helpful discussions.
+
+\begin{center}
+{\bf       Appendix. Algebra for the E2-bump correction in two dimensions}
+\end{center}
+
+We have (from equation \ref{eq:ccc})
+\begin{eqnarray*}
+B^{\prime}_{ij} & = & \frac {1}{T^a} (P^a_i P^a_j - p^a_i p^a_j) +
+                      \frac {1}{T^b} (P^b_i P^b_j - p^b_i p^b_j) \\
+    & = & B_{ij} + \frac {1}{T^a} P^a_i P^a_j +
+                   \frac {1}{T^b} P^b_i P^b_j -
+                   \frac {1}{T} P_i P_j -
+                   \frac {1}{T^a} p^a_i p^a_j -
+                   \frac {1}{T^b} p^b_i p^b_j) +
+                   \frac {1}{T} p_i p_j \ .
+\end{eqnarray*}
+
+Collecting the terms of type $PP$ together and making use of
+equations~\ref{eq:aaa}, \ref{eq:fff} and \ref{eq:FFF}, we get
+\begin{eqnarray*}
+     \frac {1}{T^a} P^a_i P^a_j
+   + \frac {1}{T^b} P^b_i P^b_j
+   - \frac {1}{T} P_i P_j
+& = & \frac {1}{T^a} P^a_i P^a_j + \frac {1}{T^b} P^b_i P^b_j
+    - \frac {1}{T} P^a_i P_j     - \frac {1}{T} P^b_i P_j \\
+& = & \frac {1}{TT^a} P^a_i (T P^a_j - T^a P_j)
+    + \frac {1}{TT^b} P^b_i (T P^b_j - T^b P_j) \\
+& = & \frac {1}{TT^a} P^a_i (T^b P^a_j - T^a P^b_j)
+    + \frac {1}{TT^b} P^b_i (T^a P^b_j - T^b P^a_j) \\
+& = & \frac {1}{fTT^a} P^a_i D_j - \frac {1}{fTT^b} P^b_i D_j \\
+& = & \frac {1}{fTT^aT^b} (T^b P^a_i - T^a P^b_i) D_j \\
+& = & \frac {1}{f^2TT^aT^b} D_i D_j \\
+& = & \frac {1}{F} D_i D_j \ .
+\end{eqnarray*}
+Similarly, collecting the terms of type $pp$ together, we have
+\begin{eqnarray*}
+     \frac {1}{T^a} p^a_i p^a_j
+   + \frac {1}{T^b} p^b_i p^b_j
+   - \frac {1}{T} p_i p_j
+& = & \frac {1}{F} d_i d_j
+\end{eqnarray*}
+and thus
+\begin{eqnarray*}
+B^{\prime}_{ij} = B_{ij} + \frac {1} {F} (D_i D_j - d_i d_j) \ .
+\end{eqnarray*}
+
+
+\newpage
+\begin{center}
+{\bf                                References}
+\end{center}
+
+\begin{itemize}
+\item[{[1]}] M. Bergstr\"{o}m and P. Ekstr\"{o}m, Nucl. Instr. and Meth. in
+    Phys. Res. {\bf A301} (1991) 132
+\item[{[2]}] D.C. Radford, Nucl. Instr. and Meth. in Phys. Res. {\bf A}
+    (accompanying paper)
+\item[{[3]}] B. Crowell, M.P. Carpenter, R.G. Henry, R.V.F. Janssens,
+    T.L. Khoo, T. Lauritsen and D. Nisius, to be published in Nucl. Instr. and
+    Meth. in Phys. Res. {\bf A}
+\item[{[4]}] G. Palameta and J.C. Waddington, Nucl. Instr. and Meth. in Phys.
+    Res. {\bf A234} (1985) 476
+\item[{[5]}] S. Flibotte {\em et al.,} Phys. Rev. Lett {\bf 71} (1993) 688
+\item[{[6]}] O. Andersen, J.D. Garrett, G.B. Hagemann, B. Herskind, D.L. Hillis
+    and L.L. Riedinger, Phys. Rev. Lett. {\bf 43} (1979) 687;
+             B. Herskind, Journal de Physique {\bf 41} (1980) C10-106
+\item[{[7]}] G. Hackman and J.C. Waddington, to be published in Nucl. Instr.
+    and Meth. in Phys. Res. {\bf A}
+\end{itemize}
+
+\setlength{\parindent}{0mm}
+\newpage
+\begin{center}
+{\bf                                Figure Captions}
+\end{center}
+\vspace{5mm}
+
+{\bf Figure 1.}
+Spectra from the reaction $^{124}$Sn~+~$^{30}$Si at 158 MeV, studied with the
+EUROGAM 1 spectrometer [5]. Shown are: (a) the total 1D projection and
+background spectra; (b),(c) two background-subtracted gated spectra from a 2D
+matrix; and (d) background-subtracted double-gated spectrum generated by
+setting the two gates together on a 3D cube and projecting the result onto the
+third dimension.
+\vspace{5mm}
+
+{\bf Figure 2.} 
+Spectra from the same data set and identical gates as for figure~1, but using a
+1D background spectrum which has been renormalized by a factor of 0.9. Shown
+are: (a) the total 1D projection and renormalized background spectra; (b),(c)
+background-subtracted gated spectra from a 2D matrix; and (d)
+background-subtracted double-gated spectrum.
+\vspace{5mm}
+
+{\bf Figure 3.} 
+Gated spectra from the reaction of $^{114}$Cd with 210 MeV $^{48}$Ca, taken
+with the EUROGAM 1 spectrometer. The background has been subtracted using the
+standard procedure of equation~\ref{eq:m1} (left-hand side, (a)--(f)), or using
+the improved procedure of equation~\ref{eq:m2} (right-hand side, (g)--(l)).
+(a),(g): Gate on the 443 keV transition in $^{158}$Er.
+(b),(h): Double gate on the 443 and 522 keV transitions in $^{158}$Er.
+(c),(i): Gate on the 527 keV transition in $^{157}$Er.
+(d),(j): Double gate on the 527 and 622 keV transitions in $^{157}$Er.
+(e),(k): Double gate on the 464 and 556 keV transitions in $^{159}$Er.
+(f),(l): Double gate on the 452 and 543 keV transitions in $^{156}$Er.
+\vspace{5mm}
+
+{\bf Figure 4.} 
+Illustration of the E2-bump correction for improved background subtraction.
+The spectra are from the reaction of $^{114}$Cd with 210 MeV $^{48}$Ca, taken
+with the EUROGAM 1 spectrometer. Shown are:
+(a): Total 1D projection and background. Also shown are the limits of the gate
+     set on the E2-bump region, used to produce the spectrum in (b).
+(b): Gated E2-bump 1D projection and background.
+(c): Normalized differences of the projections and backgrounds of parts (b) and
+     (a). The normalization factor was chosen to be the ratio of the total
+     counts in the projections, {\em i.e.} to give zero net counts in the
+     projection difference.
+\vspace{5mm}
+
+{\bf Figure 5.} 
+(a),(b): Double-gated spectra from gates at 1340 keV and 208 keV.
+These transitions belong to different nuclei and are not in true coincidence.
+(c),(d): Spectra from a single gate set at 1340 keV.
+The background has been subtracted using the improved procedure of
+equation~\ref{eq:m2} ((a),(c)), or the standard procedure of
+equation~\ref{eq:m1} ((b),(d)). The data set and backgrounds are identical to
+those of figures~3 and 4. Strong peaks in the spectra are labelled by the
+reaction channel.
+
+\end{document}

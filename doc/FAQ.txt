@@ -1,0 +1,659 @@
+
+   This file has answers to some frequently-asked questions about RadWare.
+
+   For general RadWare documentation, look at the file aa_radware.lis. It gives
+a listing of all (well, nearly all) the files. There are lots of demo*, *.hlp
+and *.txt files that you might like to peruse. All the programs have internal
+help available; typing HELP from inside a program will usually bring at least a
+hint of what you can try.
+
+-------------------------
+Background subtraction. 
+=========================
+
+> Hi, I have a question about the inputs to escl8r. It asks for projections
+> and background spectra. Is the background spectrum a slice of the total
+> projection with background subtraction? Or is it the background that you
+> would subtract in making a background-subtracted projection?
+   It's the latter. Use GF2 and read in the projection. Then use the BG command
+(autoBackGround) to create a background spectrum under the peaks.  Or use SC
+(Set Counts) to draw a background spectrum by hand, by cutting off the peaks. 
+When you're finished, write the modified spectrum out as the background
+spectrum.  I generally leave the X-rays in as background. I also sometimes put
+in (n, n' gamma) peaks/shoulders, though this is not necessary especially for
+a first stab.
+
+> Lately I've had more success with fairly flat smooth-background spectra,
+> but I remember seeing one that you drew once which was pretty tight to
+> the total projection. In your experience, which one is more satisfactory 
+> for LEVIT8R and level-scheming, a really tight choppy "smooth background" 
+> or a truly smooth, meandering background?
+   I don't think it matters too much; I usually use smooth ones, not the
+choppy sort. What you might have seen is the neutron (n, n'gamma) shoulders
+which I often include in the background. The bottom line is, what ever works
+is okay.  There's no harm in experimenting.
+
+> The superdef transitions in the mass 80 have huge energies and they come
+> riding on a nice E2 bump as backgrnd so that the intensity fitting procedure
+> in escl8r fails for those high energetic transitions, since it assumes a
+> totally background subtracted matrix. It is mentioned in the documentation 
+> somewhere that E2-bump background subtraction is possible... I haven't been
+> able to figure it out. Could you please give me some hints?
+   Let me first get clear that the matrix itself is never
+background-subtracted in escl8r. Rather, the background is subtracted from the
+gates as they are taken, and the 2D background is added to the calculation in
+the 2D fits.
+   To make use of the E2-enhanced background, you need to have the original
+symmetrised matrix. Call up GF2, read in the total projection, and use the SL
+and WI commands to create a .win file for SLICE, containing one or more wide
+gates on the E2-bump region of the spectrum. Depending on the nucleus, this is
+usually in the region of 1.1 to 1.6 MeV, but you should also be guided by the
+observed E2-bump problems in your escl8r gates. You don't need to worry about
+small peaks in the gate(s), but try to exclude large peaks.
+   Then exit from GF2, and use SLICE to take an x-projected gate on the
+matrix, summing all of the windows in your .win file. Keep the .win file for
+use later in escl8r. In GF2 again, read in the summed gate and draw a
+background under it with the BG or SC commands, just as you did for the total
+projection. Save this background spectrum.
+   Now in escl8r, use the CB (Change 2D Background) command to put in the new 
+background, as in the following example:
+        Change background? (Y/N)y
+        Use enhanced background from E2-bump gates? (Y/N)y
+         Total projection spectrum file name = ?hfs
+            E2 projection spectrum file name = ?hfe2
+         Total background spectrum file name = ?hfb
+            E2 background spectrum file name = ?hfe2b
+         Default value for factor 1 is    10.43896
+         Factor 1 = ? (rtn for default)
+         E2 gate file = ? (default .EXT = .win)hfe2
+         Default value for factor 2 is    61194.43
+         Factor 2 = ? (rtn for default)
+If you like, you could get the backup saveset hfdemo.bck from www.aecl.ca, in
+the pub/radfordd/vms directory. There is a .esc file, together with the .spe
+and .win files that were used to generate it. For unix, there are
+hfdemo_sun.tar.gz and hfdemo_dec.tar.gz files in pub/radfordd/unix.
+
+> We have also discussed the "general" background subtraction in LEVIT8R, 
+> and I would like to check with you that our approach give below is the 
+> correct one?
+> 1) Create a 1D projection from the cube using PRO3D2.EXE
+> 2) Divide the projection with the "compression spectrum" WIDTH.SPE 
+>    from LUFWHM.EXE, and create a bkg spectrum using BG or SC in GF2.
+> 3) Multiply this bkg spectrum with WIDTH.SPE, which gives the 
+>    final bkg spectrum that should be used as input to LEVIT8R
+   That's exactly right. I'm sorry that it's so complicated.
+
+> Using ESCL8R I have no problem subtracting a
+> background created from a spectrum of summed gates from the E2 bump. 
+> With LEVIT8R, however, the "E2 bump" option is available in the 
+> program but I don't realize how an E2 background spectra can be created 
+> from the cube. The only possibility seems to be a similar program such as 
+> SLICE that can make projections from the cube using a .WIN file. Is there 
+> such a program, or is there an other way to create an E2 bkg spectrum?
+   As for the E2 correction in levit8r, well, it's a bit tricky. The present
+version needs a bit more work to make it a permanent, user-friendly solution
+to setting up the E2 correction term. Here is a rough prescription for how I
+do it in the meantime.
+   I put the background sp. to zero (by using a zero-multiplied projection as
+my bkgnd spectrum) and then take a big (single) gate on the E2 bump in levit8r,
+using the "g" command. I then write this gate as a gf2-type .spe file. This is
+my E2 spectrum. In gf2 I do the usual trick of drawing the background and
+multiplying by the width again; the only difference from the total projection
+is that levit8r writes the spectrum as counts/keV, so I need to divide by two
+to get counts/channel (assuming 0.5-kev channels) and NOT divide by the width
+spectrum to start with. I also make a note of the window limits in the gate in
+levit8r, and use them now in gf2 to create a .win file to use back in levit8r.
+   When you now put the new backgrounds into levit8r, the program will go away
+and be very busy for a long time. This is because in order to do the E2
+background properly for double-gates, it needs an E2-gated 2D-projection of the
+cube, which it reads from the cube directly. This may take a very long time, so
+be patient.
+
+> Also, for a mostly-spherical nucleus like 142Sm, there isn't really a
+> pronounced E2 bump.  Did you use E2-correction on the 149Gd cube?
+> Where would be a good place to put the E2 gates?
+   If you see differences in the background subtraction for different reaction 
+channels (e.g. 4n undersubtracted, 5n oversubtracted at around 1.4 MeV) then 
+you could try using the E2 correction.
+   Depending on the nucleus, the best place to put the gates is usually in the
+region of 1.1 to 1.6 MeV, but you should also be guided by the observed
+E2-bump problems in your escl8r gates. You don't need to worry about small
+peaks in the gate(s), but try to exclude large peaks.
+
+> I have tried to copy the way you subtract background in the cube,
+> and was successful in subtracting symmetric double gated spectra. 
+> But it works only for a symmetric cube and projections. 
+> Can you tell me how I proceed with different detectors on different axes? 
+> I do not understand in detail the different parts of background you subtract.
+> Have you somewhere written down, how the mathematics of the subtraction 
+> is expanded from 2d to 3d, so that I could generalize it myself? At the 
+> moment the simple version without the E2 correction would be all I need.
+   First let me mention the file doc/bgsub.tex, or the www link
+<a href="bgsub/bgsub.html" target="_top">
+Background subtraction from in-beam HPGe coincidence data sets</a> 
+( D.C. Radford, Nucl. Instr. Meth. A361 (1995) 306 ). This may give you some 
+extra useful information.
+   For a non-symmetric case in 2D, consider the total projections P(x) and P(y)
+to be composed of peak p + background b, i.e.
+P(x) = p(x) + p(y).
+Then the 2D background is
+       B(x,y) = { b(x)b(y) + p(x)b(y) + b(x)p(y) } / M,
+i.e. all the terms in P(x)P(y) which involve b's,
+i.e. all the terms in P(x)P(y) except p(x)p(y).
+This can also be reduced to
+       B(x,y) = { P(x)b(y) + b(x)p(y) } / M.
+Here M = SUM(P(x)) = total counts in matrix.
+Generalizing to 3 dimensions, we get
+       B(x,y,z) = {  b(x)b(y)b(z)
+                   + p(x)b(y)b(z) + b(x)p(y)b(z) + b(x)b(y)p(z)
+                   + M'(x,y)b(z)  + M'(x,z)b(y)  + M'(y,z)b(x) } / C,
+where C = SUM(P(x)) = total counts in cube, and
+M'(x,y) = background-subtracted 2D-projection of cube at (x,y), i.e.
+M'(x,y) = M(x,y) - B(x,y), where M = 2D projection. This corresponds to the pp
+part, but of course the peak-peak correlations (coincidences) need to be taken
+into account, so we need the 2D projections. There would be three of these in
+the non-symmetric case, just as there are three 1D projections.
+
+-------------------------
+Efficiency calibrations.
+=========================
+
+> The gf3 help file says that the effiency is parametrised using 7 
+> variables (A-G) to give the intersecting two straight lines on a 
+> log-log plot with the G parameter for the turnover... which I think 
+> I understand. However, when I run calib_ascii on the .eff file I've been
+> using in ESCL8R, it has 10 numbers in it...could you tell me what they
+> correspond to and the format (ie. which one is A,B etc.)?
+   The first 7 numbers are A-G respectively. The last 3 are:
+ 8) the energy at which the low-energy eff. has the value A,
+ 9) the energy at which the high-energy eff. has the value D, and
+10) an estimate of the relative error on the efficiency (actually the relative 
+    uncertainty for D, I think).
+   Anyway, you can get routines for reading the .eff file and calculating the 
+efficiencies from either GF2 (subroutine DIVEFF) or ESCL8R (subroutine GET_CAL 
+and function EFFIC). These will need some modification for your purposes, but 
+that should be easy and obvious. The final result will need to be linked with 
+UTIL.OLB.
+
+> Program Effit can give the 7 parameters of the efficiency curve. Another
+> program, Energy, can use gf2.sto as input, calculate the uncertainty of
+> the peak area. The problem is, does Energy also consider the uncertainty
+> of the 7 parameters of the efficiency curve? Does it use standard derivative
+> formula?
+   It uses one overall uncertainty from the effit fit; it does not take an 
+energy-dependent uncertainty.
+
+> I have a problem with my .cal file in levit8r.
+> I built a cube from 100 keV to 1.2 MeV (980 channels).  When I run
+> the xmlev program, it doesn't display correct energy. After I wrote the
+> spectrum into GF2 file (8k channel), and then use GF2 to read the spectrum,
+> using the same .cal file, the displayed energies are right.
+> Do you have some idea what I did wrong?
+   Are the energies displayed by levit8r related to the true energies by, say, 
+a factor of two? When you enter the energy calibration, levit8r asks you:
+"Contraction factor between this calibration
+     and the ADC data on tape = ? (rtn for 2)"
+   It seems to me from what you say about the 8k spectrum that the energy 
+contraction is probably one, not the default of two. Try using the CA command
+to enter a different contraction factor and see if it works.
+
+-------------------------
+Peak shape parameters in gf2, escl8r, lufwhm and levit8r.
+=========================
+
+> The peak shape commands have me fairly confused. For instance, when you
+> use the command FW, it fits the spectra you're looking at to get the peak
+> width parameters. But it must care about the skewness of the peaks when
+> doing so, and I don't see how to fit this. I can use the PS command, but in
+> practice, messing with this either doesn't change the results of FW, or 
+> causes it to diverge or bomb.  
+> Also, when it fits a spectrum, does it do so using the gammas it would 
+> expect from the .lvl or .gls file?  i.e. if there's a gamma in the
+> spectrum I haven't placed yet, how does this affect the fit? Finally, no
+> matter what I do, it wants to drive the first and third width parameters to
+> zero, so FWHM is proportional to SQRT(energy). This doesn't seem quite right.
+> There should be a minimum FWHM from mismatched calibrations and electronic 
+> noise (shot noise, I think it's called). The nonzero parameter, as I
+> understand it, should show up in the PS command. In practice, the others do
+> show up as zero, but that one shows up with a different value than is 
+> reported by the fit.
+   The FW command is sensitive. It fits only the spectrum you have most 
+recently created, using the displayed calculated coincidences. So if the 
+spectrum is not well-reproduced, then you can't hope for good results. Also, 
+it's a good idea to have both high and low energy strong transitions in the 
+spectrum you're fitting, and to have good statistics. You CAN fit a sum of 
+gates.
+   The skewness of the peaks and the widths are treated independently, as in
+GF2. So although the values of R and Beta will affect the FWHM you get, you
+can fit the widths for any given R, Beta values. In practice, I have NEVER
+used any skewed peaks in escl8r; i.e. I always use R=0, (Beta=1). I also tend
+to find that the peak widths can be found by hand (through trying different
+values with the PS command) pretty much as well and easily as through the FW
+command.  As I said, the FW command is sensitive; it seems to find completely
+wrong values if the spectrum is not almost exactly reproduced by the
+calculation already.
+   The values reported by the FW fit may be different from those in the PS
+command by factors of 2, sqrt(2) and 1, respectively. This is due to the
+compression of the matrix from 4k to 2k.
+
+> How come, when I fit the widths, it only fits the first of the three
+> parameters? The second parameter is zero, so it doesn't fit that one, but the
+> third is non-zero, but the program won't fit it?
+    'Cause I was lazy. I didn't want to go to the effort of figuring out what
+parameters to fix/free etc., and to put in all the mechanics to do that. So I
+rationalised; the only parameter that SHOULD ever be zero is the third one
+(for a backed target). Use the PS command to make the second parameter
+non-zero, even if it's very small, and try fitting again.
+
+> What FWHM parameters did you get for making your cube's lookup table?
+> I get (5,0,3) or thereabouts for a similar reaction but
+> with a slightly lower V/C on Gammasphere, does this seem reasonable?
+    That sounds about right, but the middle parameter should not, at least in 
+principle, be zero, and I think it's best to try to keep it nonzero. I usually 
+get numbers like 3, 0.7, 4 or so, depending on the recoil velocity.
+
+> According to the equation given in the GF2 manual FWHM = sqrt(F2+G2*x+H2*x2),
+> [FWHM]=channels and x=channels/1000. When using ESCL8R and the option
+> "Fit Peak Width Parameters" the parameters given by the fit
+> (i.e. F', G' and H') relates to F, G and H as F=2*F', G=sqrt(2)*G' and H=H'. 
+> Which of these should be used as input to LUFWHM to create a .TAB
+> file, the F,G,H set or the F',G',H' set? I know that there is a comment
+> in the LUFWHM program suggesting that the F,G,H set should be used by
+> referring to the equation above, but I still would like to have this
+> confirmed by you. And if so, why does ESCL8R give the F',G',H' set after a 
+> fit of the parameters, but the F,G,H set when using the "Change Peak Shape 
+> and Width"? This is rather confusing.
+   The problem is that escl8r can compress the .mat file by a factor of
+2. This means that in order to have the correct FWHM parameterisation, I need
+to transform (F,G,H) to (F',G',H'). When I list the parameters as a result of
+the the FWHM fit in escl8r I could have retransformed back; I just didn't
+bother to do it. I do however retransform them to offer as the default values
+for the 'PS' (change Peak Shape and FWHM parameters) command.
+   Whenever I ask you for the parameters, I assume that you've estimated them
+from the original data, i.e. usually a matrix or total projection, so I expect
+the uncompressed values. In the latest version of LUFWHM I also ask for the
+compression factor between the values you give and the ADC data on tape, so I
+think that's pretty unambiguous.
+
+-------------------------
+Fitting intensities in escl8r and levit8r.
+=========================
+
+> What do the numbers in the output of the intensity fit (fi) mean? I guess
+> they are the intensities in percent of something... but, of what?
+   They are in arbitrary units. The absolute values depends on the 
+normalisation coefficient which you can inspect and/or change with the "rn" 
+(renormalise gates:scheme) command. This is normalisation coefficient is 
+automatically chosen by the program when you create the .esc file, in order to 
+make the strongest coincidence have an intensity value of about 100 units.
+
+> I am puzzled how ESCL8R fits the level scheme.
+> I suppose it always fits on the 2d matrix and not on the
+> gated spectrum, since the gate seems to have no effect at all.
+   Yes, escl8r always fits the 2D matrix, and not the gate. In other words, the
+fits are to the coincidence data in 2 dimensions. The only exception to this is
+the FW command to fit the width parameters, which fits to the gate. You should
+be careful using this command, and not always assume that it is giving the best
+values for the parameters. In particular, choose a gate (or sum of gates) with
+lots of strong well-fitted lines, especially at high energies.
+
+> Is there any special trick about how to procede to get a good intensity
+> fit? I have just gated in the interesting transitions and then asked the
+> program to fit the corresponding bands.
+   If you do not have all the transitions in the level scheme, or you have
+ones that are not really there, or you have them in the wrong order, then of
+course the results of the fit will not be as good. Also, since the fit is in
+2D, the background subtraction needs to be reasonably good. A bad efficiency
+calibration also can have a big effect. The energies of the transitions also
+affect their fitted intensites too, of course, so it's a good idea to fit both
+energies and intensities together once you are reasonably happy that you are
+close to the correct values.
+   You can check the fitted values by taking gates and seeing that the 
+calculated spectra reproduce the observed spectra.
+
+> How does it do intensity balances?  i.e., it says it won't fit intensities 
+> for transitions to "dead-end" states, but it appears to fit them. It just
+> doesn't change the number for the intensity in the level scheme. With all the
+> nuclei in my .lvl/.gls file, I think I need to understand this. (Given the 
+> number of degenerate gammas and the strength of the contaminants, I've had 
+> to put in about 7 nuclei so I can make sense of the gates.)
+   It doesn't do intensity balances. You can check the intensity balances by 
+running LEVELS and looking at the last section of the .dat file.
+   The program simply calculates branching ratios for each level. All the flux 
+coming in is assumed to be divided according to those branching ratios. This 
+can be a real problem for isomers; if you encounter that, let me know, and I 
+will provide you with a work-around.
+   The intensity of a coincidence depends only on:
+       1. the intensity of the higher transition,
+       2. the branching ratio from the final state of the higher transition 
+             through to the lower transition, and
+       3. the conversion coefficient of the lower transition.
+This is why the intensity of the lowest transition in a band never gets 
+fitted, and why its coincidences with the higher transitions do not depend on 
+its intensity. The branching ratio from its initial state is always unity.
+   If there are two or more transitions from the bottom of a band, sometimes it
+will fit all but one of them to get the branching ratio(s) right, but then the
+absolute magnitudes should again be taken from the intensity balance.
+
+> Can I fit an individual transition in a level scheme and what does it
+> mean to the fit? I have some problems with weaker levels which always result 
+> in negative intensities although it is very clear that they are in
+> coincidence with the transitions I suggest. What could cause this error?
+   You can fit as few or as many gammas at a time as you like (up to a max. of
+500). If the energies and intensities are close to their proper values, it
+doesn't matter much what order you fit them in, although it is probably best to
+fit both at once (the FB command) if possible.
+   When I put in a new band, I usually fit the intensities of all the gammas in
+the band, then their energies, to get things roughly right, and then either
+both intensities and energies or just intensities again. Just two iterations is
+usually enough to get things roughly right. Then every once in a while (once a
+day or so) I fit all the intensities and energies of the whole level scheme (or
+large chunks of it). If you change the calibrations, width parameters or
+background spectra, the level scheme can change quite a bit, and it is usually
+worth refitting.
+   Negative intensities can often arise from a number of things. Perhaps the
+most common is another gamma of the same or similar energy which has too large
+an intensity, causing the program to compensate by making the other gamma
+negative. You can sometimes get around this by fitting both gammas and their
+neighbours at the same time. If that doesn't work, fix one of them to a value
+that looks right and fit the other one.
+   Other things that can give negative intensities are bad efficiency
+calibrations and other branches out of the same initial level which are
+doublets. If the other half of the doublet is not yet in the level scheme, the
+program can sometimes force a strong coincidence by making a negative branching
+ratio. Anyway, a negative intensity can mean either that the gamma doesn't
+really go where you have put it, or that there are other gammas that you have
+left out that you need to find and put in place. You can often get a clue as to
+why the intensity is going negative from a close look at a gate on the
+offending transition or ones feeding it.
+   You will notice that the program does not usually fit the intensity of the
+lowest gamma in a band. When this happens, it is because the intensity of that
+transition should be taken from intensity balances. If there are two or more
+transitions from the bottom of a band, sometimes it will fit all but one of
+them to get the branching ratio(s) right, but then the absolute magnitudes
+should again be taken from the intensity balance.
+
+> I found that intensities of gamma lines obtained from escl8r sometimes
+> are not true because of bad type of matrices used by people in calculation.
+> Gamma-gamma matrices commonly used are sum of coincidences between all
+> combinations of detectors. It can be "isotropic" but in most cases is not
+> because of geometry of Ge balls. I calculated mean value of angular correl.
+> function for NORDBALL, what is probably similiar to Chalk River ball. Results
+> are following: in E2 gate other E2 transitions have "true" intensity" but
+> M1+E2 transition intensity vary from 30% less to 5% more of "true" value
+> depending on delta (example 7-6-4 cascade with sigma/J=0.3, reasonable
+> for standard experiment). This effect produces bad branching ratios and
+> sometimes confuses your programms.The calculations were done for point
+> detectors and for gammas with similiar energies.
+   Yes, I have noticed exactly the same thing.
+
+> We have a problem with XMESC, ESCL8R_GLS, XMLEV, ... When fitting the full 
+> level scheme it seems that there is an upper limit for the number of transi-
+> tions that you can fit. If I ask the programs to fit the full level scheme 
+> it only takes about something like the first 500 transitions in intensity
+> fits. If I fit both intensities and energies it is much less!! We have
+> compiled and linked the programs with 
+>     MAXLEV=1000, MAXGAM=1000 and MAXEMIT=21
+> So there must be another parameter that defines maximum number fitted 
+> transitions. Do you have any good suggetions to how to proceed? 
+   The maximum number of fitted parameters in escl8r and levit8r used to be
+fixed at 500.  There is now a parameter MAXFIT in the files esclev.h and gls.h
+that determines the maximum allowed number of fitted parameters.  Be a little
+cautious in increasing this beyond the default of 500.
+
+   The maximum of 500 parameters is not really a major limitation. You can fit
+large chunks of the scheme by specifying the bands that you want to fit. If
+these chunks are reasonably well decoupled, then you end up with just as good
+a fit (maybe better) as if you had fitted everything at once.
+
+-------------------------
+General escl8r and levit8r.
+=========================
+
+> Another niggle was that when you
+> kept adding levels and gammas into the level scheme window,
+> the level scheme would eventually go off the top of the
+> graphics panel and you could only scroll to the top of the 
+> panel, so you could not view the top of the level scheme.  It
+> did not seem to need very many levels to do this.  We attempted
+> to resize the window, but this did not help.  Perhaps we missed
+> an option to get round this? 
+   You need to use the "redraw entire level scheme" from the display menu. It 
+will recalculate the level scheme limits and redraw.
+
+> Program escl8r can write gf3-style .spe files. I find this spectrum is not
+> corrected for the efficiency. Is that correct?
+   Yes, that's right. You can correct for efficiency in gf3 with the DE
+command. The spectra as displayed in escl8r are not corrected for efficiency,
+either; rather, the fit has the efficiency built into it.
+
+> Is D.C.Radford et al., Nucl. Phys. A545, 665(1992) the right reference 
+> to cite your software ?
+   The escl8r and levit8r reference I usually suggest is:
+D.C. Radford, Nucl. Intr. Meth. A 361 (1995) 297
+   The background-subtraction reference is:
+D.C. Radford, Nucl. Intr. Meth. A 361 (1995) 306
+
+-------------------------
+File formats.
+=========================
+
+> I have written a sort package for event by event data and would like to
+> provide an option to generate radware format spectra, matrices and cubes. Do
+> you have a specification I could use for the file formats?
+   The .spe file format is 2 records. The first of these contains information
+on the spectrum name and length, the second has the data in real*4 format. The
+subroutine wspec() in libs/util/rwspec has the details.
+The equivalent FORTRAN code is:
+
+--------- subroutine wspec ------------
+      SUBROUTINE WSPEC(FILNAM,SPEC,IDIM)
+
+C         subroutine to write spectra in GF2 format....
+C            FILNAM = name of file to be created and written....
+C            SPEC = REAL spectrum of dimension IDIM....
+
+      CHARACTER*(*) FILNAM
+      REAL          SPEC(IDIM)
+      INTEGER       IDIM
+      CHARACTER*8   NAMESP
+
+
+C this sets the default extension on the file name....
+      CALL SETEXT(FILNAM,'.spe',J)
+      NAMESP = FILNAM(1:8)
+      IF (J.LE.8) NAMESP(J:8) = ' '
+
+C this opens a new file to recieve the data....
+      CALL OPEN_NEW_UNF(1,FILNAM,0,0)
+      WRITE(1) NAMESP,IDIM,1,1,1
+      WRITE(1) SPEC
+      CLOSE(1)
+
+      RETURN
+      END
+--------- end of subroutine wspec ------------
+
+   You could link your program with util.a to get the subroutines wspec,
+setext and open_new_unf, if you like.
+   A standard matrix (.mat) file is 4096*4096*2 bytes, with one unformatted
+direct-access record of 8192 bytes per row. Subroutine RMAT in util reads such 
+a file, but it's very simple to write. You would do something like this:
+
+      INTEGER*2 MATRIX(4096,4096)
+
+      OPEN (1, FILE=FILENAME, ACCESS='DIRECT', FORM='UNFORMATTED',
+     +      RECL=8192 (bytes, or 2048 long-words for VMS) )
+      DO IY = 1, 4096
+         WRITE(1, REC=IY) MATRIX(IX,IY), IX = 1, 4096)
+      ENDDO
+      CLOSE(1)
+
+   If you need a 4-byte matrix file, you could use my .spn format, which is
+integer*4, and can go to 4096 chs in the y-axis. You would just change
+integer*2 to integer*4 and double the record length. These .spn files are not
+as common but can be read by gf2 (though not by slice). 
+   The cube (.cub) file is more complicated. It is also direct access and
+unformatted, with a record length of 2048 bytes. There are actually 4
+versions, two of them compressed format (1/6 and 1/2 cubes), and two of them
+uncompressed.  The uncompressed versions are one with 2 bytes per channel and
+containing 1/6 of the cube (with the energies fully ordered) and one with 1/2
+of the cube, but 1 byte/channel plus a direct-access list of 1-byte
+overflows. You have the programs incub8r and foldout. Incub8r writes the 1/6
+compressed cube version, foldout converts this or the uncompressed 1/6 cube to
+the compressed 1/2 cube version. Levit8r and pro3d will accept any of the 4
+formats.
+    The maximum dimension of the cube is specified by the parameter MAXCHS in
+the file levit8r.h.
+
+> The default spectrum format seems to to be .spe which doesn't fit my needs
+> very well.  The .spn files may be better.  What are the details of the
+> .spn file format?
+   Basically, the .spn format is for 2-dimensional, 4-byte-integer per channel
+data, 4k-chs by any number of rows.  It is written very simply, in
+direct-access unformatted files, 16kB/record.  i.e. each record represents one
+row.  You could use each row to represent an independent one-dimensional
+spectrum if you wish.
+   The program gf3 can read .spn files, but not write to them;  it supports
+output to .spe files only.
+
+> What is the format of the .esc file? For example, is the hf.esc 4096*4096*2 
+> byte, and is it a triangle matrix?
+The .esc file is 2048x2048x4 bytes, square matrix, with the counts as REAL*4
+numbers. It is made from a .mat file (4096*4096*2 bytes) or .spn or .m4b file
+(4 bytes/ch). However, you could edit the subroutine prep in escl8ra.c to
+change the input data format.
+
+> Now I have .asc spectrum file. This is written by text format.
+> So it is very easy to handle. But in order to use your programs, I have to
+> convert to .spe files. Could you show me how to do it? Or is there any
+> tools to do it?
+   You can write a very simple program to read the spectrum in your format,
+and then write it out as a .spe file by calling wspec. Then you can link it
+with something like:
+cc -o your_prog your_prog.c util.a -lm
+or
+$  link <your_prog>, radware:util/lib
+This will get the subroutines wspec, setext and open_new_unf from util.a or
+util.olb.
+Don't forget to provide filnam, spec and idim in the call to wspec.
+filnam = name of file to be created and written....
+spec = real*4 spectrum of dimension idim....
+
+> We have now started to work on our first EUROGAM data set,
+> and prepared to sort it into a matrix and a cube.
+> Since the data set is so big, we ran into problems with INTEGER*2 overflows
+> in normal MAT files. On the other hand, as far as I can see, I will need a
+> matrix first, because I want to determine the FWHM for the cube's lookup
+> table. Did you run into this problem and what did you do. Do you have plans
+> to  introduce an INTEGER*4 (or REAL) matrix format.
+   Yes, you do need to know the FWHM first. On the other hand, you don't need
+to know it terribly accurately, and the replay values don't have to match the
+final values in levit8r perfectly. All I did was use a single projection
+spectrum to estimate the parameters. I think I used an online spectrum, but
+you could replay part of one tape to extract the total projection.
+   As far as a 4-byte .mat file goes, if you really need a complete matrix,
+you could use the .spn format, which is integer*4, and can go to 4096 chs in
+the y-axis. I have also used non-linear gains for 2 dimensions, using a format
+identical to the .2dp file for 2D projections of my cubes.
+
+> Do you have a program that squeezes and unsqeezes spectra according to
+> the non-linear-gain .tab file?  I want to make sure that my projection
+> makes sense.
+    Sorry, no, except for levit8r. But you can divide by the width spectrum to
+see if the spectrum has roughly the right shape, and you can look at the
+lookup table with the DW command in gf3.
+
+> As a further question, is the spectrum produced by the pro3d program
+> the projection of the symmetrized cube?  In other words does it
+> actually have 6 times as many counts in it as there were real,
+> honest-to-goodness triples in the data?
+    Yes, it is/does. Well, not necessarily triples in the data, since the cube
+has lower and upper channel limits, but rather triples in the cube.
+
+-------------------------
+Plotspec etc. and postscript files.
+=========================
+
+> At the same time I've been making plots with your plotting programs,
+> which appear to have provision for different line colours, but not different
+> line types, e.g. dotted, dot-dash etc. Do you have version(s) that can plot
+> different line types?
+   Yes.  Look at the info on the LS feature in plot.hlp. The color feature
+is not fully implemented yet though; it does not carry through to the
+postscript output file.
+
+> Anyway, he asked me if there was a switch you could set in the .psg file that
+> would cause either the different spetra of the labels to come out in 
+> different colours on a colour laser printer...
+   Actually, when I want to put colour into a postscript plot, I just edit it 
+by hand to put the correct instructions in the right place. Postscript is a 
+marvelous language, and well worth the effort of a little study.
+You could use the following commands in the text of the .ps file....
+  0.0 0.0 0.0  setrgbcolor
+  1.0 0.0 0.0  setrgbcolor
+  0.0 1.0 0.0  setrgbcolor
+  0.0 0.0 1.0  setrgbcolor
+These set the colour to black, red, green and blue respectively. You can
+create other colours too by changing the values of the parameters. Use a
+postscript previewer to make sure you put the command in the right place.
+
+-------------------------
+Miscellaneous.
+=========================
+
+> I write you because I am interested in your unfolding procedure. I have
+> found in the radware area the unfold.f program, which I suppose is the
+> write one. I have also heard from Bent that you have written a paper about
+> it. Could you please give me the reference for that?
+   Yes, you have the right program. It would help you a great deal if other 
+people have already measured and stored response functions for the detector 
+system you are using.
+   The reference is NIM A256 (1987) 111.
+
+> I tried to find out how the command "SB g" to search for SD bands works in
+> XMLEV but I was not successful. I tried first to use a gate list with energy
+> differences between SD transitions (d) and later I used a list of SD
+> transitions in a known case (g). In both cases no resulting spectrum was
+> produced. I tried also "Energy  increments" but it is not clear to me whether
+> this should be a few keV to scan a region or the energy separation between SD
+> transitions.
+   You were on the right track with the list g.  You want to start with a list
+that has approximate energies of a SDB, NOT the gamma energy differences.
+   I find that anything with a merit greater than 0.6 or 0.7 is usually worth
+checking.  You want to have about 8 gammas in the list, but you should
+experiment.  Once you have a candidate you want to check, use the T command to
+look at the spectrum, e.g. T g/g   to look at list g.  Note that the search
+procedure modifies the internal values of the energies in the list.
+   I usually produce several gatelist files containing protobands with the
+right kind of moments of inertia, using a simple program that I can give to
+you.  Then I write a command file to read these gatelist files one at a time
+and search for candidates.  It would have lines like:
+rl gate_list_file_1
+sb a
+2      (to go up in 2 keV increments)
+30     (30 times, to cover 60 keV, or the spacing between gammas in the list)
+       (return to exit this list)
+sb b   etc...
+   The results (Merit etc) are saved to levit8r.out, which you can save and
+print as you exit levit8r.  Then you can go back and check out candidates with
+high merits, by reading back the gate file, stepping forward in one step to the
+right energy in the SB command, then using the T command to look at the
+spectrum.  The XL (eXamine List) command is also useful here, to see where the
+gates are.  Once you have a good candidate, optimize the gates in a new list.
+    You should really make sure you are working with a folded-out (1/2) cube
+rather than the 1/6 cube generated by incub8r, in order to speed up the disk
+access by a factor of 20 or so.
+
+> In the output of the levit8r SB command, what are the two numbers behind the
+> +/- sign. I guess uncertainties, but why are there two of them, and why is
+> the uncertainty so large?
+   The program looks at the coincidence intensities at each of the candidate
+locations, extracts the intensity and uncertainty.  One of the numbers is the
+average uncertainty assigned using the statistics and the background
+uncertainty, and the other one is the standard deviation of all the coincidence
+intensities.  The figure of merit is the ratio of the average intensity to one
+of the two uncertainties.
+
+-------------------------
+=========================

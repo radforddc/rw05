@@ -1,0 +1,625 @@
+\documentstyle[12pt]{article}
+ \setlength{\textwidth}{16.5cm}
+ \setlength{\textheight}{24cm}
+ \hoffset = -1.3cm
+ \voffset = -2.6cm
+ \setlength{\parskip}{0.05in}
+ \setlength{\parindent}{1cm}
+ \setlength{\unitlength}{1mm}
+% \pagestyle{plain}
+ \pagestyle{myheadings}
+ \markright{}
+
+%  nuclei
+\newcommand{\gd}{$^{154}$Gd}
+\newcommand{\dy}{$^{156}$Dy}
+\newcommand{\ho}{$^{157}$Ho}
+\newcommand{\er}{$^{158}$Er}
+\newcommand{\yb}{$^{160}$Yb}
+\newcommand{\sn}{$^{124}$Sn}
+\newcommand{\cl}{$^{37}$Cl}
+
+%  miscellaneous
+\newcommand{\gray}{$\gamma$ ray}
+\newcommand{\grays}{$\gamma$ rays}
+\newcommand{\ghray}{$\gamma$-ray}
+\newcommand{\ghg}{$\gamma$-$\gamma$}
+\newcommand{\ghghg}{$\gamma$-$\gamma$-$\gamma$}
+
+\begin{document}
+
+\begin{center}
+\large
+{\bf           ESCL8R and LEVIT8R: Software for interactive graphical
+                      analysis of HPGe coincidence data sets}
+\normalsize
+\end{center}
+\vspace{5mm}
+\begin{center}
+                                D.C. Radford\\
+{\em                AECL Research, Chalk River Laboratories,\\
+                     Chalk River, Ontario, Canada K0J 1J0\\}
+\end{center}
+\vspace{8mm}
+\setlength{\baselineskip}{4mm}
+\begin{minipage}[t]{16.5cm}
+{\bf Abstract: }
+Programs for analysis of \ghg\ matrices and \ghghg\ cubes from HPGe coincidence
+experiments are described. The programs are intended primarily for high-spin
+spectroscopy studies. Users are able to inspect background-subtracted gated
+spectra, or combinations of such spectra, quickly  and easily. The programs
+also make use of a proposed level scheme, provided by the user, to calculate an
+expected spectrum for comparison with the observed spectrum. Electron
+conversion coefficients, detection efficiency and \ghray\ energy calibrations
+are included in the calculation. A graphics-based editor is included to allow
+fast and easy modification of the proposed level scheme, and least-squares fits
+to the matrix or cube can be performed to extract optimum values for the
+energies and intensities of the level scheme transitions.
+
+\end{minipage}
+
+\newpage
+\setlength{\baselineskip}{6mm}
+\begin{center}
+{\bf                          1. Introduction}
+\end{center}
+
+Modern HPGe detector arrays have revolutionized in-beam \ghray\ studies,
+especially for high-spin nuclear structure physics with heavy-ion
+fusion-evaporation reactions. The analysis of data from such arrays often
+begins with the creation of two-dimensional histograms from double-coincidence
+data, or three-dimensional histograms from triple-coincidence data. These
+histograms can then be examined and by setting ``gates'', {\em i.e.} specifying
+energies for all but one of the axes and inspecting the projection onto the
+remaining axis. Making sense of the resulting spectra and distilling the
+information from them into a deduced level scheme can be a tedious and
+time-consuming process, especially for complicated level schemes with many
+observed transitions.
+
+New large \ghray\ detector arrays such as EUROGAM, GAMMASPHERE and GA.SP are
+beginning to generate three-, four-, and even five-fold HPGe coincidence data
+in useful quantities. The unsurpassed sensitivity of these arrays will allow
+observation of nuclear levels that are well beyond the current detection
+limits, not only to higher spins but also to higher excitation energies above
+the yrast line, so that many new weakly-populated bands should be resolvable.
+But if the information contained in these high-fold data sets is overwhelming,
+so too can be the size of the data sets and the difficulty of extracting all of
+the detailed information contained in them. The analysis of specific
+experiments, such as the study of known superdeformed bands, should pose few
+technical problems; more general analysis, however, may require substantial
+enhancements to our present techniques. It may be anticipated that lack of
+methods of analysing such data sets in general, powerful ways will form a major
+obstacle to extracting all of the interesting physics in an expeditious and
+reliable fashion.
+
+General analysis of high-fold coincidence data to construct complete and
+consistent nuclear level schemes will require sophisticated computer programs
+to extract the physically interesting numbers from the raw data and present
+them to the physicist in an easily assimilated manner, to keep track of all
+\ghray\  assignments and expected coincidence intensities, and to quickly find
+and report major discrepancies between a proposed level scheme and the data so
+that they can be understood and corrected.
+
+This paper reports on interactive graphical analysis programs which meet many
+of the above criteria. These programs allow fast and easy inspection of two-
+and three-dimensional data. Their main advantage, however, is that they provide
+the user not only with the observed coincidence results, but also with
+expectations calculated on the basis of a proposed level scheme. In this way,
+it is easy for the user to find discrepancies between the proposed level scheme
+and the observed results and to modify the scheme accordingly. In addition, the
+book-keeping of the analysis is simplified. The level scheme is displayed on
+the same screen as the observed and expected spectra, and can easily be
+modified by the user. Least-squares fits directly to the 2D and/or 3D data,
+with the intensities and energies of the level scheme transitions as
+parameters, allow fast and accurate extraction of the important quantities
+from the data. This approach considerably facilitates detailed analysis,
+especially of higher-fold data sets.
+
+\begin{center}
+{\bf               2. Two-dimensional Data : Program ESCL8R}
+\end{center}
+
+ESCL8R is an interactive program for graphics-based analysis of \ghg\ data for
+the deduction of level schemes. It allows fast and easy inspection of the \ghg\
+matrix, making use of parameterized values of the peak shapes, peak widths,
+detector efficiency and energy calibrations. It uses the two-dimensional
+background-subtraction algorithm of ref. [1]. It also displays a proposed level
+scheme which is modified continually as the analysis proceeds. This level
+scheme is used to calculate expected results for comparison with the observed
+experimental data. Least-squares fits to the matrix may be performed to extract
+the optimum energies and intensities of transitions in the level scheme, with
+up to 500 parameters fitted simultaneously.
+
+\noindent
+{\bf 2.1. User interface and display}
+
+The most recent version of ESCL8R (called XmESC) makes use of X Windows and the
+Motif graphical user interface. An earlier version (ESCL8R\_GLS) had only a
+command-line user interface, but still used X Windows for the graphics display.
+Two graphics windows are created by the program, one for the level scheme and
+one for gated spectra. For users without access to X Windows, the first version
+of ESCL8R displayed only the spectra and not the level scheme, and used a more
+primitive level scheme file format that included no graphical information.
+
+Figure 1 shows an X-Windows/Motif display running XmESC. A terminal-emulator
+window is on the top right; this is the window that was used to launch the
+application and which is used to display and ask for textual information. The
+window on the top left is for the level scheme, but also includes pull-down
+menus and a command widget. The bottom window displays the gated spectra. It
+should be emphasized that the level-scheme and spectrum displays are for more
+than just informational purposes; they are used to select or specify
+transitions, bands, levels and \ghray\ energies, and thus form an important
+part of the user interface.
+
+There are several ways in which the user is able to specify gates on the
+two-dimensional data, as described below. As each gate is taken, the program
+automatically displays the observed and calculated spectra, the difference
+between them, and the residual spectrum ({\em i.e.,} the difference spectrum
+divided by the experimental uncertainty). In this way, it is easy for the user
+to find places where the proposed level scheme fails to reproduce the observed
+results. A graphics-based editor is incorporated to make it easy for the user
+to modify or add to the level scheme.
+
+\noindent
+{\bf 2.2. Experimental data}
+
+In addition to the coincidence matrix, the program requires a two-dimensional
+(2D) background, and knowledge of the efficiency and energy calibrations and
+the peak shapes and widths as a function of \ghray\ energy.
+
+The coincidence data set used by ESCL8R is stored as a 2k x 2k-channel or 4k x
+4k-channel \ghg\ ``matrix'', or 2D histogram of counts {\em vs.} energy {\em
+vs.} energy. This matrix is symmetrised, so that the two energy axes are
+equivalent. Future versions for the analysis of \ghg\ correlation data,
+requiring non-symmetric matrices, are planned.
+
+The program uses the background-subtraction algorithms of ref. [1], where the
+2D background is defined as the sum of one-dimensional spectrum cross-products.
+Rather than using a matrix with the background already removed, it subtracts
+the background from each gate. This is done to allow the program to keep track
+of the raw counts, and hence the uncertainties on the counts-per-channel, in
+the gated spectrum.
+A constant fraction of the background counts can be assigned as a systematic
+uncertainty on the background subtraction.
+
+The energy calibrations used by ESCL8R (and LEVIT8R) are simply polynomial
+expressions of the \ghray\ energy as a function of channel number, usually
+derived from least-squares fits to the centroids of peaks in calibration source
+spectra. The program accepts polynomials of order four or less.
+
+The parameterization of the photopeak efficiency of the detector array is more
+complicated. A typical logarithmic plot of efficiency {\em vs.} \ghray\ energy
+is shown in figure~2. It has the approximate appearance of two straight lines
+joined by a smooth turnover. We generalize the straight lines to quadratic
+functions and use the parameterization
+\begin{eqnarray}
+ ln (\varepsilon) = \{(A+Bx+Cx^2)^{-G} + (D+Ey+Fy^2)^{-G}\}^{-\frac{1}{G}} \ ,
+\end{eqnarray}
+where 
+\begin{eqnarray}
+x & = & ln \left ( \frac{E_\gamma}{100} \right ) \ , \\
+y & = & ln \left ( \frac{E_\gamma}{1000} \right ) \ ,
+\end{eqnarray}
+$\varepsilon$ is the efficiency, and the \ghray\ energy $E_\gamma$ is in keV.
+The parameter G determines the shape of the turn-over region between the high
+and low energy efficiency curves; the larger the value of G, the sharper the
+turn over at the maximum in the efficiency.
+The parameter C is not usually required and is often fixed to zero. 
+
+The program EFFIT can be used to perform least-squares fits of the above
+parameterization to measured efficiency calibrations. The solid line of
+figure~2 results from such a fit. The values of the parameters A through G in
+this example are 6.95(13), 0.62(17), 0, 5.287(5), -0.855(13), -0.066(3) and
+15(5), respectively. Since the matrix used by ESCL8R is symmetric, all
+detectors are treated equivalently by the program and the efficiency parameters
+used should, of course, correspond to those of the full detector array.
+
+Two-dimensional coincident peaks are simply taken as the cross-product of
+one-dimen\-sional peaks, which in turn are usually assumed to have a purely
+Gaussian shape. Non-Gaussian peaks with a low-energy tail can be included, but
+experience indicates that this is not usually necessary for analysis of in-beam
+experiments unless the peak-to-background ratio is exceptionally good.
+
+The widths of the peaks (FWHM) are used by the program not only in the
+calculation of the expected spectrum, but also for the setting of gates. A
+default gate width of one FWHM is used so that the user is able to specify a
+gate by its energy alone. This considerably simplifies the inspection of the
+\ghg\ matrix; for example, gates can be set by using the mouse to select
+transitions in the displayed level scheme.
+
+The FWHM of the peaks (in channels) is parameterized as
+\begin{eqnarray}
+ FWHM(x) = f + g \sqrt{\frac{x}{1000}} + h \frac{x}{1000} \ ,   \label{eq:fwhm}
+\end{eqnarray}
+where $x$ is the channel number. The first (constant) term arises from noise in
+the detector and amplifier, the second term arises from the statistics of the
+charge collection process, and the third (linear) term is due to
+Doppler-broadening of the peaks from emission of the \grays\ from recoiling
+residual nuclei. If a thick target is used, so that the recoils are stopped,
+then this last term should be set to zero. Typical values of the above
+parameters are approximately $f=3, \ g=1$ and $h=4$ for an energy dispersion of
+0.5 keV per channel and a recoil velocity of approximately 2.5\% of the speed
+of light. These parameters also depend on the detector array, electronics,
+energy dispersion, {\em etc.} Their values may be modified within the program,
+or fitted by least-squares regression to a selected gated spectrum, in order to
+optimize the agreement between the level-scheme predictions and the observed
+data.
+
+\noindent
+{\bf 2.3. Level scheme}
+
+In order to enable a program to keep track of \ghray\ assignments and compare
+the observed results with those expected from a proposed level scheme, routines
+were developed to read and display level schemes stored in disk files. These
+also included modified subroutines supplied by the National Nuclear Data Center
+that calculate internal conversion coefficients from the Hager-Seltzer tables
+[2]. Additional code was written to allow graphical editing of the files, to
+generate postscript files of level scheme figures, and to check intensity
+balances and energy sums. The files include data on level energies, spins and
+parities, and transition energies, intensities, multipolarities, mixing ratios
+and conversion coefficients, as well as on the graphical layout for display
+purposes. An example of an expanded level scheme display is reproduced in
+figure~3.
+
+Editing routines allow the user to easily add, delete, modify or move bands,
+levels and transitions in the level scheme. For example, a new transition
+between levels that already exist in the scheme can be added simply by
+indicating the initial and final levels with the mouse. The energy and
+multipolarity of the transition will be taken from the differences in level
+energy, spin and parity of the two levels. If one of the two levels does not
+yet exist, the energy of a new \gray\ can be given by using the mouse to select
+the energy of a peak in the gated spectrum, or by typing the value in keV; the
+program then asks for the multipolarity, and calculates the energy, spin and
+parity of the new level from the energy and multipolarity of the transition.
+Both the new level and the new transition are then added to the scheme.
+Simplified commands to add series of E2 or M1 transitions to the top of a band
+allow very fast and easy entry of new band structures; in this case all that
+the user needs to supply is the \ghray\ energies, which is usually done with
+the mouse on the gated spectrum.
+
+By incorporating these level-scheme routines, ESCL8R can calculate predicted
+gated spectra to be compared with the observed spectra. That is, the program
+can work backwards from the proposed level scheme, and attempt to reproduce the
+observed \ghg\ matrix on the basis of the proposed intensities, branching
+ratios and conversion coefficients. It can also modify the level scheme file,
+and fit the \ghray\ energies and intensities directly to the 2D data, to
+improve the agreement with the observed results. Consistency checks such as the
+testing of energy sums and intensity balances can also be readily performed.
+
+An additional advantage of this approach is that it allows level scheme figures
+and tables of the level and transition data to be generated quickly and easily.
+This also helps to document an ongoing analysis. More complicated manipulations
+of the level scheme data, such as a calculation of the total population of
+bands as a function of spin, {\em etc.,} are also greatly facilitated.
+
+Since least-squares fits can be performed to the full coincidence data set, it
+is important to reproduce all coincidences as correctly as possible. For
+example, coincident peaks arising from the reaction channel of primary interest
+may be contaminated by coincidences from other residual nuclei. Therefore a
+level-scheme file to be used with an analysis program should include all bands
+or transitions observed with significant intensity in the data, whether or not
+they are assigned to the principal isotope being studied.
+
+\noindent
+{\bf 2.4. Setting gates}
+
+The user is able to take and view gates on the matrix in a variety of simple
+ways, for example by typing a desired energy, or by using the mouse to select
+transitions in the level scheme or peaks in the spectrum. Since these specify
+only a mean energy for the gate, a width is also required; by default, this is
+taken as one FWHM, calculated according to equation~\ref{eq:fwhm} in subsection
+2.2 above. Alternatively, limiting channels for gates can be placed by the use
+of the graphics cursor or entered with the keyboard. Logical and arithmetic
+combinations of gates can also be taken just as easily. Lists of gates can be
+created, or read from a file, and the sum of gated spectra from such gate lists
+can be calculated with a single command.
+
+As each gate is taken, all transitions with energies that lie within the gate
+limits are highlighted in the level scheme display and listed on the text
+window. The program then displays the observed and calculated spectra (overlaid
+in different colors), the difference between them, and the residual spectrum
+({\em i.e.,} the difference spectrum divided by the experimental uncertainty);
+see figure~1 for an example. In this way, it is easy for the user to find
+places where the proposed level scheme fails to reproduce the observed data,
+and to modify it accordingly.
+
+If the user wishes to see where a transition in the level scheme should appear
+in the spectrum, selection of that transition with the mouse in the
+level-scheme display can be used to show the limits of the corresponding gate
+in the spectrum window. Similarly, using the mouse to specify the energy of a
+peak in the gated spectrum can highlight and list all transitions in the level
+scheme that have energies within one half-width of the peak energy. A peak
+search routine can be used to automatically label strong peaks in the spectrum
+by their energy. 
+
+As mentioned above, the matrix used by ESCL8R does not have the background
+already removed; rather, the background is subtracted from each gate as it is
+read from the matrix. In this way, the program is able to keep track of the
+uncertainties on the counts-per-channel in the gated spectrum.
+
+\noindent
+{\bf 2.5. Calculation of expected \ghg\ matrix from level scheme}
+
+In order to calculate the expected coincidence matrix (or gated spectrum), the
+program first calculates the intensities of all \ghg\ coincidences. This
+coincidence intensity depends on
+\begin{itemize}
+\item[1.] the \ghray\ intensity of the higher (feeding) transition,
+\item[2.] the branching ratio from the final state of the higher transition
+             through to the lower (fed) transition, and
+\item[3.] the conversion coefficient of the lower transition.
+\end{itemize}
+Thus the program also calculates branching ratios for the transitions
+deexciting each level, taking into account the electron conversion
+coefficients. All \ghray\ flux entering a level is assumed to be divided
+according to these branching ratios.
+
+Once the coincident intensities have been evaluated, they can be multiplied by
+the two detector efficiencies to obtain an expected coincident yield. The
+\ghray\ intensities in the level scheme are in arbitrary units, so a
+normalization factor is required to relate the expected yield to the observed
+peak areas. This normalization coefficient is initially chosen by the program
+to give the strongest observed coincidence an intensity value of about 100
+units, but can be modified by the user.
+
+The peak shapes and widths are calculated according to the paramerizations of
+subsection 2.2, and the expected yield distributed accordingly. Finally, the 2D
+background is added if comparison with the original matrix is required.
+
+\noindent
+{\bf 2.6. Least-squares fits}
+
+ESCL8R provides the user with the capability to perform least-squares fits to
+the observed data to extract optimum values for the \ghray\ energies and
+intensities of transitions in the proposed level scheme. It is possible to fit
+the energies or intensities separately, or both simultaneously. The current
+version allows up to a maximum of 500 parameters to be fitted at one time, but
+this limit could easily be increased. The fits are performed directly to the
+full 2D coincidence matrix; any displayed gate has no effect on the results of
+the fit. An extensive fit will typically have hundreds of thousands of degrees
+of freedom.
+
+The transitions to be fitted are selected by clicking with the mouse on the
+level scheme display; one can choose individual transitions or all transitions
+depopulating levels or bands. Choosing transitions that have already been
+selected will deselect them, {\em i.e.} remove them from the list of
+transitions to be fitted.
+
+All coincidence relationships that contain information on the intensity of a
+fitted transition are included in the least-squares analysis, such as
+coincidences between the fitted \gray\ and the \grays\ which it feeds. If the
+fitted transition is not the only one depopulating its initial level, the
+program also includes coincidences between higher \grays\ and all transitions
+populated from the initial state, {\em i.e.} coincidences which yield
+information on the branching ratio for the fitted transition.
+
+From the above list of quantities that determine coincidence intensities, it is
+evident that any \gray\ that does not feed other \grays, and that is the
+only transition from its initial level (so that it has a branching ratio of
+unity independent of its intensity), has no coincidences that depend
+on its intensity. Thus, for example, in an even-even nucleus the intensity of
+the $2^+ \rightarrow 0^+$ transition in the ground-state band cannot be fitted
+by ESCL8R, and must instead be deduced from intensity balances. If there are
+two or more transitions at the bottom of a band, but none of these feed lower
+transitions, then it is possible to fit all but one of them by means of their
+branching ratios; however, the absolute magnitudes must then again be taken
+from the intensity balance.
+
+If a proposed level scheme is incomplete, or contains incorrectly ordered or
+erroneous transitions, then the results of the least-squares fit will be
+compromised. The 2D background and efficiency calibration must also be accurate
+in order to obtain good results. Since the the energies of the transitions also
+affect their fitted intensities, it is prudent to fit both energies and
+intensities simultaneously once they are both reasonably close to their correct
+values.
+
+ESCL8R and LEVIT8R assume that the detection probability of \grays\ does not
+depend on the multipolarity and/or mixing ratio of the transition. In many
+cases, this is true to within a good approximation, since many detector arrays
+(such as the $8\pi$ spectrometer [4]) have nearly isotropic distributions of
+the HPGe detectors, and the \ghg\ matrix results from the sum of all
+combinations of detectors. However, some detector systems are significantly
+anisotropic. It is important for the user to remember that for data taken with
+such arrays, neither the fitted intensities nor the calculated expected spectra
+will be accurate.
+
+% The errors quoted by ESCL8R and LEVIT8R for the fitted \ghray\ energies and
+% intensities are statistical only, and do not include systematic errors due to
+% uncertainties in the background subtraction or in  the efficiency and energy
+% calibrations. As a result they should be considered to be lower limits, and
+% enlarged to account for estimated systematic uncertainties.
+
+
+\begin{center}
+{\bf            3. Three-dimensional Data : Program LEVIT8R}
+\end{center}
+
+LEVIT8R is a program for graphical analysis of \ghghg\ data; essentially, it is
+a three-dimensional version of ESCL8R. It uses the same type of parameterized
+peak shape, peak width, detector efficiency and energy calibrations. It uses an
+equivalent algorithm for background subtraction, extended to three dimensions
+[1]. It also reads, displays and edits the same type of level scheme file. The
+user interface is the same as for ESCL8R, except for extensions to allow
+additional commands for gating and fitting the cube.
+
+By incorporating the level-scheme routines, LEVIT8R calculates predicted gate
+spectra to be compared with the observed spectra. That is, the program works
+backwards from the proposed level scheme, and attempts to reproduce the
+observed \ghghg\ cube on the basis of the proposed intensities, branching
+ratios and conversion coefficients. As with ESCL8R, least-squares fits to the
+data set may be performed to extract the optimum energies and/or intensities of
+transitions in the level scheme, with up to 500 parameters being fitted
+simultaneously. By default, the fitting is done to the two-dimensional
+projection, but separate commands allow fitting of the full three-dimensional
+data set. Fits to the cube consume great amounts of CPU time; they typically
+have tens of millions of degrees of freedom.
+
+One major difference from ESCL8R is that LEVIT8R allows a non-linear gain
+({\em i.e.} an energy-dependent dispersion) for storage of the experimental
+data. This is usually used in such a way as to yield an approximately constant
+FWHM (in channels) of the peaks, independent of energy. This approach produces
+a considerable saving in disk storage required for the data, especially for
+high-fold data, without sacrificing usable resolution at low energies. When
+such non-linear spectra are displayed, the counts-per-keV (rather than the more
+conventional counts-per-channel) are shown, as a function of energy (rather
+than channel number); that is, the spectra are displayed linearly with energy,
+so that the displayed bin width is energy-dependent.
+
+The use of such an energy-dependent dispersion is illustrated in figure~4, for
+a typical heavy-ion fusion-evaporation reaction with a detector array such as
+the $8\pi$ spectrometer 5]. In this example, a FWHM of two cube channels is
+used, and the non-linear gain saves a factor of 1.9 for each dimension, over
+the range 100 to 2000 keV. For the triples data, this amounts to a reduction in
+the required storage space by a factor of 6.4. Even greater savings are
+realized when higher energies are required; for example, if the cube covered
+the range 100 to 3000 keV, using nonlinear gain saves a factor of 13 in disk
+space.
+
+A program called LUFWHM is used to generate a lookup-table, or array of
+integers $L(i)$, to map (linear) ADC channels in event-by-event data to
+(nonlinear) cube channel numbers; that is, the cube channel is $L$(ADC
+channel). LUFWHM uses equation~\ref{eq:fwhm} to obtain the FWHM as a function
+of ADC channel, and creates bins of increasing width by rounding the FWHM to
+the nearest whole number of ADC channels.
+
+A cube replay program, called INCUB8R, can then use this lookup-table mapping
+to generate a cube. By ordering the three energies, the program needs to store
+and increment only one-sixth of the whole cube. Two bytes of storage are
+allocated to each cube channel. Such a cube typically has about 900 channels in
+each dimension and requires about 240 Mbytes of disk space.
+
+Storing only one-sixth of the cube is efficient for the replay, but has the
+drawback that, in order to obtain a double-gated spectrum, a great number of
+records need to be read from the cube file. In order to speed up the extraction
+of gates, a second cube file format can be used, which stores one-half of the
+full cube. In this second format, one byte of storage is allocated to each cube
+channel, but tables of overflows ({\em i.e.,} channels that require more than
+one byte since they contain more than 255 counts) are included. Such files
+typically require about 370 Mbytes, and can be generated from the INCUB8R files
+using a program called FOLDOUT.
+
+Both cube formats can be read by LEVIT8R, although taking double-gates with the
+second (one-half cube) format is an order of magnitude faster than with the
+first format; it typically requires about 0.1s per double-gate on a modern
+workstation. The user is able to take and view a gate on the two-dimensional
+projection simply by, for example, typing the energy of the required gate or
+clicking on transitions in the level scheme. A double-gate on the triples set
+requires pairs of energies to be specified; this can again be done either with
+the mouse or the keyboard. Combinations of gates can also be taken just as
+easily, especially through the use of lists of gates. For example, the sum of
+all pairs of gates taken from two gate lists can be generated with a single
+command. The background is subtracted from each gate as it is read from the
+cube, allowing the program to keep track of the uncertainties on the
+counts-per-channel in the gate spectrum. 
+
+An example of a LEVIT8R display is reproduced in figure~5.
+
+
+\begin{center}
+{\bf                              4. Conclusion}
+\end{center}
+
+The unsurpassed sensitivity of large \ghray\ detector arrays such as EUROGAM,
+GAMMASPHERE and GA.SP will allow spectroscopic studies that go well beyond the
+present frontiers of high-spin \ghray\ spectroscopy. Unfortunately, the size of
+the high-fold data sets from these spectrometers, and the difficulty of
+extracting all of the detailed information contained in them, can be
+overwhelming.
+
+Programs ESCL8R and LEVIT8R, for interactive graphical analysis of two-fold and
+three-fold data respectively, allow fast and easy inspection of the data. They
+present the user not only with the observed coincidence results, but also with
+expectations calculated on the basis of a proposed level scheme. In this way,
+it is easy for the user to find places where the proposed level scheme fails to
+reproduce the observed results. The book-keeping of the analysis
+is also simplified.
+
+Least-squares fits directly to the 2D and/or 3D data, with the intensities and
+energies of the level scheme transitions as parameters, allow expeditious
+extraction of the observable quantities from the data. The level scheme can
+be easily modified, and printed in the form of a postscript figure. Tables of
+the level and transition data, including tests of energy sums and intensity
+balances, can be generated quickly and easily. This approach considerably
+improves the ease, speed and reliability of detailed data analysis, especially
+in extracting ``complete'' level schemes from higher-fold data sets.
+
+ESCL8R, LEVIT8R and associated programs run on both VMS and unix platforms.
+Copies of the code are available by anonymous ftp from cu1.crl.aecl.ca.
+%*** or by contacting the author by e-mail at RadfordD@crl.aecl.ca.
+
+The assistance of R.W. MacLeod in porting software described here from VMS to
+unix is gratefully acknowledged. This work has benefited greatly from helpful
+discussions with many colleagues, including
+R. Bark,
+P. Brown,
+R.W. MacLeod,
+S. Pilotte,
+P. Unrau,
+P. Vaska,
+D. Ward,
+and many others.
+
+\newpage
+\begin{center}
+{\bf                                References}
+\end{center}
+
+\begin{itemize}
+\item[{[1]}] D.C. Radford, Nucl. Instr. and Meth. in Phys. Res. {\bf A}
+    (accompanying paper)
+\item[{[2]}] R.S. Hager and E.C. Seltzer, Nucl. Data Tables {\bf A4} (1968) 1
+\item[{[3]}] D.C. Radford {\em et al.,} Nucl. Phys. {\bf A545} (1992) 665
+\item[{[4]}] J.P. Martin {\em et al.,} Nucl. Instr. and Meth. in Phys. Res.
+     {\bf A257} (1987) 301
+\end{itemize}
+
+\setlength{\parindent}{0mm}
+\newpage
+\begin{center}
+{\bf                                Figure Captions}
+\end{center}
+\vspace{5mm}
+
+{\bf Figure 1.} 
+Screen dump of an ESCL8R session (Motif version).
+The window on the top right is a terminal-emulator window. The window on the
+top left is the level scheme and graphical user interface. The bottom window
+displays spectra. Observed and predicted spectra are overlaid in the bottom of
+the spectrum window; on a color screen, these are distinguishable by their
+colors. The experimental spectrum shown is the sum of two gates, at 298 and 474
+keV.
+\vspace{5mm}
+
+{\bf Figure 2.} 
+An example of a logarithmic plot of detector efficiency {\em vs.} \ghray\
+energy. The circles represent data points measured with $^{133}$Ba and
+$^{152}$Eu sources, while the solid line is the result of a least-squares fit
+using the program EFFIT. See text for details.
+\vspace{5mm}
+
+{\bf Figure 3.} 
+An example of an expanded level scheme display. The nucleus is \ho, taken from
+ref. [3].
+\vspace{5mm}
+
+{\bf Figure 4.} 
+Illustration of the relation between E$_{\gamma}$, cube channel number and FWHM
+when an energy-dependent dispersion is used. In this example, the energy
+dispersion for the ADC is 0.5 keV/ch, and the energy dispersion in the cube is
+1.0 keV/ch at low energies and 4.0 keV/ch at 2 MeV, selected to give an
+approximately constant FWHM of 2 channels. In the bottom panel, the smooth
+curve gives the FWHM in keV, while the sawtooth curve shows the FWHM in cube
+channels. The discrete steps correspond to changes of the contraction factor
+between the ADC channels and the cube channels.
+\vspace{5mm}
+
+{\bf Figure 5.} 
+Screen dump of a LEVIT8R session (Motif version).
+The window on the top right is a terminal-emulator window. The window on the
+top left is the level scheme and graphical user interface. The bottom window
+displays spectra.  Observed and predicted spectra are overlaid in the bottom of
+the spectrum window; on a color screen, these are distinguishable by their
+colors. The experimental spectrum shown is the sum of 90 double-gates on the
+yrast superdeformed band of $^{149}$Gd.
+
+\end{document}

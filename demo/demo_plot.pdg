@@ -1,0 +1,44 @@
+\PG 56 680 51 510
+\RGB 0.6 0.6 0.6
+\RF 76 648 526 30
+\RGB 1 0.8 0.7
+\RF 72 648 530 30
+\RGB 0 0 1
+\TXT 100 537 10 12
+{bExperimental Challenges}
+\ENDTXT
+\RGB 0 0 0
+
+\TXT 100 460 9 11
+{b{x4} Beams are radioactive}
+\Y -0.5
+     {x2} Stopped/scattered beam can give huge background
+\RGB 0 0.5 0
+\Y -0.5
+      - Good tandem beam quality, careful tuning
+
+
+\RGB 0 0 0
+{b{x4} Beams are weak}
+\Y -0.5
+     {x2} {gg}, {ggg} rates comparable to room background
+\RGB 0 0.5 0
+\Y -0.5
+      - Require clean trigger  (usually HyBall)
+
+
+\RGB 0 0 0
+{b{x4} Beams are isobar cocktails, {ii.e.} contaminated}
+\RGB 0 0.5 0
+\Y -0.5
+      - Can be helped by high-resolution {gg}-ray detection
+
+
+\RGB 0 0 0
+{b{x4} Require light targets, inverse kinematics}
+\Y -0.5
+     {x2} Large recoil velocity, Doppler broadening
+\RGB 0 0.5 0
+\Y -0.5
+      - Segmented clover array CLARION
+\ENDTXT

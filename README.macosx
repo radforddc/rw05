@@ -1,0 +1,73 @@
+
+
+1. Make sure Xcode command line tools and XQuartz are installed.
+================================================================
+
+Xcode is available from the Apple App Store. But you also need to make sure
+the command-line tools are installed.
+The command-line tool installation is usually not difficult, but has varied
+over time with different OS X versions. I suggest you use web search to find
+a solution for your specific setup.
+One example:
+https://stackoverflow.com/questions/9329243/how-to-install-xcode-command-line-tools
+
+XQuartz downloads are available from https://www.xquartz.org/
+
+2. Install tools and libraries.
+===============================
+
+If you want to use the GTK or Motif GUIs, you will need to install the appropriate
+developer packages. I have not done this myself in recent years, but many years ago
+I was successful in using MacPorts or Fink.
+
+Old instructions, probably obsolete:
+
+A. Using MacPorts:
+You may need to install the java development headers from the Apple Developer site.
+If you don't have an Apple ID, you can create one for free.
+Update MacPorts and its repository lists by typing
+    sudo port selfupdate
+Use MacPorts to install the following packages:
+[ readline ] - may already be on system in MacOSX10.*.sdk
+  lesstif     (required for xm* versions of gf3, gls, escl8r, etc)
+  gtk2        (required for gtk* versions of gls, escl8r, etc)
+You would normally do this from the terminal, by typing 
+     sudo port install <package-name>
+for each <package-name> above. Other dependent packages will also be 
+installed automatically, and the process will take some time.
+
+
+B. Using Fink:
+Start the Fink application. From the list of applications, choose the
+following packages to install:
+[ readline ] - may already be on system in MacOSX10.*.sdk
+  lesstif     (required for xm* versions of gf3, gls, escl8r, etc)
+  gtk2        (required for gtk* versions of gls, escl8r, etc)
+
+
+3. Build RadWare
+================
+
+Use Makefile.macosx as the starting point for your Makefile:
+    cd rw05/src
+    cp Makefile.macosx Makefile
+
+You may need to edit this Makefile to match your system.
+Please refer to the Linux/Unix README for other comments.
+Then build rw05 with the command
+    make all
+
+If you have the appropriate GTK2 or Motif packages installed and you
+wish to use the GUI versions of some of the codes, can also
+    make GTK (for GTK versions, and/or)
+    make XM  (for Motif versions)
+
+
+You can run the programs directly from the rw05/src directory, or
+optionally install them in a different place. To do the install,
+edit the Makefile so that the install path and user/group details are
+appropriate for your system. Then run
+    make install
+
+For instructions on setting things up to run the programs easily,
+please look at sections 4) through 7) of the Linux/Unix README.

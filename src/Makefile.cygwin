@@ -1,0 +1,85 @@
+#########################################
+#    Makefile for Radware on Linux
+#    What you need:
+#      1) GCC C compiler
+########################################
+
+#   make all                to make all programs
+#   make install            to install, if all goes well
+#   make clean              to clean up this dir
+#   make very-clean         to clean up this and all subdirectories,
+#                               leaving only the source code
+
+#------------------------------------------------------------------------
+#    CHANGE  these next two lines if X11 and/or Motif are installed elsewhere 
+
+     X_WIN_TOP  = /usr/X11R6
+     MOTIF_TOP  = /usr/X11R6
+
+#------------------------------------------------------------------------
+#    CHANGE  the next 3 lines to suit your installation preferences
+
+    INSTALL_DIR = ${HOME}/rw_current
+        INSTALL = /usr/bin/install -m 0644 -o radfordd -g users
+    INSTALL_BIN = /usr/bin/install -m 0755 -o radfordd -g users
+
+#------------------------------------------------------------------------
+
+             CC = gcc
+             FC = $(CC)
+         CFLAGS = -O2 -Wall -I$(MOTIF_TOP)/include -DHAVE_GNU_READLINE
+
+         RANLIB = ranlib
+             AR = ar rv
+             RM = -rm -f
+         RM_CMD = $(RM) *.o core *[~%] *.trace
+
+           LIBS = -lX11 -lm -lreadline -lncurses
+     MOTIF_LIBS = -lXm -lMrm -lXt -lXext -lXp
+   STATIC_MOTIF = -lXm -lMrm -lXpm -lXt -lSM -lICE -lXext -lXp
+
+# -----------------------------------------------------------------------
+#  UNCOMMENT and CHANGE (if necessary)  the line defining HISLIBS
+#  if you have orphlib.a on your system, and you want to be able to read .his files.
+#  UNCOMMENT the line defining FC as gcc if orphlib was compiled using gcc
+#        HISLIBS = /usr/hhirf/orphlib.a
+#             FC = g77
+
+#------------------------------------------------------------------------
+
+      LIB_PATHS = -L. -L$(X_WIN_TOP)/lib
+   XM_LIB_PATHS = -L$(MOTIF_TOP)/lib
+
+ SUB_MAKE_FLAGS = "CC = ${CC}" "CFLAGS = ${CFLAGS}" \
+                  "RANLIB = ${RANLIB}" "HISLIBS = ${HISLIBS}"
+
+##############  Methods  ##################
+
+include Makefile.common
+include Makefile.install_ucb
+
+static: xmgf3_static xmgls_static xmesc_static xmlev_static xm4dg_static
+
+#include Makefile.static
+xmgf3_static: xmgf3.c gf3_subs.o caskx.o util.a minig.a
+	$(CC) $(CFLAGS) -o $@ xmgf3.c gf3_subs.o caskx.o util.a minig.a \
+         -Xlinker -Bstatic $(XM_LIB_PATHS) $(STATIC_MOTIF) $(LIB_PATHS) -Xlinker -Bdynamic $(LIBS)
+xmgls_static: xmgls.o caskx.o drawstring.o drawstr_ps.o gls.a util.a minig.a
+	$(CC) $(CFLAGS) -o $@ xmgls.o caskx.o drawstring.o \
+         drawstr_ps.o gls.a util.a minig.a \
+         -Xlinker -Bstatic $(XM_LIB_PATHS) $(STATIC_MOTIF) $(LIB_PATHS) -Xlinker -Bdynamic $(LIBS)
+xmesc_static: xmescc.o caskx.o xmminig2.o escl8ra.o esclev.o \
+         drawstring.o drawstr_ps.o esc_undo.o gls.a util.a minig.a
+	$(CC) $(CFLAGS) -o $@ xmescc.o caskx.o xmminig2.o escl8ra.o \
+         esclev.o drawstring.o drawstr_ps.o esc_undo.o gls.a util.a minig.a \
+         -Xlinker -Bstatic $(XM_LIB_PATHS) $(STATIC_MOTIF) $(LIB_PATHS) -Xlinker -Bdynamic $(LIBS)
+xmlev_static: xmlevc.o caskx.o xmminig2.o gate3d.o levit8ra.o esclev.o lev4d.o \
+         drawstring.o drawstr_ps.o lev4d_undo.o gls.a util.a minig.a
+	$(CC) $(CFLAGS) -o $@ xmlevc.o caskx.o gate3d.o xmminig2.o levit8ra.o \
+         esclev.o lev4d.o drawstring.o drawstr_ps.o lev4d_undo.o gls.a util.a minig.a \
+         -Xlinker -Bstatic $(XM_LIB_PATHS) $(STATIC_MOTIF) $(LIB_PATHS) -Xlinker -Bdynamic $(LIBS)
+xm4dg_static: xm4dgc.o 4dg8ra.o gate4d.o gate3d.o caskx.o xmminig2.o esclev.o \
+         lev4d.o drawstring.o drawstr_ps.o lev4d_undo.o gls.a util.a minig.a
+	$(CC) $(CFLAGS) -o $@ xm4dgc.o gate4d.o gate3d.o caskx.o xmminig2.o \
+         4dg8ra.o esclev.o lev4d.o drawstring.o drawstr_ps.o lev4d_undo.o gls.a util.a minig.a \
+         -Xlinker -Bstatic $(XM_LIB_PATHS) $(STATIC_MOTIF) $(LIB_PATHS) -Xlinker -Bdynamic $(LIBS)

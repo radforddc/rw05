@@ -1,0 +1,313 @@
+ARCHIVES = gls.a minig.a util.a mingtk.a
+
+EXE = 4dg8r 4play addesc addmat algndiag calib_ascii combine divide \
+      dixie_gls drawstring effit encal energy escl8r foldout fwhm_cal \
+      gf3 gf3_nographics gf3x gls gls_conv incub8r legft levit8r \
+      lufwhm make4cub pedit plot plot2ps sdgen split4cub slice Source \
+      spec_ascii statft pro3d pro4d pslice subbgm2 subbgmat symmat \
+      txt2spe unfold unfoldesc unix2unix vms2unix win2tab
+# his2mat rdm rdmfit
+
+GTK = gtkgls gtkesc gtklev gtk4dg
+
+XM =  xmgf3 xmgls xm4dg xmesc xmlev
+
+all: $(EXE)
+
+caskx.o: libs/util/cask.c
+	$(CC) $(CFLAGS) -DXWIN -c -o $@ libs/util/cask.c
+
+###############################################################################
+#   r e p l a y / s c a n n i n g       programs and utilities
+###############################################################################
+
+4play: 4play.c 4play.h get_event.c compress4d.c rwutils.c
+	$(CC) $(CFLAGS) -o $@ 4play.c
+foldout: foldout.c pro3d.h compress3d.c rwutils.c
+	$(CC) $(CFLAGS) -o $@ foldout.c
+incub8r: incub8r3.c incub8r3.h get_event.c compress3d.c rwutils.c
+	$(CC) $(CFLAGS) -o $@ incub8r3.c
+lufwhm: lufwhm.c util.a
+	$(CC) $(CFLAGS) -o $@ lufwhm.c util.a $(LIB_PATHS) $(LIBS)
+make4cub: make4cub.c 4play.h compress4d.c rwutils.c
+	$(CC) $(CFLAGS) -o $@ make4cub.c
+pro3d: pro3d.c pro3d.h compress3d.c rwutils.c util.a
+	$(CC) $(CFLAGS) -o $@ pro3d.c util.a $(LIB_PATHS) $(LIBS)
+pro4d: pro4d.c pro4d.h compress4d.c compress3d.c rwutils.c
+	$(CC) $(CFLAGS) -o $@ pro4d.c
+split4cub: split4cub.c 4play.h compress4d.c rwutils.c
+	$(CC) $(CFLAGS) -o $@ split4cub.c
+
+###############################################################################
+#   e s c l 8 r,     l e v i t 8 r,     4 d g 8 r
+###############################################################################
+
+4dg8ra.o: 4dg8ra.c levit8r.h esclev.h gls.h
+	$(CC) $(CFLAGS) -c 4dg8ra.c
+esc_undo.o: esc_undo.c escl8r.h
+	$(CC) $(CFLAGS) -c esc_undo.c
+lev4d_undo.o: lev4d_undo.c escl8r.h
+	$(CC) $(CFLAGS) -c lev4d_undo.c
+gate4d.o: gate4d.c 4play.h compress4d.c rwutils.c
+	$(CC) $(CFLAGS) -c gate4d.c
+4dg8r: 4dg8r.c 4dg8ra.o gate4d.o gate3d.o caskx.o gls_minig.o esclev.o\
+         lev4d.o drawstring.o drawstr_ps.o lev4d_undo.o gls.a util.a minig.a 
+	$(CC) $(CFLAGS) -o $@ 4dg8r.c 4dg8ra.o gate4d.o gate3d.o \
+         caskx.o gls_minig.o esclev.o lev4d.o drawstring.o drawstr_ps.o \
+         lev4d_undo.o gls.a util.a minig.a $(LIB_PATHS) $(LIBS)
+escl8r: escl8r.c escl8ra.o caskx.o gls_minig.o esclev.o \
+         drawstring.o drawstr_ps.o esc_undo.o gls.a util.a minig.a 
+	$(CC) $(CFLAGS) -o $@ escl8r.c escl8ra.o caskx.o gls_minig.o \
+         esclev.o drawstring.o drawstr_ps.o esc_undo.o gls.a util.a \
+         minig.a  $(LIB_PATHS) $(LIBS)
+esclev.o: esclev.c esclev.h gls.h
+	$(CC) $(CFLAGS) -c esclev.c
+escl8ra.o: escl8ra.c esclevb.c escl8r.h esclev.h gls.h
+	$(CC) $(CFLAGS) -c escl8ra.c
+gate3d.o: gate3d.c pro3d.h compress3d.c
+	$(CC) $(CFLAGS) -c gate3d.c
+lev4d.o: lev4d.c esclevb.c levit8r.h esclev.h gls.h
+	$(CC) $(CFLAGS) -c lev4d.c
+levit8ra.o: levit8ra.c levit8r.h esclev.h gls.h
+	$(CC) $(CFLAGS) -c levit8ra.c
+levit8r: levit8r.c levit8ra.o gate3d.o caskx.o gls_minig.o esclev.o \
+         lev4d.o drawstring.o drawstr_ps.o lev4d_undo.o gls.a util.a minig.a
+	$(CC) $(CFLAGS) -o $@ levit8r.c levit8ra.o gate3d.o caskx.o \
+         gls_minig.o esclev.o lev4d.o drawstring.o drawstr_ps.o lev4d_undo.o \
+         gls.a util.a minig.a $(LIB_PATHS) $(LIBS)
+
+###############################################################################
+#   g e n e r a l    d a t a     a n a l y s i s     programs
+###############################################################################
+
+dixie_gls.o: dixie_gls.c gls.h
+	$(CC) $(CFLAGS) -c dixie_gls.c
+dixie_gls: dixie_gls.c caskx.o gls_minig.o drawstring.o drawstr_ps.o \
+           gls.a util.a minig.a
+	$(CC) $(CFLAGS) -o $@ dixie_gls.c caskx.o gls_minig.o drawstring.o \
+         drawstr_ps.o gls.a util.a minig.a $(LIB_PATHS) $(LIBS)
+gf3: gf3.c gf3_subs.o caskx.o util.a minig.a
+	$(FC) $(CFLAGS) -o $@ gf3.c gf3_subs.o caskx.o util.a minig.a \
+            $(HISLIBS) $(LIB_PATHS) $(LIBS)
+gf3_nographics: gf3.c gf3_subs.c caskx.o util.a minig.a
+	$(FC) -DNOGRAPHICS $(CFLAGS) -o $@ gf3.c gf3_subs.c caskx.o util.a minig.a \
+            $(HISLIBS) $(LIB_PATHS) $(LIBS)
+gf4: gf4.c gf4_subs.o caskx.o util.a minig.a
+	$(FC) $(CFLAGS) -o $@ gf3.c gf4_subs.o caskx.o util.a minig.a \
+            $(HISLIBS) $(LIB_PATHS) $(LIBS)
+gf3x: gf3x.c gf3_subs.o caskx.o util.a minig.a
+	$(FC) $(CFLAGS) -o $@ gf3x.c gf3_subs.o caskx.o util.a minig.a \
+            $(HISLIBS) $(LIB_PATHS) $(LIBS)
+unfold: unfold.c gf3_subs.o caskx.o util.a minig.a
+	$(FC) $(CFLAGS) -o $@ unfold.c gf3_subs.o caskx.o util.a minig.a \
+            $(HISLIBS) $(LIB_PATHS) $(LIBS)
+
+gls: gls.c caskx.o drawstring.o drawstr_ps.o gls.a util.a minig.a
+	$(CC) $(CFLAGS) -o $@ gls.c caskx.o drawstring.o \
+         drawstr_ps.o gls.a util.a minig.a $(LIB_PATHS) $(LIBS)
+gls_conv: gls_conv.c drawstr_ps.o gls.a util.a
+	$(CC) $(CFLAGS) -o $@ gls_conv.c drawstr_ps.o gls.a util.a $(LIB_PATHS) $(LIBS)
+
+###############################################################################
+#   p l o t t i n g   and   l e v e l    s c h e m e    programs
+###############################################################################
+
+drawstring: test_drawstring.c drawstring.o drawstr_ps.o minig.a util.a
+	$(CC) $(CFLAGS) -o $@ test_drawstring.c drawstring.o \
+          drawstr_ps.o util.a minig.a $(LIB_PATHS) $(LIBS)
+pedit: pedit.c menu_x.o caskx.o getfloat.o drawstring.o util.a minig.a
+	$(CC) $(CFLAGS) -o $@ pedit.c menu_x.o caskx.o getfloat.o \
+         drawstring.o util.a minig.a $(LIB_PATHS) $(LIBS)
+plot: plot.c getfloat.o util.a
+	$(CC) $(CFLAGS) -o $@ plot.c getfloat.o util.a $(LIB_PATHS) $(LIBS)
+plot2ps: plot2ps.c getfloat.o util.a drawstr_ps.o
+	$(CC) $(CFLAGS) -o $@ plot2ps.c getfloat.o util.a drawstr_ps.o $(LIB_PATHS) $(LIBS)
+
+###############################################################################
+# m a t r i x    m a n i p u l a t i o n    programs
+###############################################################################
+
+addesc: addesc.c util.a
+	$(CC) $(CFLAGS) -o $@ addesc.c util.a $(LIB_PATHS) $(LIBS)
+addmat: addmat.c util.a
+	$(CC) $(CFLAGS) -o $@ addmat.c util.a $(LIB_PATHS) $(LIBS)
+algndiag: algndiag.c util.a
+	$(CC) $(CFLAGS) -o $@ algndiag.c util.a $(LIB_PATHS) $(LIBS)
+pslice: pslice.c util.a
+	$(CC) $(CFLAGS) -o $@ pslice.c util.a $(LIB_PATHS) $(LIBS)
+slice: slice.c util.a
+	$(FC) $(CFLAGS) -o $@ slice.c util.a $(HISLIBS) $(LIB_PATHS) $(LIBS)
+symmat:  symmat.c util.a
+	$(CC) $(CFLAGS) -o $@ symmat.c util.a $(LIB_PATHS) $(LIBS)
+subbgm2:  subbgm2.c util.a
+	$(FC) $(CFLAGS) -o $@ subbgm2.c util.a $(HISLIBS) $(LIB_PATHS) $(LIBS)
+subbgmat:  subbgmat.c util.a
+	$(FC) $(CFLAGS) -o $@ subbgmat.c util.a $(HISLIBS) $(LIB_PATHS) $(LIBS)
+unfoldesc: unfoldesc.c util.a
+	$(CC) $(CFLAGS) -o $@ unfoldesc.c util.a $(LIB_PATHS) $(LIBS)
+
+###############################################################################
+# c a l i b r a t i o n   and   u t i l i t i e s    programs
+###############################################################################
+
+calib_ascii: calib_ascii.c util.a 
+	$(CC) $(CFLAGS) -o $@ calib_ascii.c util.a $(LIB_PATHS) $(LIBS)
+combine: combine.c util.a
+	$(CC) $(CFLAGS) -o $@ combine.c util.a $(LIB_PATHS) $(LIBS)
+divide: divide.c util.a 
+	$(CC) $(CFLAGS) -o $@ divide.c util.a $(LIB_PATHS) $(LIBS)
+effit: effit.c caskx.o minig.a util.a
+	$(CC) $(CFLAGS) -o $@ effit.c caskx.o minig.a util.a $(LIB_PATHS) $(LIBS)
+encal: encal.c util.a 
+	$(CC) $(CFLAGS) -o $@ encal.c util.a $(LIB_PATHS) $(LIBS)
+energy: energy.c util.a 
+	$(CC) $(CFLAGS) -o $@ energy.c util.a $(LIB_PATHS) $(LIBS)
+fwhm_cal: fwhm_cal.c
+	$(CC) $(CFLAGS) -o $@ fwhm_cal.c -lm
+legft: legft.c util.a
+	$(CC) $(CFLAGS) -o $@ legft.c util.a $(LIB_PATHS) $(LIBS)
+Source: source.c util.a 
+	$(CC) $(CFLAGS) -o $@ source.c util.a $(LIB_PATHS) $(LIBS)
+spec_ascii: spec_ascii.c util.a
+	$(FC) $(CFLAGS) -o $@ spec_ascii.c util.a $(HISLIBS) $(LIB_PATHS) $(LIBS)
+statft: statft.c caskx.o gf3_subs.o minig.a util.a
+	$(FC) $(CFLAGS) -o $@ statft.c caskx.o gf3_subs.o minig.a util.a \
+         $(HISLIBS) $(LIB_PATHS) $(LIBS)
+txt2spe: txt2spe.c
+	$(CC) $(CFLAGS) -o $@ txt2spe.c -lm
+win2tab: win2tab.c util.a
+	$(CC) $(CFLAGS) -o $@ win2tab.c util.a $(LIB_PATHS) $(LIBS)
+vms2unix: vms2unix.c util.a
+	$(CC) $(CFLAGS) -o $@ vms2unix.c util.a $(LIB_PATHS) $(LIBS)
+unix2unix: unix2unix.c util.a
+	$(CC) $(CFLAGS) -o $@ unix2unix.c util.a $(LIB_PATHS) $(LIBS)
+sdgen: sdgen.c util.a
+	$(CC) $(CFLAGS) -o $@ sdgen.c util.a $(LIB_PATHS) $(LIBS)
+
+###############################################################################
+#   M O T I F      programs
+###############################################################################
+
+xmgls.o: xmgls.c
+	$(CC) $(CFLAGS) -c xmgls.c
+xmescc.o: xm234.c
+	$(CC) $(CFLAGS) -c -o $@ -DXM2D xm234.c
+xmlevc.o: xm234.c
+	$(CC) $(CFLAGS) -c -o $@ -DXM3D xm234.c
+xm4dgc.o: xm234.c
+	$(CC) $(CFLAGS) -c -o $@ -DXM4D xm234.c
+xmminig2.o: xmminig2.c
+	$(CC) $(CFLAGS) -c xmminig2.c
+
+xmgf3: xmgf3.c gf3_subs.o caskx.o util.a minig.a
+	$(FC) $(CFLAGS) -o $@ xmgf3.c gf3_subs.o caskx.o util.a minig.a \
+         $(XM_LIB_PATHS) $(MOTIF_LIBS) $(HISLIBS) $(LIB_PATHS) $(LIBS)
+xmgls: xmgls.c caskx.o drawstring.o drawstr_ps.o gls.a util.a minig.a
+	$(CC) $(CFLAGS) -o $@ xmgls.c caskx.o drawstring.o \
+         drawstr_ps.o gls.a util.a minig.a \
+         $(XM_LIB_PATHS) $(MOTIF_LIBS) $(LIB_PATHS) $(LIBS)
+xmesc: xmescc.c caskx.o xmminig2.o escl8ra.o esclev.o \
+         drawstring.o drawstr_ps.o esc_undo.o gls.a util.a minig.a
+	$(CC) $(CFLAGS) -o $@ xmescc.c caskx.o xmminig2.o escl8ra.o \
+         esclev.o drawstring.o drawstr_ps.o esc_undo.o gls.a util.a minig.a \
+         $(XM_LIB_PATHS) $(MOTIF_LIBS) $(LIB_PATHS) $(LIBS)
+xmlev: xmlevc.c caskx.o xmminig2.o gate3d.o levit8ra.o esclev.o lev4d.o \
+         drawstring.o drawstr_ps.o lev4d_undo.o gls.a util.a minig.a
+	$(CC) $(CFLAGS) -o $@ xmlevc.c caskx.o gate3d.o xmminig2.o levit8ra.o \
+         esclev.o lev4d.o drawstring.o drawstr_ps.o lev4d_undo.o gls.a util.a \
+         minig.a $(XM_LIB_PATHS) $(MOTIF_LIBS) $(LIB_PATHS) $(LIBS)
+xm4dg: xm4dgc.c caskx.o xmminig2.o 4dg8ra.o gate4d.o gate3d.o esclev.o \
+         lev4d.o drawstring.o drawstr_ps.o lev4d_undo.o gls.a util.a minig.a
+	$(CC) $(CFLAGS) -o $@ xm4dgc.c gate4d.o gate3d.o caskx.o xmminig2.o \
+         4dg8ra.o esclev.o lev4d.o drawstring.o drawstr_ps.o lev4d_undo.o \
+         gls.a util.a minig.a $(XM_LIB_PATHS) $(MOTIF_LIBS) $(LIB_PATHS) \
+         $(LIBS)
+
+###############################################################################
+#   G T K      programs
+###############################################################################
+
+ifdef GTK2
+         GTKFLAGS = `pkg-config --cflags gtk+-2.0`
+         GTKLIBS  = `pkg-config --cflags --libs gtk+-2.0`
+         C2FLAGS = -DGTK2
+else
+         GTKFLAGS = `gtk-config --cflags`
+         GTKLIBS  = `gtk-config --cflags --libs`
+         C2FLAGS = 
+endif
+
+gtkgls_utils.o: gtkgls_utils.c util.h gls.h mingtk.h
+	$(CC) $(CFLAGS) $(C2FLAGS) -c gtkgls_utils.c $(GTKFLAGS)
+gtkminig2.o: gtkminig2.c
+	$(CC) $(CFLAGS) $(C2FLAGS) -c gtkminig2.c $(GTKFLAGS)
+gtk_esc_undo.o: esc_undo.c
+	$(CC) -DGTK $(CFLAGS) -c -o $@ esc_undo.c
+gtk_lev4d_undo.o: lev4d_undo.c
+	$(CC) -DGTK $(CFLAGS) -c -o $@ lev4d_undo.c
+gtkescc.o: gtk234.c util.h gls.h mingtk.h
+	$(CC) -DGTK2D $(CFLAGS) $(C2FLAGS) -c -o $@ gtk234.c $(GTKFLAGS)
+gtklevc.o: gtk234.c util.h gls.h mingtk.h
+	$(CC) -DGTK3D $(CFLAGS) $(C2FLAGS) -c -o $@ gtk234.c $(GTKFLAGS)
+gtk4dgc.o: gtk234.c util.h gls.h mingtk.h
+	$(CC) -DGTK4D $(CFLAGS) $(C2FLAGS) -c -o $@ gtk234.c $(GTKFLAGS)
+gtkgls: gtkgls.c gtkgls_utils.o drawstring.o drawstr_ps.o gls.a util.a mingtk.a
+	$(CC) $(CFLAGS) $(C2FLAGS) -o $@ gtkgls.c gtkgls_utils.o drawstring.o \
+         drawstr_ps.o gls.a util.a mingtk.a \
+         $(LIB_PATHS) $(LIBS) $(GTKLIBS)
+gtkesc: gtkescc.c gtkgls_utils.o gtkminig2.o escl8ra.o esclev.o drawstring.o \
+         drawstr_ps.o gtk_esc_undo.o gls.a util.a mingtk.a
+	$(CC) $(CFLAGS) $(C2FLAGS) -o $@ gtkescc.c gtkgls_utils.o gtkminig2.o escl8ra.o \
+         esclev.o drawstring.o drawstr_ps.o gtk_esc_undo.o gls.a util.a mingtk.a \
+         $(LIB_PATHS) $(LIBS) $(GTKLIBS)
+gtklev: gtklevc.c gtkgls_utils.o gtkminig2.o gate3d.o levit8ra.o esclev.o lev4d.o \
+         drawstring.o drawstr_ps.o gtk_lev4d_undo.o gls.a util.a mingtk.a
+	$(CC) $(CFLAGS) $(C2FLAGS) -o $@ gtklevc.c gtkgls_utils.o gate3d.o gtkminig2.o levit8ra.o \
+         esclev.o lev4d.o drawstring.o drawstr_ps.o gtk_lev4d_undo.o gls.a util.a mingtk.a \
+         $(LIB_PATHS) $(LIBS) $(GTKLIBS)
+gtk4dg: gtk4dgc.c gtkgls_utils.o gtkminig2.o 4dg8ra.o gate4d.o gate3d.o esclev.o lev4d.o \
+         drawstring.o drawstr_ps.o gtk_lev4d_undo.o gls.a util.a mingtk.a
+	$(CC) $(CFLAGS) $(C2FLAGS) -o $@ gtk4dgc.c gtkgls_utils.o gtkminig2.o 4dg8ra.o gate4d.o gate3d.o \
+         esclev.o lev4d.o drawstring.o drawstr_ps.o gtk_lev4d_undo.o gls.a util.a mingtk.a \
+         $(LIB_PATHS) $(LIBS) $(GTKLIBS)
+
+###############################################################################
+
+his2mat: his2mat.c util.a
+	$(FC) $(CFLAGS) -o $@ his2mat.c util.a $(HISLIBS) $(LIB_PATHS) $(LIBS)
+
+###############################################################################
+#   a r c h i v e s
+###############################################################################
+
+gls.a: FORCE
+	cd libs/gls; $(MAKE) ../../gls.a ${SUB_MAKE_FLAGS}
+minig.a: FORCE
+	cd libs/minig; $(MAKE) ../../minig.a ${SUB_MAKE_FLAGS}
+mingtk.a: FORCE
+	cd libs/mingtk; $(MAKE) ../../mingtk.a ${SUB_MAKE_FLAGS}
+util.a: FORCE
+	cd libs/util; $(MAKE) ../../util.a ${SUB_MAKE_FLAGS}
+
+.c.o: FORCE
+	$(CC) $(CFLAGS) -c $*.c
+
+###############################################################################
+
+FORCE:
+
+clean: 
+	$(RM_CMD)
+clean-exe: 
+	$(RM) $(EXE) $(GTK) $(XM)
+clean-subdirs:
+	cd libs/gls; $(MAKE) clean
+	cd libs/minig; $(MAKE) clean
+	cd libs/mingtk; $(MAKE) clean
+	cd libs/util; $(MAKE) clean
+very-clean:
+	$(RM_CMD) $(EXE) $(GTK) $(XM)
+	cd libs/gls; $(MAKE) very-clean
+	cd libs/minig; $(MAKE) very-clean
+	cd libs/mingtk; $(MAKE) very-clean
+	cd libs/util; $(MAKE) very-clean

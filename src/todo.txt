@@ -1,0 +1,74 @@
+rubber-band move text, gammas, energy-sum, etc
+
+test and document SQ: 4D SDB search in 4dg8r
+
+[ double matrix inversion again? ]
+[ Fitting energies - chisq > chisq1 due to moving peaks ]
+
+move function comfil from esclev.c and gf3_subs.c to util?
+   - get rid of extern FILE *infile etc. in other modules?
+
+---------------------
+ss, rs into escl8r/levit8r/4dg8r help
+
+ask, askfn : set Cancel button label in special cases??
+
+gls/esc/lev/4dg & motif versions - save ~, especially on exit?
+
+***  hpk in ss/rs - is it needed / used?
+
+Dialogs:
+
+Add level  -  E, J, pi, (name of new band)
+Add band?
+Add text?
+new .esc/.lev/.4dg file?
+      - files, bkgnd, ecal, effcal, fwhm & shape
+fit - intensities, energies, both
+    - level_energies?  -- need to split get_fit_lev() out of src/libs/gls/fitl.c
+    - width parameters?
+Settings?  - e.g. turn bell on/off
+
+spectrum display setup:
+ -  apply/reset/cancel, toggle on-off applies typed values, other not-so-nice features
+     - only way to fix is to remember entry values?
+ - remember "disp diff sp" when changing "disp calc. sp"
+ - hide, rather than delete, the dialog on Ok or Cancel?
+
+change spectrum zoom mode to be like ex/xa command
+
+fit level energies does not always scroll listed output
+
+fit width params does not work!
+
+2dp2spn, gatepro3d  into Makefile.common
+
+
+*** Reconcile libs/mingtk/minig.h, libs/minig/minig.h :
+   < int set_minig_color_rgb(int color_num, float red, float green, float blue);
+   > int set_minig_color_rgb(float red, float green, float blue);
+
+-------------------------------------------
+tabbed level schemes
+unix2unix - include .lev & .4dg files
+combine4cub - i.e. "anti-split"
+2d plots
+perl <-> gf3  (popen)
+-------------------------------------------
+
+Functions which are common to escl8ra.c and lev4d.c,
+       and could perhaps be moved to esclevb.c:
+
+float effic(float eg)
+int calc_peaks(void)
+int disp_dat(int iflag)
+int disp_many_sp(void)
+int gate_sum_list(char *ans)
+****** int get_bkgnd(void)
+int get_cal(void)
+int get_list_of_gates(char *ans, int nc, int *outnum, float *outlist,
+int get_shapes(void)
+int num_gate(char *ans, int nc)
+int project(void)
+int write_sp(char *ans, int nc)
+int wspec2(float *spec, char *filnam, char sp_nam_mod, int expand)

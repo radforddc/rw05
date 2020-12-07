@@ -1,0 +1,227 @@
+------------------------------------------------------------------------------
+
+Programs:
+=========
+
+4dg8r        4D hypercube data analysis program; 4D version of levit8r. See 
+               D.C. Radford, Nucl. Instr. Meth. A361(1995)297
+               (=doc/esclev.tex) and also gls
+4play        replay program to make compressed RadWare 4D histograms for
+               4dg8r; see doc/4play.doc
+addesc       adds two .esc escl8r-data matrix files
+addmat       adds two .mat matrix files
+algndiag     transforms a matrix to align the Ex=Ey diagonal 
+               at channel x=2048 for all channels y
+[branch]     deleted; replaced by new features in gls_conv
+calib_ascii  transforms .eff & .cal files to/from ASCII versions
+combine      combines peaks in gf3.sto files to look like one peak, for rdm
+divide       renormalizes intensities in .eng files from energy 
+dixie_gls    plots alignments, routhians, etc. for rotational bands,
+               input from .gls level scheme file
+drawstr_ps   PostScript text-drawing package; used in gls, pdplot, psplot etc.
+effit        fits efficiency calibrations; see doc/gf3.hlp 
+encal        fits energy calibrations; see doc/gf3.hlp
+energy       applies efficiency and energy calibrations to gf3.sto files;
+               see doc/gf3.hlp
+escl8r       2D Ge-Ge coincidence data analysis program. See 
+               D.C. Radford, Nucl. Instr. Meth. A361(1995)297
+               (=doc/esclev.tex) and also gls
+[ex_diff]    deleted; replaced by new features in gls_conv and dixie_gls
+foldout      converts 1/6 cubes to compressed 1/2 cubes for faster gating.
+               Both formats are accepted by levit8r.
+[gf2]        deleted; replaced by gf3
+gf3          graphical spectrum analysis and manipulation. Very flexible.
+               See doc/gf3.hlp, on-line help also available.
+gf3x         version of gf3 with a simple X-windows menu interface
+gls          Graphical Level Scheme editor, for level schemes in .gls format.
+               Also produces postscript figures of (expanded) level scheme.
+               See also gls_conv, and
+               D.C. Radford, Nucl. Instr. Meth. A361(1995)297
+               (=doc/esclev.tex)
+gls_conv     converts .lvl files to .gls files, and .gls files to .lvl,
+               .ags (ASCII), .gra, .ps and .dat files
+incub8r      replay program to make compressed RadWare 3D histograms for
+               levit8r; see doc/incub8r3.doc
+legft        fits Legendre polynomials; see doc/gf3.hlp
+levit8r      3D cube data analysis program; 3D version of escl8r. See 
+               D.C. Radford, Nucl. Instr. Meth. A361(1995)297
+               (=doc/esclev.tex) and also gls
+lufwhm       makes look-up table .tab files for incub8r and 4play; see
+               doc/incub8r3.doc or doc/4play.doc
+make4cub     creates new empty hypercube files; see doc/4play.doc
+[pdeditx]    deleted; replaced by pedit
+[pdplot]     deleted; replaced by plot2ps
+pedit        interactive editor for spectrum/data plots; see doc/plot.hlp
+plot         makes publication-quality plots of spectra; see doc/plot.hlp
+[plotdata]   deleted; replaced by plot
+[plotspec]   deleted; replaced by plot
+pro3d        projects 3D cubes from incub8r to 2D (matrix) and 1D (spectrum)
+               needed for levit8r
+pro4d        projects 4D hypercubes from 4play to 3D (cubes) needed for 4dg8r
+[pseditx]    deleted; replaced by pedit
+pslice       slices matrices perpendicular/parallel to Ex=Ey diagonal
+[psplot]     deleted; replaced by plot2ps
+rdm          calculates RDM ratios for plunger lifetime analysis
+rdmfit       fits lifetimes for plunger lifetime analysis
+sdgen        generates gate-lists for use in looking for SDBs with 
+               levit8r/4dg8r; see doc/sdb_search.txt
+split4cub    splits 4D compressed hypercube files into smaller subfiles
+slice        projects and gates on .mat Ge-Ge coincidence matrices;
+               see doc/slice.hlp
+Source       prepares files for effit and encal; see doc/gf3.hlp
+spec_ascii   converts binary RadWare .spe files to/from ascci format
+statft       fits 1D spectrum with statistical-E1 spectral shape
+subbgm2      | subtract 2D background from .mat matrix files
+subbgmat     |   - see D.C. Radford, Nucl. Instr. Meth. A361(1995)306
+             |    (=doc/bgsub.tex) 
+symmat       symmetrizes .mat matrix files
+unfold       subtracts Compton-scattered background from gamma spectra
+               - see D.C. Radford et al., Nucl. Instr. Meth. A258(1987)111
+unfoldesc    subtracts Compton-scattered background from .esc
+               escl8r-data matrix files
+unix2unix    for byte-swapping binary RadWare files between Unix platforms
+vms2unix     for converting binary RadWare files from VMS to Unix format
+win2tab      converts .win gate files to .tab look-up-table files.
+xm4dg        version of 4dg8r with a Motif GUI interface
+xmesc        version of escl8r with a Motif GUI interface
+xmgf3        version of gf3 with a Motif GUI interface
+xmgls        version of gls with a Motif GUI interface
+xmlev        version of levit8r with a Motif GUI interface
+
+------------------------------------------------------------------------------
+
+Notable files in the RadWare src directory:
+===========================================
+
+.radware.bashrc   | resource scripts to set up the RadWare programs;
+.radwarerc        |   modify one of them to match your system and preferences,
+                      and execute it in your .login or .cshrc file
+
+Makefile.aix            | 
+Makefile.hp-ux9.1       |
+Makefile.install_cp     | 
+Makefile.install_sysv   | 
+Makefile.install_ucb    | Makefiles for different Operating Systems
+Makefile.irix           |   and/or different compilers;
+Makefile.linux          |
+Makefile.osf            |    see README
+Makefile.solaris        | 
+Makefile.static         | 
+Makefile.sun            | 
+Makefile.ultrix         | 
+
+Makefile.common         common Makefile included in all Makefile.sys
+
+4play.inc         | example .inc files for 4play and incub8r;
+incub8r.inc       |   see doc/4play.doc and doc/incub8r3.doc
+
+4play.h           |
+incub8r3.h        | header files included in C source code;
+pro3d.h           |   allow modification of max. cube/hypercube sizes, etc. 
+pro4d.h           |
+
+gls.h             defines MAXGAM, MAXLEV etc.; maximum allowed numbers of
+                    gammas and levels for .gls and .ags level schemes
+                    (defined in LEVELS.PAR in rw97 and earlier)
+levit8r.h         defines MAXCHS; maximum number of channels per side
+                    for cubes (levit8r) and hypercubes (4dg8r)
+                    (defined in 4DG8R.PAR and LEVIT8R.PAR in rw97 and earlier)
+
+get_event.c       get-event header file for 4play.c and incub8r3.c
+get_event_eg2.c   |
+get_event_grid.c  | example header files for 4play.c and incub8r3.c;
+get_event_gs0.c   |   extract events from tape buffers for different
+get_event_gs1.c   |   event-by-event tape formats;
+get_event_rand.c  |   see doc/4play.doc and doc/incub8r3.doc
+
+rwutils.c         RadWare utilities header file
+compress3d.c      minicube compression algorithm for cubes (4 bytes/ch)
+compress4d.c      minicube compression algorithm for hypercubes (2 bytes/ch)
+
+xm234.c      C source code for xmesc, xmlev and xm4dg.
+             Compiled with commands like:
+               cc -c -o xmescc.o -DXM2D xm234.c
+             to generate the different object codes for different programs.
+
+libs/*/      contain source code and Makefiles for *.a subroutine libraries
+
+------------------------------------------------------------------------------
+
+Notable files in the RadWare doc directory:
+===========================================
+
+FAQ.txt            Answers to some Frequently Asked Questions about RadWare
+
+aa_radware.lis     this file
+
+4play.doc          how to make 4D hypercubes with 4play
+incub8r3.doc       how to make 3D cubes with incub8r
+
+ascii_gls.doc      documentation on the .ags level scheme file format
+autocal.doc        documentation about the CA command in gf3
+
+bgsub.tex          latex file for NIM paper on background subtraction
+bgsub*.gif           and figures    NIM A361(1995)306
+esclev.tex         latex file for NIM paper on escl8r/levit8r
+esclev*.gif          and figures    NIM A361(1995)297
+
+gf3.html           documentation on gf3 and associated programs,
+gffig*.ps            and figures
+gfonline.hlp       online-help version of gf3 documentation
+
+plot.hlp           about the "plot" figure-making program
+                     and associated programs pedit and plot2ps
+
+sdb_search.txt     how to use the SDB search feature in levit8r/4dg8r
+slice.hlp          old-fashioned matrix projecting and slicing
+
+------------------------------------------------------------------------------
+
+Files in the RadWare demo directory:
+====================================
+
+4play.inc        | example .inc files for 4play and incub8r;
+incub8r.inc      |   see doc/4play.doc and doc/incub8r3.doc
+
+am241.sou        |
+am243.sou        |
+ba133.sou        | calibration source data files
+co56.sou         |   for use with Source etc.
+eu152.sou        |   See doc/gf3.hlp
+eu_autocal.sou   |
+na24.sou         |
+se75.sou         |
+ta182.sou        |
+y88.sou          |
+
+calib.sou          example file for gf3 CA4 autocalibrate command
+
+demo.aca           ASCII energy calibration file, from calib_ascii
+demo.aef           ASCII efficiency calibration file, from calib_ascii
+demo.ags           ASCII Graphical Level Scheme file, from gls/escl8r etc.
+demo.spe           1D spectrum
+demo.cal           energy calibration file, binary, from encal
+demo.dmp           "dump" file from gf3
+demo.eff           efficiency calibration file, binary, from effit
+demo.gls           Graphical Level Scheme file, binary, from gls/escl8r etc.
+demo.lim           example peak info file for gf3 CA3 autocalibrate command
+demo.rsp           Ge detector response function file for unfold, unfoldesc
+demo1.sin          source data input file for effit/encal
+demo2.sin          source data input file for effit/encal
+demo_drawstr.ps    demonstrates fonts used by drawstring/drawstr_ps
+demo_drawstr.ps    demonstrates fonts used by drawstring/drawstr_ps
+demo_gf3.cmd       command file (macro) for gf3
+demo_plotdata.*    see doc/plot.hlp
+demo_plotspec.*    see doc/plot.hlp
+
+eu.spe             try the new CA command in gf3 on this file,
+                     with eu_autocal.sou
+
+eu.sto             | peak info files greated by gf3 SA command
+demo.sto           |
+
+gfinit.dat         initialization file for gf2; copy it to your home directory
+
+demo_spe.txt       ASCII-format spectrum, from spec_ascii
+
+------------------------------------------------------------------------------

@@ -1,0 +1,67 @@
+#########################################
+#    Makefile for Radware on Solaris
+#    What you need:
+#      1) C compiler
+#########################################
+
+#   make all                to make all programs
+#   make install            to install, if all goes well
+#   make clean              to clean up this dir
+#   make very-clean         to clean up this and all subdirectories,
+#                               leaving only the source code
+
+#------------------------------------------------------------------------
+#    CHANGE  these next two lines if X11 and/or Motif are installed elsewhere 
+
+     X_WIN_TOP  = /usr/openwin
+     MOTIF_TOP  = /usr/dt
+
+#------------------------------------------------------------------------
+#    CHANGE  the next 3 lines to suit your installation preferences
+
+    INSTALL_DIR = ${HOME}/rw_current
+        INSTALL = /usr/sbin/install -m 0644 -u radfordd -g users
+    INSTALL_BIN = /usr/sbin/install -m 0755 -u radfordd -g users
+
+#------------------------------------------------------------------------
+
+#             CC = gcc -O2 -Wall
+#             CC = cc -Xc
+#         CFLAGS = 
+             CC = cc
+             FC = $(CC)
+         CFLAGS = -I$(X_WIN_TOP)/include -I$(MOTIF_TOP)/include
+# -DHAVE_GNU_READLINE
+
+
+         RANLIB = ranlib
+             AR = ar rv
+             RM = -rm -f
+         RM_CMD = $(RM) *.o core *[~%] *.trace
+
+           LIBS = -lX11 -lm
+# -lreadline -lncurses
+     MOTIF_LIBS = -lXm -lMrm -lXt -lgen -lnsl
+
+# -----------------------------------------------------------------------
+#  UNCOMMENT and CHANGE (if necessary)  a line defining HISLIBS
+#  if you have orphlib.a on your system, and you want to be able to read .his files.
+#  UNCOMMENT the line defining FC as gcc if orphlib was compiled using gcc
+#        HISLIBS =  lM77 -lF77 -lsunmath /usr/hhirf/orphlib.a
+#        HISLIBS = /usr/hhirf/orphlib.a
+#             FC = g77
+
+#------------------------------------------------------------------------
+
+      LIB_PATHS = -L. -L$(X_WIN_TOP)/lib
+# -L/opt/SUNWspro/SC3.0.1/lib
+   XM_LIB_PATHS = -L$(MOTIF_TOP)/lib
+
+ SUB_MAKE_FLAGS = "CC = ${CC}" "CFLAGS = ${CFLAGS}" \
+                  "RANLIB = ${RANLIB}" "HISLIBS = ${HISLIBS}"
+
+##############  Methods  ##################
+
+include Makefile.common
+include Makefile.install_sysv
+include Makefile.static

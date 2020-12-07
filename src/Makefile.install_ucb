@@ -1,0 +1,25 @@
+install: install-dir install-dat install-icc install-demo \
+         install-doc install-bin
+
+install-dir:
+	-mkdir -p $(INSTALL_DIR)/bin
+	-mkdir -p $(INSTALL_DIR)/font
+	-mkdir -p $(INSTALL_DIR)/icc
+	-mkdir -p $(INSTALL_DIR)/demo
+	-mkdir -p $(INSTALL_DIR)/doc
+install-dat: install-dir
+	$(INSTALL) ./.radwarerc $(INSTALL_DIR)/.radwarerc
+	$(INSTALL) ./.radware.bashrc $(INSTALL_DIR)/.radware.bashrc
+	$(INSTALL) ../font/font.dat $(INSTALL_DIR)/font/font.dat
+	$(INSTALL) ../font/font_ps.dat $(INSTALL_DIR)/font/font_ps.dat
+install-icc: install-dir
+	$(INSTALL) ../icc/iccndx.dat $(INSTALL_DIR)/icc/iccndx.dat
+	$(INSTALL) ../icc/icctbl.dat $(INSTALL_DIR)/icc/icctbl.dat
+install-demo: install-dir
+	$(INSTALL) ../demo/*.* $(INSTALL_DIR)/demo
+install-doc: install-dir
+	$(INSTALL) ../doc/*.* $(INSTALL_DIR)/doc
+install-bin: install-dir
+	for program in $(EXE) ; \
+	   do $(INSTALL_BIN) $$program $(INSTALL_DIR)/bin; \
+	done

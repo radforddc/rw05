@@ -1,0 +1,36 @@
+   A superdeformed band search routine for cubes has been added to levit8r_gls
+and xmlev. It is invoked from the xmlev menu or by the command SB (Search for
+Band).
+
+   The idea behind it is that you create a list of about 10 - 12 gammas that 
+have about the right spacing for the band you want to search for, and roughly 
+(within 100 keV or so) the right region for the energy of the lowest gamma. You 
+can do this either by using a known band as a template or by writing a little 
+program to create a .lis file of the standard levit8r/escl8r type. If you do 
+this you can create a file with 52 lists, each with a different energy spacing 
+set, which can then be read by the new levit8r.
+
+   In the new levit8r, then, you just say "SB a" to test for a band with the 
+spacing of list a, for example. It goes and looks in the cube at all triple 
+coincidences expected from list a, subtracting the calculated background and 
+coincidences from the known scheme, and it tells you what the average remaining 
+counts are, and the standard deviation of the set of remaining counts. From 
+these it works out a rough figure of merit.
+
+   You then are given the option of stepping up or down in energy with a loop. 
+That is, the energies in the list can all be incremented by say 2 kev, and the 
+new list tested, incremented again, etc, say 25 times to test the full range of 
+energies for the band. The results are written to the screen, but also saved in 
+the print file, so you can set this up in a command file and leave it running 
+overnight.
+
+   Once you have found a candidate band, you can get out of the SB routine and 
+type T a/a to see the sum-of-double-gates spectrum for the new list a (which 
+is modified by the stepping internally to levit8r). You can then fine-tune the 
+gates using the L(ist) command and the cursor on the sum-of gates spectrum.
+
+   Clear as mud, huh? I think all this should be clear once you try it. 
+Remember that it won't find SDB's that are in your .gls level scheme, since the 
+calculated coincidences are removed from the net counts. And remember that you
+can set up gate-list files and command files to leave a search running
+overnight, for example, to test many possible band spacings.

@@ -1,0 +1,73 @@
+#########################################
+#    Makefile for Radware on SG INDY R4600 (IRIX System V.5.3 / V.6.4)
+#    Originally modified by Roscislaw KACZAROWSKI      November 13, 1996
+#                           SINS Swierk, POLAND
+#                           e-mail: slawek@india.cyf.gov.pl   
+#    What you need:
+#      1) C compiler
+#########################################
+
+#   make all                to make all programs
+#   make install            to install, if all goes well
+#   make clean              to clean up this dir
+#   make very-clean         to clean up this and all subdirectories,
+#                               leaving only the source code
+
+#------------------------------------------------------------------------
+#    CHANGE  these next two lines if X11 and/or Motif are installed elsewhere 
+
+      X_WIN_TOP = /usr
+      MOTIF_TOP = /usr
+
+#------------------------------------------------------------------------
+#    CHANGE  the next 3 lines to suit your installation preferences
+
+    INSTALL_DIR = ${HOME}/rw_current
+        INSTALL = install -m 0644 -u radfordd -g users
+    INSTALL_BIN = install -m 0755 -u radfordd -g users
+
+#------------------------------------------------------------------------
+#    CHANGE  the next 2 lines if /usr/lib32 does not exist on your system
+      LIB_PATHS = -L. -L$(X_WIN_TOP)/lib32 -L/usr/lib/terminfo/i/iris-ansi
+   XM_LIB_PATHS = -L$(MOTIF_TOP)/lib32
+#      LIB_PATHS = -L. -L$(X_WIN_TOP)/lib -L/usr/lib/terminfo/i/iris-ansi
+#   XM_LIB_PATHS = -L$(MOTIF_TOP)/lib
+
+#------------------------------------------------------------------------
+
+# RK the next line added; necessary to understand by "make" the "for ... do ..."
+#    instruction in Makefile.common. Check where is "sh" in your computer!
+          SHELL = /sbin/sh
+
+#             CC = gcc -O2 -Wall
+             CC = cc
+             FC = $(CC)
+         CFLAGS = -cckr -g
+# -DHAVE_GNU_READLINE
+
+         RANLIB = ranlib
+             AR = ar rv
+             RM = -rm -f
+         RM_CMD = $(RM) *.o core *[~%] *.trace
+
+           LIBS = -lX11 -lm
+# -lreadline -lncurses
+     MOTIF_LIBS = -lXm -lMrm -lXt
+
+# -----------------------------------------------------------------------
+#  UNCOMMENT and CHANGE (if necessary)  a line defining HISLIBS
+#  if you have orphlib.a on your system, and you want to be able to read .his files.
+#  UNCOMMENT the line defining FC as gcc if orphlib was compiled using gcc
+#        HISLIBS =  -lF77 -lftn /usr/hhirf/orphlib.a
+#        HISLIBS = /usr/hhirf/orphlib.a
+#             FC = g77
+
+#------------------------------------------------------------------------
+
+ SUB_MAKE_FLAGS = "CC = ${CC}" "CFLAGS = ${CFLAGS}" \
+                  "RANLIB = ${RANLIB}" "HISLIBS = ${HISLIBS}"
+
+##############  Methods  ##################
+
+include Makefile.common
+include Makefile.install_sysv

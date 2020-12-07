@@ -1,0 +1,62 @@
+#########################################
+#    Makefile for Radware on SunOS
+#    What you need:
+#      1) C compiler
+#########################################
+
+#   make all                to make all programs
+#   make install            to install, if all goes well
+#   make clean              to clean up this dir
+#   make very-clean         to clean up this and all subdirectories,
+#                               leaving only the source code
+
+#------------------------------------------------------------------------
+#    CHANGE  these next two lines if X11 and/or Motif are installed elsewhere 
+
+      X_WIN_TOP = /dat1/motif/scomd12x
+      MOTIF_TOP = /dat1/motif/scomd12x
+
+#------------------------------------------------------------------------
+#    CHANGE  the next 3 lines to suit your installation preferences
+
+    INSTALL_DIR = ${HOME}/rw_current
+        INSTALL = install -m 0644 -o radfordd -g users
+    INSTALL_BIN = install -m 0755 -o radfordd -g users
+
+#------------------------------------------------------------------------
+
+#             CC = gcc -O2 -Wall
+             CC = cc
+             FC = $(CC)
+         CFLAGS = -Dsun
+
+         RANLIB = ranlib
+             AR = ar rv
+             RM = -rm -f
+         RM_CMD = $(RM) *.o core *[~%] *.trace
+
+           LIBS = -lX11 -lm
+     MOTIF_LIBS = -lXm -lMrm -lXt
+
+# -----------------------------------------------------------------------
+#  UNCOMMENT and CHANGE (if necessary)  a line defining HISLIBS
+#  if you have orphlib.a on your system, and you want to be able to read .his files.
+#  UNCOMMENT the line defining FC as gcc if orphlib was compiled using gcc
+#        HISLIBS =  -lF77 /usr/hhirf/orphlib.a
+#        HISLIBS = /usr/hhirf/orphlib.a
+#             FC = g77
+
+#------------------------------------------------------------------------
+
+      LIB_PATHS = -L. -L$(X_WIN_TOP)/lib
+# -L/opt/SUNWspro/SC2.0.1/cg89
+   XM_LIB_PATHS = -L$(MOTIF_TOP)/lib
+
+SUB_MAKE_FLAGS = "CC = ${CC}" "CFLAGS = ${CFLAGS}" \
+                  "RANLIB = ${RANLIB}" "HISLIBS = ${HISLIBS}"
+
+##############  Methods  ##################
+
+include Makefile.common
+include Makefile.install_ucb
+include Makefile.static

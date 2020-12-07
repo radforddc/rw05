@@ -1,0 +1,1688 @@
+    CA, CA3, CA4 - autoCAlibrate one or many spectra quickly and easily
+    SS, OS       - display many spectra simultaneously
+                 - intended for multi-spectrum files
+    PK           - quick and quite accurate peak energies and areas
+    AF [sensitivity] - very easy and robust AutoFit routine
+    SD [MaxNumofSp]  - sets up automatic spectrum display for whenever
+                       you read in a new spectrum
+    DL lo_ch hi_ch   - alternative way of specifying display limits
+    LIN, LOG         - alternative way of specifying y-axis mode
+    S+, S-           - read next / previous spectrum in a multi-spectrum file
+--------------------------
+>>>F4
+>>>SUMMARY
+Commands available:
+
+AF [S]        Auto-Fit: iteratively peak-find and peak-fit for a selected
+                region of the spectrum [with peak-find sensitivity S]
+NF            set-up a new fit for an arbitrary number of peaks (<16)
+                and do fit
+FT [N]        N=1-15 : set-up for N peaks and do fit
+              [N=0] : do fit using present parameter values
+              N=-1 :  recalculate initial parameter estimates and do fit
+AP            add a new peak to the fit set-up
+DP [N]        delete a peak [peak no. N] from the fit set-up
+WM [N]        change weighting mode (i.e. data error bars)
+                N=1/2/3 : weight with   fit / data / another spectrum
+RF            reset free parameters to their original estimates
+FX [P]        fix additional parameters [par. P] or change fixed value(s)
+FR [P,Q..]    free additional parameters [pars. P,Q..]
+RP N          free (N=1) or fix (N=0) relative peak positions to present values
+RW N          free (N=1) or fix (N=0) relative widths
+SW            change starting FWHM parameters, etc.
+MA [N]        change limits for fit and/or peak positions
+                [N=1-17 : change marker no. N]
+DM            display markers
+DF            display fit for present parameter values
+LP            list parameter values
+SA N          N=1-20 : store fitted centroids and areas as one of 20 data sets
+              N=-1 :   write stored values to disk file gf2.sto
+>>>>PAGE
+SP FN         read in new spectrum  (FN = file name or ID)
+                [SP-1 asks for new initial estimates etc for R, Beta, Step]
+SP/C          read in new spectrum from matrix, using Cursor to enter limits
+S+            read next spectrum in a multi-spectrum file (useful in cmd files)
+S-            read previous spectrum in a multi-spectrum file
+DS [I,J[,K]]  display spectrum   [in Ith of J parts of screen]
+                [I,J = 1,0  or K = 1  :  display whole spectrum]
+OV [I,J[,K]]  overlay spectrum (i.e. no erase) [I,J,K as for DS]
+OV -1         overlay spectrum using same counts scale as previous sp. display
+SS lo,hi      display many spectra (spectrum IDs lo through hi) in many small
+                sub-windows of the graphics window
+OS lo,hi      display many spectra (spectrum IDs lo through hi) overlayed
+SD [max]      sets up new-Spectrum auto-Display for whenever you read
+                a new spectrum [and clears screen after max spectra]
+X0 N          X-axis lower limit (chs) = N
+NX N          N>0 : range of X-axis (chs) = N
+              N=0 : autoscaling of X-axis to display entire spectrum
+Y0 N          Y-axis lower limit (counts) = N
+NY N          N>0 : range of y-axis (counts) = N
+              N=0 : autoscaling of Y-axis to largest counts/ch.
+              N=-1/-2/-3 : linear / square-root / logarithmic Y-axis
+DL lo,hi      alternative way of specifying display limits,
+               equivalent to  "X0 lo"  plus  "NX (hi-lo+1)"
+LIN           alternative way of specifying y-axis mode, same as  "NY -1"
+LOG           alternative way of specifying y-axis mode, same as  "NY -3"
+XA            set both origin (X0) and range (NX) for X-axis
+YA            set both origin (Y0) and range (NY) for Y-axis
+EX            expand display using cursor
+MU            move display up in spectrum using cursor
+MD            move display down in spectrum using cursor
+RD [1]        clear and redraw graphics display, 
+                [redraw and display all channels of spectra]
+CO [N1,N2...] Change color map [to N1,N2...]
+HC            generate hardcopy of graphics screen
+PF            set up peak search to be done on sp. display
+                 (for display purposes only)
+>>>>PAGE
+CR [N]        call cursor  (hit X to exit)  [ display cursor at ch. N ]
+SU [I,J]      sum between two channels using cursor  [ chs I to J ]
+SB            sum between channels, subtracting background
+SC            set counts per ch. using cursor
+PK            gives quick and reasonably accurate peak energies and areas
+                using auto-background-find and peak integration
+AS X          add another spectrum to current sp.    (X = mult. factor)
+AC X          add X counts to each channel in spectrum
+MS X          multiply spectrum by factor X
+MS FN         multiply spectrum by another sp.       (FN = file name)
+DV FN         divide spectrum by another spectrum    (FN = file name)
+AG            adjust gain of spectrum
+CT N          contract spectrum by factor N
+>>>>PAGE
+BG            try to generate a BackGround spectrum for current spectrum
+CA            autocalibrate from source spectra and .sou files
+WS FN         write spectrum to disk                 (FN = file name)
+DU FN         dump parameters, markers etc to disk   (FN = file name)
+IN FN         indump parameters etc from disk        (FN = file name)
+EC            define / change / delete  energy calibration
+EC FN         take calibration from ENCAL par. file  (FN = file name)
+CF FN         take commands from disk command file   (FN = file name)
+                CF CHK : check whether to proceed with command file
+                CF END : end of command file
+                CF CON : continue with present command file
+                CF LOG : log all typed input to create a new command file
+                     (Use CF END to close new file.)
+LU [FN]       create look-up table file              (FN = file name)
+SL [FN]       create slice input file                (FN = file name)
+WI            add window(s) to look-up table or slice file using cursor
+DW            display windows as they are presently defined
+ME            go to menu mode (get commands from menus)
+DE            divide sp. by det. effic. (from an EFFIT.sto file)
+HE            type list of commands and other help topics
+HE/P          send this output to the default printer
+HE [Topic]    on-line help [on command or Topic (2 or 3 letters needed)]
+ST            stop and exit from program
+>>>>END
+>>>TOPICS
+Commands:
+   AC       AF       AG       AP       AS       BG       CA       CA3
+   CA4      CF       CO       CR       CT       DE       DF       DL
+   DM       DP       DS       DU       DV       DW       EC       EX
+   FR       FT       FX       HC       HE       IN       LIN      LOG
+   LP       LU       MA       MD       ME       MS       MU       NF
+   NX       NY       OS       OV       PK       PF       RD       RF
+   RP       RW       SA       SB       SC       SD       SL       SP
+   SS       ST       SU       SW       S+       S-       WI       WM
+   WS       X0       XA       Y0       YA
+
+Figures and tables:
+   F1       F2       F3       F4       F5       F6       F7       F8
+   F9       T1
+
+Other topics:
+   ASSociated programs        DISplay limits             EFFit
+   ENCal                      ENErgy                     FILes
+   GFInit files               INTroduction to gf3        LEGft
+   SOUrce                     SUMmary of commands        TOPics
+>>>>END
+>>>INTRODUCTION
+>>>GELIFT
+>>>GF3
+gf3 is a least-squares peak-fitting program designed primarily for use in
+analyzing gamma-ray spectra from Germanium detectors.  However, it can also be
+used to analyze other types of spectra, such as those from Si(Li) electron
+detectors and silicon surface barrier detectors, and under some circumstances
+may even be used to extract lifetimes from time spectra.  gf3 will fit a
+portion of the spectrum using the sum of up to fifteen peaks on a quadratic
+background.  Each peak is composed of three components:
+
+    (1) a Gaussian,
+    (2) a skewed Gaussian, and
+    (3) a smoothed step function to increase the background on the low-energy
+        side of the peak.  Components (2) and/or (3) can easily be set to zero
+        if not required.
+
+    Component (1), the Gaussian, is usually the main component of the peak, and
+in Ge detectors, physically arises from complete charge collection of a
+photoelectric event in the detector.
+>>>>PAGE
+    Component (2), the skewed Gaussian, arises from incomplete charge
+collection , often due to "trapping" of charge at dislocations in the crystal
+lattice caused by impurities or neutron damage.  If the detector and
+electronics had perfect resolution, component (1) would be a delta-function
+and component (2) would yield an exponential tail on the low-energy side.
+Convolution of this exponential tail with a Gaussian resolution function
+yields the functional form:
+          y = constant
+               * EXP( (x-c)/beta )
+               * ERFC( (x-c)/(SQRT(2)*sigma) + sigma/(SQRT(2)*beta) )
+where ERFC is the complement of the error function, x is the channel number,
+c and sigma are the centroid and standard deviation of the Gaussian in
+component (1), and beta is the decay constant of the exponential.  Beta now
+corresponds to the "skewedness" of the skewed Gaussian.
+    Component (3) arises mainly from Compton scattering of photons INTO the
+detector and from escape of photoelectrons from the Ge crystal, which result in
+a slightly higher background on the low-energy side of the peak.  The
+functional form used in gf3 is:
+             y = constant * ERFC( (x-c)/(SQRT(2)*sigma) )
+which is produced by the convolution of a step function with a Gaussian of
+width sigma.
+    Fig. 1 illustrates these three components, and how they each go to make up
+the total peak shape.  The parameters chosen for the purposes of this display
+are as listed in the figure.
+>>>>PAGE
+    When both R and Beta are allowed to vary during a fit, component (2) will
+usually greatly increase the uncertainties calculated for the peak areas.  This
+is because there is a large cross-correlation, between the heights of
+components (1) and (2), which is not properly taken into account in the
+calculation of the uncertainties.  Since, if Beta is unknown, the relative
+height of the skewed Gaussian is not generally well-determined by the fit, the
+large uncertainty in the relative heights yields a large uncertainty in the
+area.  If, however, at least one of the parameters R and Beta can be fixed at
+some reasonable or previously-determined value, then the quoted error on the
+area is usually reasonable and reliable.
+    For this reason, and for the purpose of consistency, it is suggested that
+at the start of the analysis of a series of spectra, at least one preliminary
+pass be made in the analysis of a source calibration spectrum, to determine a
+set of shape parameters R, Beta and Step which describe the peak shapes well,
+as a function of channel number.  Experience shows that Beta and Step do not
+seem to vary appreciably with gamma-ray energy, and R can usually be
+approximated by a straight line (or combination of two straight lines, one at
+low energies and the other at higher energies) as a function of channel number.
+These values can then be entered as the initial estimates, and one or more of
+the parameters fixed, on entering the program.  Initial estimates may also be
+entered from within the program by typing the command SP-1, or by using the
+initialization file gfinit.dat  (see HELP GFINIT).
+>>>>PAGE
+    An example of a fit to a Ge detector using gf3 is given in Fig. 3.  The
+limits of the fit are shown as the vertical lines from the x-axis to the
+spectrum, and the vertical arrows with numbers below them are peak position
+markers.  The difference between the data and the fit (in counts per channel) is
+shown halfway between the spectrum and the x-axis.  The vertical offset is added
+to the difference to separate it from the x-axis for reasons of visibility.
+  Once you become familiar with gf3, you will probably want to create one of
+the two initialization files gfinit.dat or gfinit.cmd.  The operation of these
+files is described under the command HELP FILES.
+>>>>PAGE
+    THE COMMANDS.
+
+    gf3 is designed to be user-friendly, in that it is as self-prompting and
+self-documenting as possible.  Commands are entered as a two- or
+three-character command word, possibly followed by an optional filename, a
+number, or a series of up to three numbers.  Any additional information
+required to execute the command is requested by the program.  It is usually
+possible to exit gracefully from such a prompt by typing a Carriage Return
+(<rtn>), if you decide not to execute the command after all.  The space
+following the command, separating it from any parameters, is optional.  Also,
+delimiters between integer parameters may generally be either spaces or
+commas.
+    A list of available commands can be obtained on the screen by typing
+HE SUM, or on the printer by typing HE/P.
+>>>>END
+>>>FT
+>>>AF
+>>>NF
+FT (FiT spectrum region)
+AF (Auto-Fit spectrum region)
+NF (set up New Fit)
+
+    In general, AF or NF is used to define new fits to regions of spectra,
+while FT is used to redo fits after they have been modified (with, for
+example, the commands AP, DP, FX, FR, MA etc.).
+    The AF command is a relatively new feature; it provides a very easy and 
+fast way of setting up new fits.  NF is an alternative, less automated,
+way to define fits. Before using either of these commands, you
+should first display on the screen the portion of the spectrum which you wish
+to fit.
+    The command FT has three slightly different functions, depending on whether
+it is followed by an integer that is:
+(a) greater than zero,
+(b) nonexistent (or zero), or
+(c) -1.
+
+>>>>PAGE
+   AF
+
+    The simplest way to define a fit in gf3 is to use the command AF.  This
+command will iteratively search the spectrum for peaks, perform a
+least-squares fit, search again for more peaks (this time on the difference
+between the least-squares fit), re-fit, etc.  This continues until no more
+viable peaks are found.
+    The AF command has one optional, real (float) parameter, namely a relative
+sensitivity to use for the peak search.  Higher sensitivities will generally 
+result in more peaks being included in the final resulting fit.  In general, 
+sensitivities in the range of 1 to 4 are reasonable values.
+    When you run the AF command, you will first be prompted for a relative
+peak search sensitivity, unless it was provided on the command line.  You will
+then be prompted to use the cursor to define lower and upper limits for the
+region of the spectrum to be fitted.  The iterative search and fit procedure
+is then started.
+    In order to quickly obtain consistent results from this routine, it is
+helpful to define good default initial parameters for R, Beta, Step and the
+peak widths, and to define which parameters should by default be fixed; see
+HELP GFINIT FILES, and Figure 2 (HELP F2).  This is especially important for
+this automatic fitting, since, unlike with the NF command, you are not given
+the opportunity to fix additional parameters before the fit is begun.
+However, the AF routine is very robust, especially if the parameters R, Beta
+and Step, together with the relative peak widths, are normally fixed.  The
+demonstration gfinit.dat file (Figure 5; HELP F5) that comes with the RadWare
+distribution provides these features.
+    After the automatic fitting has completed, the program redraws the
+spectrum, and displays the limit, peak positions, and fit. It also lists the
+fitted parameters, areas and energies etc. on the screen.  If you choose to do
+so, you are then free to modify the fit, by for example deleting or adding
+peaks (DP, AP), and/or fixing or freeing parameters (FX, FR, RW etc.), and
+then re-fitting with the modified setup using the FT command.
+>>>>PAGE
+   NF
+   FT n,  where n = 1 - 15
+
+    These commands provide an alternative, less automated, way of defining fits
+to regions of the spectrum.
+    When the command FT is followed by an integer between 1 and 15, this number
+is taken to be the number of peaks required in the fit, and the program will
+proceed to set up for a new fit (as shown in Fig. 3).  You will be prompted
+with "Limits for fit? (hit T to type)", and the cursor will appear on the
+screen.  You may then enter the boundaries of the spectrum region you wish to
+fit by positioning the cursor at the required channels and typing any
+character other than T (e.g. the mouse button or the space bar), once for each
+limit.  The prompt "Peak positions? (hit T to type, R to restart)" will then
+appear, and you should respond by using the cursor to give an approximate
+position for each peak.  If there are limit channels or peak positions that
+you would like to have given a special value, you may type the character T in
+response to the cursor when asked for that position; you will then be prompted
+to type the value.  Limits should be given as integers, but peak positions may
+be real numbers.  If you wish to restart the limit and/or peak position
+definition, type R at one of the peak positions; the program will then return
+to requesting the fit limits.
+    The NF command is equivalent to the FT n command except that you do not
+have to specify the number of peaks that you wish to fit.  You just choose the
+fit limits and then indicate the peak locations until you have entered as many
+peaks as you wish (up to the maximum of 15).  Then, type X or hit the third
+mouse button and the fit will proceed as described below.
+>>>>PAGE
+    The parameters of the fit will then be written on the screen, together
+with the "parameter number" that identifies it.  An asterisk in place of the
+parameter number will denote any parameter that is already fixed at its
+initial estimate; that is, will not be varied in the chi-squared minimization.
+You will be prompted to type the name or number of any (additional) parameters
+that you wish to fix, one per line.  Each time you fix a parameter, you will
+also be asked for the value you wish it to be fixed to.  <Rtn> to this
+question indicates that the parameter should remain at its current value (in
+this case, at the initial estimate).  Note that you may fix any parameter you
+wish, by giving either its number or its name (e.g. 7 or P1).  In addition,
+you may fix the RELATIVE widths and/or peak positions by responding with RW
+("Relative Widths") or RP ("Relative Positions").  In this way you may fix as
+many parameters as you wish, provided that at least two are left to vary in
+the fit.
+    When you have finished fixing parameters, or if you do not wish to fix
+any, type <rtn>.  You will then be prompted for a maximum number of iterations
+to be performed.  If the fitting algorithm has not converged before this
+number of iterations has been completed, the fit will be aborted.  If you are
+unhappy with the way the parameters or markers have been set up (e.g. if you
+would like to fit more peaks, or free parameters etc.), answer 0 to this
+question, and no iterations will be performed.  A <rtn> in response to the
+prompt will select the default of 50 as the maximum number of iterations.
+>>>>PAGE
+    Once you have defined the maximum number of iterations, the fit will
+begin.  When the fit has been completed such information as the limits, number
+of peaks and iterations, and chi-square will be listed on the terminal.
+Provided that the fit converged, these data will also be written to the print
+file.  You will then be asked if you wish to type and/or print the parameters;
+that is, have a listing of the parameter values sent to the screen and/or
+print file.  This print file is labelled gf3.out, and may be saved, deleted,
+or printed and then deleted, on exiting the program.
+
+   FT
+
+    If you type simply FT, without a following number, the program will return
+to the point where it asks you for the maximum number of iterations, and then
+proceeds to do the fitting with the present parameter values as the new
+initial estimates.  This command is used, for example, when the fit has
+previously failed to converge, or you have read in a new spectrum.
+
+   FT -1
+
+    FT -1 has the same effect as the above (FT), except that before the
+fitting is begun the non-fixed parameters will first be reset to their
+original initial estimates.
+>>>>END
+>>>AP
+AP (Add Peak to fit set-up)
+
+    If you have a fit set up, but wish to add a peak to this fit, use the
+command AP.  You will be prompted for the position of the new peak.  The width
+of the new peak will be set to its initial starting value, so if the widths are
+free, but relative widths fixed, you will be given the option of reseting all
+non-fixed widths to their initial values also.  If the new peak is not higher in
+energy than the previous last peak, you may also select to re-order the peaks
+in order of increasing energy.
+>>>>END
+>>>DP
+DP (Delete Peak from fit set-up)
+
+    Use this command to delete a peak from a fit you have set up, if you wish
+to have fewer peaks.  If you do not provide the number of the peak you want
+deleted, the program will prompt you for it.
+>>>>END
+>>>WM
+WM [n] (select Weight Mode for data)
+
+    This command lets you select the algorithm to be used in determining the
+weight to be applied to each channel in the fit.  The integer parametern is by
+default one, so that the standard deviation assigned to the counts in a given
+channel is taken as the result of the fit, as calculated using the current
+parameter values for each iteration.  This option removes excessive weighting
+of channels which have lower counts because of statistical fluctuations, and
+is generally to be preferred.  If n is given as 2, the standard deviation is
+taken as the square root of the number of counts in the data itself.  The
+third option, n = 3, is used in fitting a subtracted spectrum.  Let us
+suppose, for example, that you are fitting a spectrum A, which is computed by
+subtracting a spectrum C, multiplied by a factor x, from spectrum B.  That is,
+if
+
+          counts(A) = counts(B) - x * counts(C)
+
+then
+
+          sigma**2(A) = sigma**2(B) + x**2 * sigma**2(C)
+                      = counts(B) + x**2 * counts(C)
+
+    Thus the correct weighting spectrum may be obtained by computing a fourth
+spectrum which is the sum of B and x**2 times C, and weighting according to
+(the square root of) the counts in this fourth spectrum.  After typing WM 3 you
+will be asked for the filename of this weighting spectrum.
+>>>>END
+>>>FX
+>>>FR
+FX (FiX parameter(s))
+FR (FRee parameter(s))
+
+    These commands are used to fix or free (i.e. unfix) additional parameters,
+or to change the values of parameters already fixed.  If the command is not
+followed by a parameter name or number, the parameters will be listed, with
+asterisks indicating any fixed parameters, and you will be asked which
+parameters you wish to fix or free.  If you wish to fix or free just one
+parameter, you may do so by typing the name or number of that parameter
+following the command.  For FX, you will also be asked for the fixed parameter
+value.  <Rtn> to this question indicates that the parameter should remain at
+its current value.
+    In addition, you may fix or free the RELATIVE widths and/or peak positions
+by giving RW ("Relative Widths") or RP ("Relative Positions") as the parameter
+name.  You may fix as many parameters as you wish, provided that at least two
+independent parameters are left to vary in the fit.  See also HELP RW or
+HELP RP - relative widths/positions.)
+>>>>END
+>>>RP
+>>>RW
+RP (fix or free Relative Positions)
+RW (fix or free Relative Widths)
+
+    RP [0] and RP 1 fix and free, respectively, the relative peak positions,
+for those peaks whose position is not fixed.  Similarly, RW [0] and RW 1 fix
+and free, respectively, the relative peak widths, for those peaks whose width
+is not fixed.  The same effect may be achieved using the FX and FR commands,
+with RP or RW as a parameter name.
+    Fixing the relative positions and/or widths is very useful in analyzing a
+series of spectra for which there may be slight gain shifts, so that the peaks
+may move slightly in absolute position but have a constant spacing.  Fixing the
+relative widths from the start of a fit also has the effect of fitting one
+common width to all peaks in the fitted region.  This is usually an excellent
+approximation, and has the additional advantage of decreasing the uncertainties
+on the peak areas, especially for weak peaks.
+>>>>END
+>>>SW
+SW (change Starting Width parameters etc.)
+
+    This command may be used to change the parameters defining the starting
+FWHM of the peaks, and whether the absolute and relative widths are fixed by
+default.  After the starting width has been changed, you will be asked if you
+wish to reset the free parameters to their new initial estimates.
+>>>>END
+>>>MA
+MA (change MArker locations)
+
+    The MA command is used to change the limits for the fit and/or the peak
+positions.  If followed by an integer N, it will be assumed that you wish to
+change only one marker.  Here N = 1 and 2 for the lower and upper limits,
+respectively, and N = n+2 for the position of peak number n.  If there is no
+integer on the command line, you will be asked if you wish to change the limits
+and/or peak positions, at which time you will be prompted with the cursor for
+the new positions.  Again, you may hit T to type specific values.  After the
+markers have been changed, you will be asked if you wish to reset the free
+parameters to their new initial estimates.
+>>>>END
+>>>LP
+LP (List Parameter values)
+
+    This command simply causes all the present limits, peak position markers
+and parameter values to be listed on the terminal screen.
+>>>>END
+>>>CR
+CR (call or display CursoR)
+
+    This command causes the cursor to be called.  By positioning the cursor and
+typing any character other than X (e.g. a space, or the mouse button), the
+coordinates of any point in the presently displayed axes may be determined.
+The counts in the channel corresponding to the x-coordinate is also given, and
+if a calibration is defined, the energy is listed as well.  X typed in response
+to the cursor will exit from this routine.
+    CR followed by an integer will cause a marker to be displayed in the
+channel corresponding to that integer, and the counts and energy for that
+channel to be listed.
+    By default, the "bell" character is sent to the terminal each time cursor
+input is requested.  If you wish to remove this effect, define the environment
+variable (in Unix) or logical name (in VMS) CURSOR_BELL to be N, F or 0.
+Redefining it to be Y, T or 1 will reactivate the bell.
+>>>>END
+>>>SP
+>>>SP/C
+>>>S+
+>>>S-
+SP    (read new SPectrum)
+SP/C  (read SPectrum from matrix using Cursor)
+S+    (read next spectrum in a multi-spectrum file)
+S-    (read previous spectrum in a multi-spectrum file)
+
+    These commands are used to read a new spectrum from a disk file into the
+program's memory. The default extension for spectrum filenames is .spe, which
+corresponds to the standard gf3 format. The program can also read from the
+RadWare-format .mat and .spn files, and from ORNL .spk files.  A special
+version is also available that will read from ORNL .his files, including
+shared-memory .his files.  For these latter formats, you need to specify the
+filename extension. If the last spectrum you read was from a .spk, .mat or
+.spn file, and you wish to read a different spectrum from that same file,
+there is no need to retype the filename; simply give the number(s)
+corresponding to the desired spectrum or range of y-channels. In these cases,
+the program will read from the last file opened.
+    SP/C (SPectrum using Cursor) will assume that you are reading from, or
+intend to read from, a matrix (.mat) file.  The cursor will be called, and you
+can use it to enter two gate limits from previously displayed spectra.  If the
+last spectrum was not read from a matrix, you will then be prompted for the
+matrix file name.
+    The commands S+ and S- tell gf3 to read the next or previous spectrum from
+a multi-spectrum file.  For example, if the current spectrum is number 10, then
+S+ will read spectrum 11, and S- will read spectrum 9.  These commands are very 
+useful in processing multiple spectra with command files (see CF).
+    The command SP-1 will cause the program to return to giving the listings in
+Fig. 2 (see HELP F2), so that you can change the initial estimates of,
+or by default fix or free, the parameters R, Beta and Step.  SP-1 will have
+this effect regardless of whether you previously used the file gfinit.dat or
+gfinit.cmd to initialize these parameters.  You can also type SP-2 to
+re-execute the file gfinit.dat and/or gfinit.cmd.
+>>>>END
+>>>DS
+>>>OV
+DS (Display Spectrum)
+OV (OVerlay spectrum)
+
+    The commands DS and OV are used to display the current spectrum on the
+graphics screen.  By default, the whole of the screen will be used to display
+the part of the spectrum between channel limits previously defined using the X0
+and NX, or EX, commands.  However, by following the command with up to three
+integers, you may select a certain portion of the screen for the display,
+and/or display the entire spectrum.  In general, DS n m will select the nth of
+m parts of the screen for the display, while a trailing 1 displays the entire
+spectrum.  Thus DS 1, for example, will display the entire spectrum on the
+whole of the screen.  DS 1 4 will display the selected portion of the spectrum
+in the lowest fourth of the screen, while DS 2 3 1 will display the entire
+spectrum in the middle third.
+    The command DS causes the graphics screen to be cleared before the
+spectrum is displayed.  The command OV, which does not clear the screen,
+allows different spectra or portions of spectra to be displayed
+simultaneously.  OV accepts the same integer arguments as DS, so that the
+spectra may be either overlapped or drawn on different parts of the screen.
+    The command OV-1 will overlay a new spectrum using the same _vertical_
+(counts) scale as the previously displayed spectrum.
+    The last display drawn is always considered to be the current display for
+the purposes of the cursor, summing of counts, etc.
+    An example of a spectrum display (with fit and markers) is given in Fig. 3.
+>>>>END
+>>>SS
+>>>OS
+SS lo,hi (display many Stacked Spectra)
+OS lo,hi (display many Overlayed Spectra)
+
+    These commands display many spectra with one command, and are therefore
+intended to be used with multiple-spectrum files, such as .spk files.  SS
+displays each spectrum in its own small subwindow of the graphics window,
+while OS displays all spectra overlayed using the entire graphics window.
+    The form of the command is:
+       SS lo hi
+and
+       OS lo hi
+where lo and hi are spectrum IDs, specifying the range of spectra to be
+displayed.  Values for lo and hi should be supplied for at least the first
+time the comands are run; thereafter, they default to the most recently
+supplied values.
+
+NOTE: SS will usually display several spectra across the width of the screen;
+unfortunately, the graphics routines that use the input cursor are presently
+unable to interpret such displays.  Therefore, after a command SS, other
+commands thant make use of graphics input, such as CR or AF, are disabled
+until a normal spectrum display has been performed.
+>>>>END
+>>>SD
+SD n (set up new-Spectrum auto-Display)
+
+    There may be times when a user would like to have each new spectrum
+automatically displayed in the graphics window as soon as it is read by gf3.
+This feature is provided by the SD command.  When the command
+      SD n
+is entered, the current spectrum is displayed in the first of n regions of the
+graphics window.  Thereafter, until a new SD command is entered, each new
+spectrum read by the program is automatically displayed in the next such
+region of the graphics window.  After n spectra have been displayed, so that
+all regions have been used, the next new spectrum will clear the graphics
+window and then be displayed in the first region again.
+    Normally, to display pairs of spectra on the graphics window, for example,
+the user might do something like:
+      SP spec1
+      DS 1 2
+      SP spec2
+      OV 2 2
+      SP spec3
+      DS 1 2
+      SP spec4
+      OV 2 2
+Using the SD command, the same effect could be obtained with:
+      SP spec1
+      SD 2
+      SP spec2
+      SP spec3
+      SP spec4
+To disable the automatic display of spectra, simply type the command SD
+(or SD 0) again.
+>>>>END
+>>>DL
+>>>LIN
+>>>LOG
+>>>X0
+>>>NX
+>>>Y0
+>>>NY
+>>>XA
+>>>YA
+>>>NX0
+>>>NY0
+>>>DISPLAY LIMITS
+X0, NX, Y0 and NY (set display limits)
+DL, XA, YA        (set both origin and range for X/Y-axis)
+LOG, LIN          (set y-axis mode)
+
+    These commands may be used to set the X-axis (channels) and Y-axis
+(counts) origins and scales for the spectrum display.  In addition, NY 0 (or
+NX 0) will select autoscaling of the Y-axis (or X-axis) to the largest number
+of counts per channel in the displayed spectrum segment, and NY-1, NY-2 and
+NY-3 select a linear, square-root or logarithmic Y-axis, respectively.  When
+the program is first entered, an autoscaled linear Y-axis is in effect by
+default.
+    DL lo, hi (Display Limits command) will set the x-axis range as lo to hi;
+it is quivalent to the pair of commands X0 lo and NX (hi-lo+1).  Both the
+origin and range (number of channels or counts) for either axis can also be
+specified using the commands XA and YA; you will be prompted for the required
+numbers.
+    LIN and LOG are alternative ways of specifying the y-axis scale mode.
+These commands are equivalent to NY-1 and NY-03, respectively.
+>>>>END
+>>>EX
+>>>MU
+>>>MD
+>>>RD
+EX (EXpand display)
+MU (Move display Up in spectrum)
+MD (Move display Down in spectrum)
+RD (ReDraw graphics screen using new display limits)
+
+    The lower and upper limits of the X-axis (channels) may also be changed by
+using the EX, MU and MD commands.  To change both limits, type EX.  The cursor
+will be called, and you must position it and reply with a character, once for
+each of the lower and upper limits.  You may enter them in either order.  To
+change only the lower limit, and leave the number of displayed channels
+unchanged, use MU (Move Up) or MD (Move Down).  You will be asked to provide
+either the new lower limit or new upper limit using the cursor.
+     If you wish to redraw the graphics screen for any reason, you may also use
+the RD (ReDraw) command.  For example, if you have displayed a set of several
+gamma-gamma gates on different parts of the screen, and now wish to see a
+different range of channels, you may use the X0 and NX commands to select the
+range and then redisplay by typing RD.  If you wish to view the entire x-range,
+you may type RD 1; this will autoscale the x-axis.  You can then go back to the
+previous x-axis display limits using RD, or expand on another region.
+    For all these commands, ALL spectra displayed since the last DS command
+will be redrawn, using the same new x-axis limits.  The Y-axis (or -axes) will
+be left unchanged, except possibly in the case of autoscaling.  The screen will
+be automatically cleared before the display is redrawn.
+>>>>END
+>>>DM
+>>>DF
+DM (Display Markers)
+DF (Display Fit)
+
+    These commands simply display the marker positions and fit, as currently
+defined, on top of the most recent display of the spectrum.
+An example of a spectrum displayed with fit and markers is given in Fig. 3.
+The limits of the fit are shown as the vertical lines from the x-axis to the
+spectrum, and the vertical arrows with numbers below them are peak position
+markers.  The difference between the data and the fit (in counts per channel)
+is shown halfway between the spectrum and the x-axis.  The vertical offset is
+added to the difference to separate it from the x-axis for reasons of
+visibility.
+>>>>END
+>>>CO
+CO (change COlor map for display)
+
+    The program uses a "color map" to display spectra in different colors
+according to the value of the parameter I in the DS command.  Thus, for
+example, DS 1 4  will display the spectrum in color 1,  DS 3 5  in color 3,
+etc.  In order to overlay spectra in the same region but in different colors,
+use the CO command to change the color map.  The old map will be listed, and
+the new map requested.  You need provide only those values you wish to change;
+the other values will remain at their old values.  See also HELP on the
+commands DS (Display Spectrum) and OV (OVerlay spectrum).
+>>>>END
+>>>PF
+PF (set up Peak Find for spectrum display)
+
+    You may use this command to set up a peak find routine to list the energy
+(or channel) of significant peaks when you display spectra.  The energy or
+channel is given above a marker on the screen, indicating the position of the
+found peak.  Parameters requested by the program are:
+    FWHM : an estimate of the width (in channels) of the peaks in the
+           region of the spectrum that you wish to display,
+   SIGMA : a threshold for the peak find in standard deviations, and
+       % : a threshold for listing of the peak in percent height of
+           the strongest peak found.
+>>>>END
+>>>SU
+>>>SB
+>>>PK
+SU (SUm counts between channels)
+SB (Sum with Background subtraction)
+PK (quick and quite accurate PeaK energies and areas)
+
+    The commands SU and SB may be used to sum over a range of channels, with
+and without background subtraction, respectively.  By default, the cursor will
+be called up, and you use it to enter the channel limits, in either order.  For
+SB, the subtracted background is taken as the straight line joining the
+positions of the horizontal cross-hair at the two limiting channels.  In each
+case, the centroid and area are computed.
+    You may also sum over a selected range of channels by entering the command
+SU <lim1> <lim2>, where <lim1> and <lim2> are the limiting channel numbers.
+This form of the command does not require the current spectrum to be displayed
+on the screen.
+    The command PK is similar to SB, except that it attempts to automatically
+determine the background below the peak, and the optimum peak integration
+limits.  You will prompted to click with the cursor/mouse to select peaks that
+you wish to integrate; for isolated, reasonably strong peaks, clicking within
+one half-width is usually sufficient.  For each peak integrated, the
+background and integration limits used are drawn on the spectrum display.
+>>>>END
+>>>SC
+SC (Set Counts)
+
+    This command enables the user to alter the counts per channel over a
+selected range of the current spectrum, by specifying the required contents.
+This may be done either through the cursor or by typing the desired value.  If
+the spectrum is displayed, the cursor will be called up repeatedly.  Each pair
+of entries through the cursor specifies a straight line between the cross-hair
+positions; the spectrum counts will be set to correspond to this line.  To exit
+from the SC routine, simply type X.  If, at either cursor entry, you type the
+character T (for Type), you will asked to type limiting channel numbers and the
+required counts per channel for that range.
+>>>>END
+>>>AS
+>>>AC
+AS (Add Spectrum)
+AC (Add Counts)
+
+    The command  AS x  will add another spectrum, multiplied by the arbitrary
+normalization factor x, to the current spectrum.  The program will prompt for
+the filename ( or ID) of the spectrum to be added.  The command AC x  will
+add x counts per channel to the current spectrum.  For both commands, if the
+parameter x is omitted, the program will prompt for it.
+>>>>END
+>>>MS
+>>>DV
+MS (Multiply Spectrum)
+DV (Divide Spectrum)
+
+    The command  MS x  will multiply the current spectrum by the factor x.  The
+command  MS <filename>  will multiply the current spectrum by the contents of
+the spectrum specified by <filename>.  The command  DV <filename> will divide
+the current spectrum by the contents of the spectrum specified by <filename>.
+>>>>END
+>>>CT
+CT n (ConTract spectrum by factor n)
+
+    This command contracts the current spectrum by the integer factor n.
+Channels 0 through n-1 will be summed into channel 0, etc.  The number of
+channels in the spectrum will also be divided by n.  If an energy calibration
+is defined, you are given the option of selecting a new calibration calculated
+to correspond to the new (contracted) spectrum.
+>>>>END
+>>>BG
+BG (generate BackGround spectrum)
+    Programs such as escl8r and subbgmat require a background spectrum as well
+as the projection of a coincidence data set, in order to subtract background in
+two (or more) dimensions.  The user can draw such a background spectrum by
+hand, using the SC command, or try this BG command to generate a background
+spectrum automatically.
+    This auto-background procedure uses a multiple of the "starting width" at
+each channel as a length scale for finding the background.  If the results are
+unsatisfactory, check the width parameters with the SW command.  You are also
+given the option of varying the length scale factor to fine-tune the background
+to your taste.
+>>>>END
+>>>CA
+>>>CA3
+>>>CA4
+CA, CA3, CA4 (autoCAlibrate from source spectra)
+
+    In the 1996 release of RadWare (rw96), a new function was added to GF2, to
+automatically extract areas and centroids of peaks from Ge detector source
+calibration spectra.  By the 1999 release (rw99 and later), this feature had
+been expanded to allow the user a choice of at least three different ways to
+do semi-automatic detector calibrations.
+
+Automatic Calibration Routines in gf3:
+    1. CA  - Autocalibrate Spectrum (1)
+    2. CA3 - Autocalibrate Spectrum (3)
+    3. CA4 - Autocalibrate Spectrum (4)
+
+More details follow.
+>>>>PAGE
+CA command; Autocalibrate Spectrum (1)
+
+    The first such routine is run by the CA command (autoCAlibrate), or
+Autocalibrate Spectrum (1) option in the info menu of xmgf3 or gf3x.
+    This routine uses a source data (.sou) file to define what peaks are
+expected to be present in the spectrum.  It then automatically finds the
+peaks, defines backgrounds and integrates to get centroids and areas.  The
+results are stored in a Source INput (.sin) file, and energy calibration fits
+may be optionally saved in an energy calibration (.cal) file.  The command is
+intended to ease the extraction of energy and efficiency calibrations, and to
+assist in gain-matching detectors.  It operates on a single spectrum; energy
+calibrations for many spectra in multi-spectrum files can be automatically
+generated using CA3, see (3) below.
+    To use the command, read in the spectrum you want to analyze and type CA.
+You will be prompted for the name of a .sou source data file; you can use the
+standard .sou files that come with radware, although it is usually necessary
+to edit those for more complex sources (e.g. 152Eu, 133Ba) to remove some
+doublets etc.  An example of such an edited file for 152Eu is given as
+demo/eu_autocal.sou.
+>>>>PAGE
+    The program will then find several peaks, work out the energy dispersion
+and attempt to integrate over all the peaks listed in the .sou file.  The
+results will be displayed on the graphics window, and you will be requested to
+press <return> to proceed.  Next a plot of the centroids, less the value
+expected if the spectrum was perfectly linear in energy, will be displayed on
+an expanded scale.  Linear and quadratic fits will be performed to the results
+of the peak integration, and displayed on this plot; you will be given the
+opportunity to save the results in an energy calibration file with the same
+filename as the spectrum but with the filename extension changed to .aca.
+    The program also automatically saves the results of the peak integration
+in a standard radware-type .sin file, again with the same filename as the
+spectrum but with the filename extension changed to .sin.  This file may be
+used to input the data to the programs effit and encal, or to deduce
+gain-correction coefficients for gain-matching different detectors.
+    If the command seems to have trouble finding the peaks, or integrating
+over what you gauge to be the correct region, try playing with the PeakFind
+(PF) parameters.  It uses the FWHM parameter from PF to guess at the width of
+the region of the spectrum that it should inspect for peaks.  If you have
+strong contaminant peaks at high energies in your spectrum, that could also
+confuse the peak-matching routine; you could add the contaminant to your .sou
+file or simply use SC to remove the offending peak(s) from the spectrum.
+>>>>PAGE
+CA3 command; Autocalibrate Spectrum (3)
+
+    The second auto-calibration routine is run by the CA3 command, or
+Autocalibrate Spectrum (3) option in the info menu of xmgf3 or gf3x.
+    Unlike the first routine (1) above, this mode of calibration is for energy
+calibrations only, and uses just a simple two-point calibration.  That is, it
+uses the energies and centroids of only two peaks to determine the energy
+dispersion and offset for each spectrum.  Its main advantage is one of speed
+and reliability for multiple-spectrum files (such as .spk or .spn files); it
+is intended to produce calibrations for many spectra simultaneously.
+    This routine uses a "peak limits and info" (.lim) file to define ranges of
+spectra numbers to be processed, the energy and a range of channels to search
+for each of two different peaks, and an approximate FWHM for the peaks.  An
+example of such a .lim file is given as demo/demo.lim, and listed below:
+
+* limits for co60 2-point calib at ~0.35 keV/ch hires, 2keV/ch lores
+* splo sphi   eg1   chlo1 chhi1     eg2   chlo2 chhi2  approx.fwhm
+    1,   4, 1173.24, 3000, 3300,  1332.51, 3350, 3900,    7
+    9,  11, 1173.24,  500,  620,  1332.51,  620,  720,   15
+
+    Here spectra IDs 1 through 4 will be searched for gamma 1173.24 keV over
+channels 3000 to 3300, and then for gamma 1332.51 keV over channels 3350 to
+3900, with a FWHM of around 7 chs.  Likewise spectra IDs 9 through 11 will be
+searched for gamma 1173.24 keV over channels 500 to 620, and for gamma 1332.51
+keV over channels 620 to 720, with a FWHM of around 15 chs.  Any number of
+spectra, with different resolutions and energy dispersions, can be treated
+this way in a single .lim file.  Such .lim files must contain a minimum of one
+data line, but there is no maximum line count.  Also, lines beginning with an
+asterisk (*) are treated as comments.
+>>>>PAGE
+    To run the CA3 routine, open the multiple-spectrum file you wish to
+process, by reading in at least one spectrum from it.  Then type CA3, or
+select the appropriate menu item.  The program will proceed through the peaks
+and through the .lim file data lines (spectrum ID ranges), displaying the
+integrated peaks and calculating the energy calibration coefficients for each
+spectrum.  The results will be stored in a text-format output file with the
+filename extension .ca3, and containing one line for each spectrum ID
+successfully processed.
+    An example of a .ca3 output file follows:
+
+ * gf3 autocalibrate type-3 output,  01-Apr-99 15:54:05
+ * SP       A          B         CENT1   FWHM1     CENT2   FWHM2
+    1    -2.033    .25462615    486.266   1.63   5537.703   2.31
+    2     -.182    .26025367    468.639   1.68   5410.848   2.21
+    3    -2.612    .24683824    503.952   1.68   5714.766   2.26
+    4     1.876    .25990814    461.343   1.90   5410.122   2.40
+    5      .849    .24480446    494.003   1.61   5748.106   2.20
+    6    -2.091    .24093580    514.138   1.49   5852.606   2.41
+    7      .069    .24572888    495.318   1.52   5729.656   2.29
+    8    -2.861    .23925383    520.968   1.55   5896.966   2.35
+
+    Here the columns correspond to spectrum ID, energy offset and dispersion
+(in keV and keV/ch), and centroid (in chs) and FWHM (in keV) for the two
+peaks.  This example was generated by processing 152Eu spectra.
+>>>>PAGE
+CA4 command; Autocalibrate Spectrum (4)
+
+    A third type of auto-calibration routine is run by the CA4 command, or
+Autocalibrate Spectrum (4) option in the info menu of xmgf3 or gf3x.  It is
+intended for an easy, simple two-point energy calibration of a single
+spectrum, when the user knows the energies of at least two peaks.
+    To run the CA4 routine, read in and display the spectrum spectrum, then
+type CA4 or select the appropriate menu item.  You will be prompted to select
+two peaks with the graphics cursor; to select a peak, simply click on the
+spectrum within one FWHM of the centroid.  You will then be asked to provide
+the energies of the two peaks.  The energy calibration is then deduced, and
+becomes the defined gf3 calibration.
+    In order to facilitate providing the energies of the two peaks, you can
+create a file called calib.sou, either in the current working directory or in
+your home directory.  Use the standard format for .sou files (see the demo
+directory for examples) and place in the file any gamma-ray lines that you
+wish to use for such calibrations.  If a calib.sou file is found by the CA4
+routine, the energies of the gammas listed in it will be printed on the
+screen, together with one-letter IDs for each energy.  You can then use that
+ID to specify the energy, rather than typing the energy itself.
+    An example calib.sou is given in the demo directory.
+>>>>END
+>>>AG
+AG (Adjust Gain of spectrum)
+
+    The command AG adjusts the energy dispersion of the current spectrum by
+applying a linear transformation to the position of each channel.  It can be
+used, for example, to match the gains of spectra from different detectors.
+    The program will prompt for four channel numbers, OLDCH1, OLDCH2, NEWCH1
+and NEWCH2.  These numbers define the linear transformation, and should be real
+numbers or integers separated by commas.  The gain and offset of the current
+spectrum will be adjusted so that if there had been peaks centered at channels
+OLDCH1 and OLDCH2, those peaks will now be centered at NEWCH1 and NEWCH2,
+respectively.  The transformation applied is:
+
+              x' = A + B*x,
+
+where x is the channel number,  B = (OLDCH2-OLDCH1)/(NEWCH2-NEWCH1)  and
+A = OLDCH2 - B*NEWCH2.  The inversion of spectra, i.e. a negative value of B,
+is not allowed.
+    The user is warned that, since the adjustment may require the contents of
+one channel to be divided between two or more channels in the new spectrum,
+multiple uses of the AG command have the effect of "smoothing" the spectrum,
+and should hence generally be avoided.
+>>>>END
+>>>WS
+WS (Write Spectrum)
+
+    This command writes the current spectrum to a disk file.  If the file name
+is omitted from the command line, the program will prompt for it.  You will
+also be asked for a spectrum name, or title, which will be written to the file
+along with the data.  The output file always has the default extension .spe.
+    Note that gf3 cannot write to .spk, .mat or .spn files.
+>>>>END
+>>>DU
+>>>IN
+DU (DUmp program set-up)
+IN (IN-dump program set-up)
+
+    These commands are used to dump (write) and in-dump (read) the current
+gf3 status to and from disk files.  The default extension for gf3 dump
+files is .dmp.  All relevant information is stored in these files, including:
+   i) the current parameters for the fit, and which parameters are fixed;
+  ii) the specified initial estimates for R, BETA, STEP and peak FWHM;
+ iii) the display parameters (X0, NX, Y0, NY etc, and the CO and PF values);
+  iv) the energy calibration; and
+   v) any fitted areas and centroids that have been saved using the SA command,
+      but not yet written to disk (see HELP SA - Store Areas and centroids from
+      fit).  These data are always written to the dump file; however, when
+      reading the file (in-dumping), you will be given the option of reading
+      them from disk or disregarding them, thus leaving the current stored
+      areas and centroids unchanged.
+   The only things not stored and restored are the spectrum itself, and the
+"weight" spectrum, if any.
+>>>>PAGE
+    Dump files are very useful, since they save fits for later reference, use
+and/or improvement.  For example, during the analysis of a series of spectra,
+it is often a good idea to fit the sum of all the spectra initially, followed
+by individual fits to each spectrum with the (relative or absolute) positions
+and widths fixed from the fit to the sum spectrum.  Dump files may then be used
+to verify that the proposed fit is satisfactory for all of the individual
+spectra.  The series of individual fits may be done using a command file;
+see HELP CF (execute/create Command File).
+>>>>END
+>>>SA
+SA (Store Areas and centroids from fit)
+
+    This command may be used to build a file of peak centroids and areas for
+later analysis, using for example the programs SOURCE, ENCAL, EFFIT, ENERGY,
+RDMFIT and/or LEGFT; see HELP ASSociated programs.  When you have a
+satisfactory fit to a spectrum segment, and wish to store the areas and
+centroids, type SA followed by an integer in the range 1 to 20.  This will save
+the areas and centroids in the program's memory, but not yet write them to
+disk.  You may then fit the same peaks in a second and third, etc., spectrum,
+up to a maximum of twenty, saving the areas and centroids each time by using a
+different integer after the SA command.  Once all required spectra have been
+fitted and the results saved, type SA-1 to write all of the saved data to the
+disk file gf2.sto.  If this file exists, the new data will be appended to the
+end of it; otherwise, a new file will be created.  The numbers used in the
+previous SA commands will also appear in the file, to help identify the
+respective spectra.
+    This procedure, of not writing the results to disk immediately following
+the fit, is followed to allow a re-ordering of the data in the gf2.sto file.
+It is usually advantageous to have the results for all spectra listed together
+for each peak (rather than all peaks together for each spectrum).  However, it
+does have the disadvantage of requiring an additional command to write the
+spectra to disk, so that even if only one spectrum is being analyzed, the
+results must be saved using the TWO commands  SA 1  and  SA -1.
+>>>>END
+>>>EC
+EC (define Energy Calibration)
+
+    An energy calibration for the current spectrum may be defined, modified or
+removed using the command EC.  When followed by the name of a file, the command
+causes the calibration to be taken from the ENCAL output file specified by this
+filename.  See  also HELP ENCal.  The default extension for ENCAL files is
+.cal.  If the command is not followed by a filename, the program will ask if
+you wish to have a calibration.  If so, the current calibration parameters for
+the calibration will be listed, and you are given the option of modifying them,
+by either typing the new values or reading them from a .cal file.  When typing
+the numbers by hand, you are limited to at most a quadratic calibration (i.e. 
+three terms); however, calibrations from a .cal file may be up to a fifth-order
+polynomial.
+>>>>END
+>>>CF
+CF (execute/create Command File)
+
+    Batch processing of sets of commands within gf3 is achieved through the
+use of the command CF to execute command files.  The default extension for
+these files is .cmd.  They may be written using the system editor utility, and
+can include any valid gf3 commands.  Be sure, however, to include valid
+responses to any prompts or questions the program may ask, since while the
+command file is being executed, it will replace the keyboard as the source of
+all user responses, with the exception of those involving the graphics cursor.
+If the program reads a command it does not recognize, you will be informed of
+this and asked if you wish to continue with the file execution.
+    If you put  CF CHK  (Command File CHecK) as a command entry in your file,
+execution will be interrupted at that point, and you will be given the option
+of continuing or stopping execution.  This may be used, for example, to verify
+the quality of fits while the command file is being used to automate the
+fitting of a series of related spectra.  If you elect to stop the execution of
+the file, you may resume at the same point in the same file at a later time by
+typing the command  CF CON (Command File CONtinue).  In addition, the graphics
+screen may be cleared from within the command file by use of the command 
+CF ERA (Command File ERAse).
+    You may create command files directly in gf3, without using the system
+editor, by typing  CF LOG.  This will cause all typed commands and responses to
+be logged to a new command file, with a filename specified by you.  You may
+enter the commands  CF CHK  and  CF ERA  into the file simply by typing them,
+and the commands  CF END,  CF filename  and  CF LOG  will all close the new
+file.  NOTE that these last commands will also be entered into the file, and
+executed when the file is called.
+>>>>END
+>>>HE
+HE (HElp; list and describe commands etc.)
+
+    The command HE or HE TOPics lists the topics with help information
+available in gf3, and prompts for a topic to be explored.  The command
+HE SUMmary causes a summary of the valid gf3 commands to be listed on the
+terminal screen.  The command HE/P causes the same listing to be printed on the
+default printer.  This listing is reproduced in Fig. 4.
+>>>>END
+>>>HC
+HC (make HardCopy of graphics screen)
+
+    This command generates a postscript file that attempts to reproduce the
+current contents of the graphics display window as accurately as possible.
+The file contains vector graphics and displayed text, rather than a bit-map,
+so it is generally of better quality and smaller in size than a hardcopy
+produced by, for example, capturing the graphics window with a program such as
+xv.
+    When you run the HC command, you will be asked several questions.  The
+first of these is "Use color? (Y/N)".  If you answer No (the default), then
+the postscript file will be simple black and white.  Secondly, you will be
+asked for a file name to use for the postscript output file, with mhc.ps
+provided as a default.  You are also given the option of saving the postscript
+file, or printing and deleting it.  If you choose the print option, you will
+then be prompted to supply any additional flags for the lpr or PRINT command
+line, for example to specify which printer to use.
+    An example of the use of HC is as follows:
+
+Use color? (Y/N)y
+Output file name = ? (rtn for mhc.ps)
+   (default .ext = .ps)junk
+Print and delete the postscript file now? (Y/N)
+                (If No, the file will be saved)y
+Enter any required lpr flags
+     (e.g.: "-Pps02 -h", rtn for "")-Ppsc03
+Printing with system command: lpr -Ppsc03 junk.ps
+
+>>>>END
+>>>RF
+RF (Reset Free parameters)
+
+    RF causes the non-fixed parameters to be reset to their original initial
+estimates.
+>>>>END
+>>>ST
+ST (STop and exit from program)
+
+    After checking that you do indeed wish to stop program execution, this
+command will cause the program to offer you the choice of having the print
+output file gf3.out either printed and then deleted, saved for later use, or
+simply deleted.  Execution of the program will then be terminated.
+>>>>END
+>>>LU
+LU [FN] (create/modify Look-Up table) (FN = file name )
+
+    This command allows the user to create a look-up file of numerically
+labeled regions (gates), that can be used in tape replay tasks (e.g. INCUB8R,
+MATTRIP, and  MATBGO).  Windows can be added to the file, or overwritten,
+through the use of the command WI.  If the file FN does not exist, a new
+look-up table, initially containing only zeroes, is created.  If it does exist,
+the user is allowed the option of reading and modifying it.
+>>>>END
+>>>SL
+SL [FN] (create/modify SLice input file) (FN = file name )
+
+    This command allows the user to create a gate file for use by the program
+SLICE, to "slice", or set gates on, 2-dimensional matrices.  Windows can be
+added through the use of the command WI.  If the file FN does not exist, a new
+(empty) file will be created.  If it does exist, the user is allowed the option
+of reading and adding to it.  Windows saved to the file specify both the upper
+and lower limits, and a peak-to-total ratio.  The user specifies the background
+used to calculate this ratio by the vertical position of the cursor when adding
+windows.
+>>>>END
+>>>WI
+WI  (add WIndow(s) to look-up table or slice file using cursor)
+
+    Adds a window to the currently defined file (Look-up or Slice).  The cursor
+is called, and is used to specify the upper and lower limits of each window.
+For each window,in LU mode, the user is also asked for a look-up value to be
+inserted in the table for the appropriate range of channels.  In SLice mode,
+the y position of the cursor is used to define a background for the gate, used
+to calculate the peak-to-total ratio.
+>>>>END
+>>>DW
+DW  (Display Windows as they are presently defined)
+
+    Displays the ranges and window labels of the currently defined window file
+(either SLice or Look-Up).  For SLice files, a background calculated from the
+stored peak-to-total ratio is also displayed.
+>>>>END
+>>>ME
+ME  (go to MEnu command mode)
+
+    Switches from Command mode to Menu mode in gf3x version of the program.
+>>>>END
+>>>DE
+DE  (Divide by Efficiency)
+
+    Divides the current spectrum by a detector efficiency.  The parameters
+defining this efficiency should have been stored in an .eff file from program
+EFFIT.  See also HElp EFFit.
+>>>>END
+>>>GFINIT
+INITIALIZATION FILES
+
+gf3 supports two types of initialization files, gfinit.dat and gfinit.cmd.  On
+start-up of the program, gf3 searches for these two files on the default disk
+directory and, failing that, in your home (login) directory.  If either file
+is found, the listing discussed in sections 1 and 2 above, and shown in
+Fig. 2, is not given by the program (see HELP gf3 & HELP F2).  Instead, the
+relevant initialization data and options are read from the file gfinit.dat
+and/or assumed to be provided by execution of the command file gfinit.cmd. The
+operation of these files is discussed in more detail below.
+>>>>PAGE
+GFINIT.DAT
+    If the file gfinit.dat exists in the default directory, it is read to
+provide answers to the questions asked in Fig. 2.  If not, your home (login)
+directory is also searched for a file gfinit.dat.  There must be at least two
+lines, the first containing the values A, B, C, D and E, and the second
+containing ones and zeroes to specify whether the parameters R, Beta and Step
+are by default free or fixed, respectively.  Optional third and fourth lines
+may specify the parameterization of the starting width, and ones or zeroes to
+specify whether the absolute and relative widths are by default to be free or
+fixed, respectively.
+    An example of a gfinit.dat file is given in Fig. 5(a) (see HELP F5). This
+example specifies initial estimates of the parameters R, Beta and Step such
+that the fitted peaks have purely Gaussian shape, with no step function
+increasing the background below the peaks, and also specifies that these
+parameters are by default always fixed.  The initialization provided by this
+example is equivalent to that given by the answers quoted in Fig. 2.
+    If both files gfinit.dat and gfinit.cmd exist, gfinit.dat is read first, as
+above, and then the command file gfinit.cmd is executed. NOTE that if an
+in-dump is performed by gfinit.cmd, the initial estimates specified in
+gfinit.dat are replaced by those of the dump file; see HELP DU / IN
+(DUmp program set-up / IN-dump program set-up).
+>>>>PAGE
+GFINIT.CMD
+    If the file gfinit.cmd exists in the default directory, it is treated
+as a command file and executed on entry to the program.  It is up to the user
+to ensure that the program receives all the required initialization data,
+either by providing a gfinit.dat file as well, or by having gfinit.cmd in-dump
+a specified .dmp file created earlier.  The file gfinit.cmd may contain any
+valid gf3 commands.
+    An example of a gfinit.cmd file is given in Fig. 5(b) (see HELP F5). This
+example uses initial estimates of the parameters R, Beta, Step and starting
+FWHM stored in a disk file gfinit.dmp, and also reads in a spectrum and
+displays it, etc.
+    If both files gfinit.dat and gfinit.cmd exist, gfinit.dat is read first, as
+above, and then the command file gfinit.cmd is executed.  NOTE that if an
+in-dump is performed by gfinit.cmd, the initial estimates specified in
+gfinit.dat are replaced by those of the dump file; see HELP DU / IN
+(DUmp program set-up / IN-dump program set-up).
+>>>>END
+>>>ASSOCIATED PROGRAMS 
+ASSOCIATED PROGRAMS TO PROCESS GF2.STO FILES.
+
+    The programs SOURCE, ENCAL, EFFIT, ENERGY and LEGFT form a package designed
+to analyze gf2.sto files.  The first three of these are used to analyze files
+from the fitting of source spectra, to determine the efficiency and energy
+calibrations of detectors.  ENERGY will then process a file from the fitting of
+one or more other spectra (e.g., in-beam spectra) to calculate the energies
+and/or relative intensities of the gamma rays from the stored centroids and
+areas, using the calibrations derived from ENCAL and EFFIT.  LEGFT fits angular
+distributions of gamma rays, and uses the output files of ENERGY as input, with
+some extra lines added at the top of the file with a text editor to provide
+angles and normalizations, etc.
+    Descriptions of these five programs can be obtained by typing HELP SOUrce,
+EFFit, ENCal, ENErgy or LEGft.  Some default filename extensions for files used
+by these and other programs associated with gf3 are listed in Table 1 (see
+HELP T1).
+>>>>END
+>>>SOURCE
+SOURCE - to create a calibration input (.sin) file
+
+    This program combines a gf2.sto file, from the analysis of a source
+spectrum, with a data file containing the energies and relative intensities of
+the source gamma rays (default filename extension .sou).  It thereby creates a
+file to be used for input to the programs ENCAL and EFFIT (default filename
+extension .sin).  An example of a source data file for Eu-152 (file eu152.sou)
+is listed as Fig. 6  (See HELP F6).
+    Before running SOURCE, the gf2.sto file should be edited so that the
+lines match one-to-one with the lines in the source data file.  If the .sou
+file includes gamma rays which you have not fitted, insert a blank line.  The
+program will then ignore those lines in both files.  All lines in the .sto
+file corresponding to contaminant gamma rays, or lines not included in the
+.sou file, should of course be deleted.
+    When you run SOURCE, the program will prompt you for the name of the
+gf2.sto file (so that you may rename such files as you create them), the
+name of the (.sou) source data file, and a name for the new (.sin) file to be
+created.  It will also ask for a title, which is written to the new file and
+read by ENCAL and EFFIT.
+>>>>END
+>>>ENCAL
+ENCAL - to fit an energy calibration
+
+    ENCAL uses the output files from SOURCE (.sin files) as its input.  It will
+ask you for the name of this file, read in the data, and perform polynomial
+fits to the energy calibration.  The order of the fitted polynomial may be from
+one (i.e. a linear fit) to five.  You are given the option of writing the
+fitted parameters to a disk file (default filename extension .cal), which may
+then be used to input the energy calibration conveniently to programs such as
+gf3 and ENERGY.  When you exit from ENCAL, the results of all fits will be
+listed on the printer.
+>>>>END
+>>>EFFIT
+EFFIT - to fit an efficiency calibration
+
+    EFFIT is, in many ways, similar to gf3 in architecture.  The command HE
+will again generate a listing of commands; this listing is reproduced in Fig. 7
+(see HELP F7).  Input data is taken from (.sin) files generated by SOURCE, and
+several such files may be read and combined using normalization factors.  An
+example of a fit to the efficiency calibration of a coaxial Ge detector is
+given in Fig. 8.  This calibration was obtained using Eu-152 and Ba-133 sources.
+    If you wish to fit the data in more than one .sin file simultaneously, read
+in the first file as you enter the program, or using the command ND (New
+Data). Fit that data as best you can using the FT (FiT) command, and then use
+the AD (Add Data) command to add the data in the second file.  The efficiencies
+calculated from the data in this second file will be listed, together with the
+ratio of the present fit (i.e. from the first file) to these new values.  The
+program will then prompt for a normalization factor.  If you have absolute
+source intensities, you may calculate the normalization from those.  Otherwise,
+take the average of several of the listed ratios, for energies which overlap
+well with the data in the first file, to obtain an empirical normalization. 
+You may then fit the combined data of the two files and add a third data set,
+etc, as required.
+>>>>PAGE
+    The seven parameters of the calibration that may be fitted are labelled A
+through G.  A, B and C describe the efficiency at low energies, so that on a
+log-log plot the efficiency curve is:     A + B*x + C*x*x,  i.e.
+
+        log(eff) = A + B*log(EG/E1) + C*{log(EG/E1)}**2
+
+at low energies.  Similarly, D, E and F describe the efficiency at high
+energies,
+
+        log(eff) = D + E*log(EG/E2) + F*{log(EG/E2)}**2
+
+    at high energies.  Here EG is the gamma-ray energy, and the constants E1
+and E2 have the values 100 keV and 1 MeV, respectively.  The parameter C is
+in general not required, and is by default fixed to zero.  G is an interaction
+parameter between the two regions; the larger G is, the sharper will be the
+turnover at the top, between the two curves.  If the efficiency turns over
+gently, G will be small.
+    The complete functional form for the efficiency is:
+
+     eff = EXP{ [ (A+B*x+C*x*x)**(-G) + (D+E*y+F*y*y)**(-G) ]**(-1/G) },
+
+where     x = log(EG/E1)    and     y = log(EG/E2).
+>>>>PAGE
+    Experience shows that, unless there is a good reason to do otherwise, the
+parameter C should usually be left fixed to zero.  In addition, many gamma-ray
+sources do not provide enough data points at low energy to unambiguously
+determine both B and G, so that at least one of these parameters may also have
+to be fixed before beginning the fit.  If more data that better defines the
+turnover region is added later, B and/or G may then be freed.  Typical values
+for B and G, for coaxial Ge detectors, are of the order 1 and 20, respectively.
+    When you have obtained a satisfactory fit to your data, use the WP (Write
+Parameters) command to store the parameters in a disk file (default filename
+extension .eff).  This file may later be used to input the efficiency
+calibration to ENERGY, to convert peak areas to relative intensities.
+>>>>END
+>>>ENERGY
+ENERGY - to convert centroids to energies, and areas to intensities
+
+    This program was written to process gf2.sto files, calculating the
+gamma-ray energies and/or relative intensities from the stored centroids and
+areas.  To do this, it takes the energy and efficiency calibrations from .cal
+and .eff files, created by ENCAL and EFFIT.
+When you run ENERGY, you will be asked for the name of the .sto file you wish
+to process, for a name for the resultant output file (default filename
+extension .eng), and for the name of the (.cal) energy calibration file.  Then
+you will be asked for the number of lines in the input file for each peak you
+fitted.  This will be the number of spectra that you analyzed, provided that
+you followed each fit with the command  SA n  (n = 1-20), followed by  SA -1 
+after the fit to the last spectrum.  In this way, all values will be stored on
+consecutive lines for each peak (see HELP SA (Store Areas and centroids from
+fit) ), and ENERGY will also be able to calculate the AVERAGE centroid and
+energy.  This format must be followed when generating input files for LEGFT and
+RDMFIT.
+    You will also be given the option of dividing the areas by the efficiency
+values, to obtain relative intensities.  If you so choose, you will then be
+prompted for the name of the (.eff) efficiency calibration file.
+>>>>END
+>>>LEGFT
+LEGFT - to fit angular distributions or correlations
+
+    Before running LEGFT, you must first create an input file (default filename
+extension .eng) by running ENERGY on a gf2.sto file.  In addition, you will
+need to edit this (.eng) file to add four or five lines of additional data at
+the beginning.  These lines should contain:
+
+  Line 1 (Format I):         NT = number of angles in the data set, up to a
+                             maximum of ten.
+
+  Line 2 (Format 10F10.0):   ANGLE(I), I=1 to NT; angles, in degrees,
+                             corresponding to the stored areas (intensities)
+                             in the order in which they appear in the file.
+
+  Line 3 (Format 10F10.0):   WNORM(I), I=1 to NT; normalization values for
+                             each angle.  These may be taken, for example,
+                             from the areas of peaks in a normalization
+                             detector.  For each angle, the area (intensity)
+                             will be divided by this value before the fit
+                             to the angular distribution is performed.
+
+  Line 4 (Format 10F10.0):   ENORM(I), I=1 to NT; uncertainties on the
+                             normalization values WNORM(I) of line 3.
+
+  Line 5 (Format 10F10.0):   THICK(I), I=1 to NT; (relative) thickness of
+                             the target backing and/or target chamber
+                             material at each angle.
+>>>>PAGE
+    This last line is optional, and may be used to provide a correction for
+gamma-ray absorption as a function of angle.  If you do not wish to use this
+correction, insert a blank line as line 5.  If you do wish to use it, you will
+also need to provide a value for the gamma-ray attenuation per unit of
+thickness for each peak.  This should be added at the end of each line
+beginning "EGAMMA = ..." (Format F10.5).  For transitions where no value is
+given, the attenuation is taken as zero.
+A partial listing of such an edited file is given in Fig. 9 ( see HELP F9 ).
+When LEGFT is run, it will ask for the name of your input file.  For each
+peak in the file, LEGFT will divide the areas or intensities by WNORM(I), and
+correct for attenuation by dividing by:
+
+             [ 1.0 - (attenuation value) ] ** THICK(I).
+
+    Two fits to the data as a function of angle are then performed.  These use
+the functional forms:
+
+             W(theta) = A0 + A2*P2(cos(theta))
+and
+             W(theta) = A0 + A2*P2(cos(theta)) + A4*P4(cos(theta)),
+
+respectively.  The program generates an output file named legft.out, which
+contains a detailed description of the data and fits.  In addition, a briefer
+summary of the results is printed on your default printer; since legft.out can
+be quite long, it is not printed automatically.
+>>>>END
+>>>FILES
+>>>T1
+                              Table 1.
+                              ========
+       Default Filename Extensions for gf3 and Associated Programs.
+
+------------------------------------------------------------------------
+Default    File                               Created          Used
+.ext       Description                        by(1)            by(1)
+------------------------------------------------------------------------
+
+.spe       Spectrum files (Special            gf3              gf3
+           gf3 format)                        STATFT           STATFT
+                                              SLICE            SLICE
+                                                               MATFIT
+                                                               SUBBGMAT
+
+.dmp       gf3 dump files                     gf3              gf3
+
+.sto       Stored areas and centroids         gf3              SOURCE
+           from gf3                                            ENERGY
+                                                               COMBINE
+
+.cmd       Command files                      gf3              gf3
+                                              editor
+
+.aca       Energy Calibrations                ENCAL            gf3
+.cal                                                           STATFT
+                                                               MATFIT
+>>>>PAGE
+.sou       Source energy and intensity        (editor)         SOURCE
+           data files
+
+.sin       Combined data from .sto and .sou   SOURCE           EFFIT
+           files                                               ENCAL
+
+.aef       Efficiency calibration             EFFIT            gf3
+.eff       parameter files                                     ENERGY
+                                                               MATFIT
+                                                               SUBBGMAT
+
+.eng       ENERGY output files; a list        ENERGY           LEGFT(2)
+           of gamma energies and                               RDM(2)
+           intensities.  May be the final                      RDMFIT(2)
+           result of analysis.                                 DIVIDE
+
+.rdm       RDMFIT dump files                  RDMFIT           RDMFIT
+
+.rsp       Detector response function files   UNFOLD           UNFOLD
+
+.tab       Look-up table files                gf3              replay
+
+.win       SLICE window files                 gf3              SLICE
+>>>>PAGE
+.mat       4096 x 4096 channel matrices       replay           gf3
+                                                               SLICE
+                                                               MATFIT
+                                                               SUBBGMAT
+
+.spn       Spin orientation results; a        replay           gf3
+           4-byte-integer version of .mat
+           files
+
+.spk       Spectrum files                     replay, etc.     gf3
+           (ORNL format)
+
+NOTES: (1) UNFOLD is a superset of gf3.  Therefore, any files created and/or
+             used by gf3 may also be created and/or used by UNFOLD.
+       (2) Editing required before use by these programs.
+>>>>END
+>>>F1
+
+   Fig. 1.   The components of the peaks fitted by gf3.
+
+ -------------------------------------------------------------------------
+   Print or view the file doc/gffig1.ps  to generate a copy of Fig. 1.
+ -------------------------------------------------------------------------
+>>>>END
+>>>F2
+   Fig. 2.   The listing generated by starting gf3.
+
+ Welcome to gf3, version 0.0
+
+ To avoid answering these setup questions each time you enter gf3
+   create a file gfinit.dat and/or gfinit.cmd in your current
+   or home directory.  Type HELP GFINIT for details.
+
+ Press any key to continue...
+
+This program fits portions of spectra with up to fifteen peaks
+       on a quadratic background.
+The fitted parameters are :
+  A, B and C :  Background = A + B*X + C*X*X
+       where X is the channel number minus an offset.
+  R, BETA and STEP :  These define the shape of the peaks.
+       The peak is the sum of a gaussian of height H*(1-R/100) and
+       a skew gaussian of height H*R/100.  BETA is the decay constant
+       (skewness) of the skew gaussian, in channels.  STEP is the
+       relative height (in % of the peak height) of a smoothed step
+       function which increases the background below each peak.
+  Pn, Wn and Hn :   The position (centroid of the non-skew gaussian),
+       width and height of the nth peak.
+Initial estimates of A,B and C are taken to give a
+       straight line between the limits for the fit.
+Initial estimates for Pn and Hn are taken from the given peak
+       positions ( Hn = counts at peak position - background )
+
+Initial estimate for R is taken as R = A + B*X  (X = ch. no.)
+  Enter A,B (rtn for default: A=10., B=0.)0.0
+Do you want always to fix R at this value? (Y/N)y
+Initial estimate for BETA is taken as BETA = C + D*X  (X = ch. no.)
+  Enter C,D (rtn for default: BETA = st. width/2)2
+Do you want always to fix BETA at this value? (Y/N)y
+>>>>PAGE
+
+Initial estimate for STEP is taken as STEP = E
+  Enter E (rtn for default: STEP = 0.25)0
+Do you want always to fix STEP at this value? (Y/N)y
+Initial estimates for the fitted peak widths are taken as:
+       FWHM = sqrt(F*F + G*G*x + H*H*x*x)  (x = ch.no. /1000)
+  Default values are:  F = 3.00, G = 2.00, H = 0.00
+  Enter F,G,H (rtn for default values) ?
+Do you want all widths to be fixed by default? (Y/N)n
+Do you want the relative widths to be fixed by default? (Y/N)y
+
+Welcome to gf3, version 0.0
+
+Check out the new commands:
+    CA, CA3, CA4 - autoCAlibrate one or many spectra quickly and easily
+    SS, OS       - display many spectra simultaneously
+                 - intended for multi-spectrum files
+    PK           - quick and quite accurate peak energies and areas
+    AF [sensitivity] - very easy and robust AutoFit routine
+    SD [MaxNumofSp]  - sets up automatic spectrum display for whenever
+                       you read in a new spectrum
+    DL lo_ch hi_ch   - alternative way of specifying display limits
+    LIN, LOG         - alternative way of specifying y-axis mode
+
+<Return> or 0 as an answer to any (Y/N) question is equivalent to N
+            1 as an answer to any (Y/N) question is equivalent to Y
+ The default extension for all spectrum file names is .spe
+ Type HE   for a list of available commands,
+      HE/P to print a list of available commands.
+
+ D.C. Radford
+Spectrum file or ID = ?test
+ Sp. BA126       4096 chs   read.
+?
+>>>>END
+>>>F3
+
+   Fig. 3.   An example of a spectrum and fit displayed by gf3.
+
+ -------------------------------------------------------------------------
+   Print or view the file doc/gffig3.ps to generate a copy of Fig. 3.
+ -------------------------------------------------------------------------
+>>>>END
+>>>F5
+   Fig. 5.   Examples of files gfinit.dat and gfinit.cmd.
+------------------------------------------------------------
+        5(a) gfinit.dat.
+------------------------------------------------------------
+
+0.0,0.0,0.0,0.0,0.0          ; <--  A,B,C,D,E for gf3 initialization.
+0,0,0              ; <--  0/1 for R,BETA,STEP fixed/free.
+3.0,2.0,0.0        ; <--  F,G,H for gf3 initialization (starting widths).
+1,0                ; <--  0/1 for absolute widths, relative widths fixed/free.
+;   File gfinit.dat to initialize program gf3.
+;   This version will set the initial estimates to fit non-skew gaussians
+;    only.  The parameter STEP is also by default fixed to zero.
+;        For gf3, and gf2 versions 6.1 and above.
+;        D.C. Radford   June 1989.
+
+>>>>PAGE
+------------------------------------------------------------
+        5(b) gfinit.cmd
+------------------------------------------------------------
+
+in gfinit.dmp
+y
+y
+sp gfinit
+ds 1 2
+df
+lp
+ec
+y
+n
+cf end
+
+  This is an example of a gfinit.cmd initialization file for gf3.
+  It indumps file gfinit.dmp, and reads and displays spectrum gfinit.spe.
+  It also lists the energy calibration and fit parameters, etc.
+  D.C. Radford  1989
+>>>>END
+>>>F6
+   Fig. 6.   File eu152.sou.
+
+        121.7830       .0020      13620.        160.
+        244.6920       .0020       3590.         60.
+        295.9390       .0080        211.          5.
+        344.2760       .0040      12750.         90.
+        367.7890       .0050        405.          8.
+        411.1150       .0050       1070.         10.
+        443.9760       .0050       1480.         20.
+        488.6610       .0390        195.          2.
+        564.0210       .0080        236.          5.
+        586.2940       .0060        220.          5.
+        678.5780       .0030        221.          4.
+        688.6780       .0060        400.          8.
+        778.9030       .0060       6190.         80.
+        867.3880       .0080       1990.         40.
+        964.1310       .0090       6920.         90.
+       1005.2790       .0170        310.          7.
+       1089.7000       .0150        820.         10.
+       1109.1800       .0120         88.          2.
+       1112.1160       .0170       6490.         90.
+       1212.9500       .0120        670.          8.
+       1299.1240       .0120        780.         10.
+       1408.0110       .0140      10000.         30.
+>>>>END
+>>>F7
+   Fig. 7.   Valid EFFIT commands.
+
+  Commands available:
+FT       fit using present initial parameter values
+FT -1    recalculate initial estimates and restart fit
+FX [N]   fix additional parameters [no. N] or change fixed value(s)
+FR [N]   free additional pars. [no. N]
+DF       display fit for present par. values
+LP       list parameter values
+ND FN    get new data  (FN = file name)
+AD FN    get additional data points from file FN
+DE       delete data points from data set
+DD       display data points
+X0 N     X-axis lower limit (energy) = N
+NX N     range of X-axis (energy) = N
+Y0 N     Y-axis lower limit (efficiency) = N
+NY N     N > 0 : range of Y-axis (efficiency) = N
+         N = -1/-2/-3 : linear / square-root / logarithmic Y-axis
+EX       expand display using cursor
+CR       call cursor  (hit X to exit)
+WP FN    write parameter values to disk (FN = file name )
+MD X     multiply efficiency values by factor X
+HC       generate hardcopy of graphics screen
+RP       read parameters from .eff file
+WS       write out calculated efficiency as a spectrum file
+HE[/P]   send this output to the terminal [ lineprinter ]
+ST       stop and exit from program
+>>>>END
+>>>F8
+
+   Fig. 8.   An example of efficiency data and fit displayed by EFFIT.
+
+ -------------------------------------------------------------------------
+   Print or view the file doc/gffig8.ps to generate a copy of Fig. 8.
+ -------------------------------------------------------------------------
+>>>>END
+>>>F9
+   Fig. 9.   A sample LEGFT input file.
+
+  5,
+0.0,30.0,45.0,60.0,89.77
+20.08,20.56,29.88,32.50,37.28
+ 0.09, 0.09, 0.10, 0.15, 0.15
+ 0.707,0.1,0.0,0.1,0.707
+  1  1541.8900   0.0433     23757.     322.   770.8505   0.0217     SPEC1  88-
+  2  1541.6540   0.0449     24124.     328.   770.7324   0.0225     SPEC2  88-
+  3  1541.5760   0.0374     35686.     396.   770.6934   0.0187     SPEC3  88-
+  4  1541.9510   0.0356     37839.     415.   770.8810   0.0178     SPEC4  88-
+  5  1541.4770   0.0317     42753.     428.   770.6439   0.0159     SPEC5  88-
+ MEAN ENERGY =   770.7506 +-   0.0084  EFFIC. =     1.0000   0.02
+
+  1  1265.2770   0.0269     37791.     379.   632.4996   0.0135     SPEC1  88-
+  2  1264.9470   0.0267     39310.     382.   632.3346   0.0134     SPEC2  88-
+  3  1265.0450   0.0229     56457.     464.   632.3836   0.0115     SPEC3  88-
+  4  1264.6000   0.1057     58813.    1087.   632.1611   0.0529     SPEC4  88-
+  5  1264.1570   0.0744     66694.    1082.   631.9395   0.0372     SPEC5  88-
+ MEAN ENERGY =   632.3819 +-   0.0071  EFFIC. =     1.0000   0.03
+
+>>>>PAGE
+  1   925.7334   0.0141     57846.     387.   462.7063   0.0070     SPEC1  88-
+  2   925.2917   0.0139     58423.     385.   462.4854   0.0069     SPEC2  88-
+  3   925.2290   0.0119     86203.     472.   462.4541   0.0059     SPEC3  88-
+  4   924.5291   0.0115     93683.     491.   462.1041   0.0057     SPEC4  88-
+  5   922.6731   0.0106    107952.     513.   461.1762   0.0053     SPEC5  88-
+ MEAN ENERGY =   462.0808 +-   0.0027  EFFIC. =     1.0000   0.04
+
+  1   519.7688   0.0120     81450.     455.   259.7777   0.0060     SPEC1  88-
+  2   515.7795   0.0090     83719.     438.   257.7842   0.0045     SPEC2  88-
+  3   515.1851   0.0076    120481.     539.   257.4871   0.0038     SPEC3  88-
+  4   513.6318   0.0067    134651.     585.   256.7109   0.0033     SPEC4  88-
+  5   512.7583   0.0057    155369.     622.   256.2744   0.0028     SPEC5  88-
+ MEAN ENERGY =   257.0963 +-   0.0017  EFFIC. =     1.0000   0.10
+
+>>>>END

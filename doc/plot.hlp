@@ -1,0 +1,426 @@
+   plot, pedit and plot2ps:
+   programs to generate publication-quality spectrum and data figures.
+
+   D.C. Radford    May 2000
+
+
+
+CONTENTS:
+   1) INTRODUCTION.
+   2) STRUCTURE OF THE .PDC AND .PSC FILES
+   3) SPECIAL CHARACTERS IN LABELS
+   4) PEDIT - AN INTERACTIVE GRAPHICS EDITOR FOR DATA AND SPECTRUM PLOTS
+   5) PLOT2PS - POSTSCRIPT FILES OF DATA AND SPECTRUM PLOTS
+
+
+
+1) INTRODUCTION.
+
+Three programs are included in this package, namely plot, pedit and
+plot2ps. Five types of files can be involved; they have default file extensions
+of .pdc, .pdg, .psc, psg and .ps, and will be referred to by those extensions 
+in this documentation.
+
+.pdc and .psc files are PlotCommand files; 
+	they contain commands used by plot to generate the figure. They are 
+	created by the user (i.e. with an editor) and are input to plot.
+
+.pdg and .psg files are PlotGraphics metafiles; 
+	they contain the coordinates etc. for the lines, data and labels of 
+	the figure. They are created by plot, are modified by pedit, 
+	and are input to plot2ps.
+
+.ps files are PostScript files; 
+	they contain PostScript commands describing the finished figure. 
+	They are created by plot2ps, and can be output to any PostScript 
+	device (e.g. ghostview or a PostScript laser printer).
+
+Originally, spectrum and data plots were created and edited separately, by 
+different programs (plotspec, plotdata, psedit, pdedit).  These have since 
+been combined.  The choice of filename extension .pdc or .psc has very little
+effect on the operation of the plot program, and none on pedit or plot2ps.
+Data and spectrum plots can be mixed, or generated at the same time by the 
+same .pdc or .psc file.  The only difference between the .psc and .pdc 
+filename extensions concerns the default meaning of the "S" command; for
+.psc files, it generates a linear spectrum plot and is equivalent to the 
+"SLIN" command, while for .pdc files it defines a symbol size and type to use 
+for data points.  "SLIN" and "SLOG" can be used in either .psc or .pdc files.
+
+Since all of the above files contain only ASCII text, they can also be edited
+and mailed by e-mail systems, etc.
+
+To run a program, type its name. You will be prompted for all required input.
+
+
+2) STRUCTURE OF THE .PDC AND .PSC FILES
+
+The format of all lines in .pdc and .psc files is free format. The various 
+data fields may be separated by spaces, tabs or commas.  The choice of 
+filename extension .pdc or .psc has very little effect on the operation of 
+the plot program, and none on pedit or plot2ps.  Data and spectrum plots can 
+be mixed, or generated at the same time by the same .pdc or .psc file.
+
+Example 1: (demo_plotdata.pdc, excerpts only)
+-------------------------------------
+c 4 5 2
+
+lin 100 200  226  80
+    3 71 0 2.0
+x,  "" 1 
+xt, "" 2
+y,  "({gm}{dN}/eb){u2}" 2
+yr, "" 1
+
+s 6 3 1 1 5
+d 2 0 3 4 radware:demo_plotdata 4
+
+lin 100 200  183  40
+    3 71 0 1.0
+x,  "" 1 
+xt, "" 1 
+y,  "B(M1; J {su} J-1) / B(E2; J {su} J-2)" 2
+yr, "" 1
+
+s 1 3 1 1 2
+d 2 0 3 4 radware:demo_plotdata 5
+
+lin 100 200  92  88
+    3 71 -0.2 2.2
+x,  "Spin (J)" 2 
+xt, "" 1 
+y,  "" 2
+yr, "" 1
+
+s 2 3 1 1 1
+d 2 0 3 4 radware:demo_plotdata 6
+s 3 3 1 1 4
+d 2 0 3 4 radware:demo_plotdata 7
+s 2 3 1 1 1
+d 2 0 3 4 radware:demo_plotdata 8
+
+lw 1
+ls 4 2 0.1 2
+lin 100 200  309 100
+    3 71 0 2.5
+s 0 0 1 2
+d 1 0 4 0 radware:demo_plotdata.tou 1
+s 0 0 1 2
+d 1 0 4 0 radware:demo_plotdata.tou 2
+-------------------------------------
+
+Example 2: (demo_plotspec.psc)
+-------------------------------------
+c 4 5 2
+lw 0.2 0.8
+
+slin radware:demo
+100 300 100 120
+200 2048 0 0
+x,  "E{d{gg}}  (keV)" 2 0.5 0
+xt, "" 1
+y,  "Counts per Channel ({s*}10{u3})" 2 0.001 0
+yr, "" 1
+
+slin radware:demo
+275 125 180 40
+850 200 500 0
+x,  "" 2 0.5 0
+xt, "" 1
+y,  "" 2 0.001 0
+yr, "" 1
+
+slog radware:demo
+100 300 220 80
+200 2048 500 0
+x,  "" 1
+xt, "Channel number" 2
+y,  "" 2 0.001 0
+yr, "" 1
+-------------------------------------
+
+
+2.1) CHARACTER SIZES
+
+The first line begins with "C" (or "c"), followed by three (real) numbers in
+free format. These provide plot with values for Character_Size_X,
+Character_Size_Y and Axis_Tick_Length, respectively, in "figure units". These
+units are arbitrary, and simply represent the units by which the figure is
+laid out.
+
+
+2.2) LINEAR OR SEMILOGARITHMIC SPECRUM PLOTS
+
+Lines beginning with "SLIN" or "SLOG" (or "slin" or "slog") cause a spectrum 
+to be drawn on the figure.
+If the input filename extension is .psc, then a simple "S" is equivalent to 
+"SLIN" , and generates the spectrum with a LINear y-scale. Alternatively, 
+"SLOG" generates the spectrum with a LOGarithmic y-scale. As illustrated in 
+the example, several spectra can be drawn in different regions ("windows") 
+of the figure.
+
+These lines have the following format:
+-------------------------------------
+SLIN Spec_File_Name[, Spec_Scale, Spec_Offset]
+  WX_0, WX_Length, WY_0, WY_Length.
+  Ch_0, NChs, Cts_0, NCts.
+
+SLOG Spec_File_Name[, Spec_Scale, Spec_Offset]
+  WX_0, WX_Length, WY_0, WY_Length.
+  Ch_0, NChs, Cts_0, NCts.
+-------------------------------------
+Here square brackets indicate optional data fields.
+
+Following the "S"/"SLIN"/"SLOG", and on the same line, is the name of the
+spectrum file containing the data to be plotted. The default file extension is
+.spe, and the spectrum must be in the standard gf3 spectrum file format.
+Following the filename you may optionally enter linear transformation
+coefficients for the counts in the spectrum, Spec_Scale and Spec_Offset. If
+these are present, the plotted counts-per-channel will be the counts in the
+spectrum file multiplied by Spec_Scale and added to Spec_Offset, i.e.
+   Plotted_Counts = Spectrum_File_Counts * Spec_Scale + Spec_Offset
+
+The next two lines contain sets of limits for the spectrum display.
+First come
+  WX_0, WX_Length, WY_0, WY_Length.
+These are "window" limits specifying the region of the figure to contain the
+spectrum, and are given in "figure units".
+Then come
+  Ch_0, NChs, Cts_0, NCts.
+These are axis limits for the spectrum. The displayed channels will be Ch_0 to
+Ch_0 + NChs, and the y-axis will be from Cts_0 to Cts_0 + NCts. If NCts is
+zero, the spectrum will be autoscaled to the largest count-per-channel in the
+displayed portion of the spectrum.
+
+
+2.3) LINEAR OR SEMILOGARITHMIC DATA PLOTS
+
+Lines beginning with "LIN" or "LOG" (or "lin" or "log") specifies a region
+("window") of the figure for data points to be drawn onto. "LIN" generates the
+data with a LINear y-scale; alternatively, "LOG" generates the data with a
+LOGarithmic y-scale. As illustrated in the example, several different data
+sets can be drawn in the same or different regions ("windows") of the figure.
+
+These lines have the following format:
+-------------------------------------
+LIN  WX_0, WX_Length, WY_0, WY_Length.
+     DataX_0, NDataX, DataY_0, NDataY.
+-------------------------------------
+LOG  WX_0, WX_Length, WY_0, WY_Length.
+     DataX_0, NDataX, DataY_0, NDataY.
+-------------------------------------
+
+Following the "LIN"/"LOG", and on the same line, come
+  WX_0, WX_Length, WY_0, WY_Length.
+These are "window" limits specifying the region of the figure to contain the
+data display, and are given in "figure units".
+The next line must contain
+  DataX_0, NDataX, DataY_0, NDataY.
+These are axis limits for the data. The displayed X-axis will be from DataX_0
+to DataX_0 + NDataX, and the y-axis will be from DataY_0 to DataY_0 + NDataY.
+
+2.4) SYMBOL AND DATA SPECIFICATIONS
+
+Lines beginning with "S" (or "s") specify the symbol(s) and lines to be used
+in drawing the next set of data points on the figure.
+
+Lines beginning with "D" (or "d") specify the source of the next set of data 
+to be drawn on the figure. As illustrated in the example, several data can be
+drawn in different regions ("windows") of the figure.
+
+These lines have the following format:
+-------------------------------------
+S Symbol_ID, Symbol_Size, Join_Flag[, Color[, Symbol_ID2]]
+D Column_X, Column_DX, Column_Y, Column_DY[, Data_File_Name, Data_Set_Number]
+  [ data1, data2, ...]
+  [ data1, data2, ...]
+  [        ...       ]
+  [ (blank line)     ]
+-------------------------------------
+Here square brackets indicate optional data fields.
+
+Symbol_ID and Symbol_ID2 are integers between 0 and 13, and specify the
+symbol(s) tobe used to represent the data points, as follows:
+
+    0 - no symbol (can be used to draw lines only)
+
+    1 - open circles            7 - open upwards-pointing triangles
+    2 - filled circles          8 - filled upwards-pointing triangles
+    3 - open squares            9 - open downwards-pointing triangles
+    4 - filled squares         10 - filled downwards-pointing triangles
+    5 - open diamonds          11 - plus (+)
+    6 - filled diamonds        12 - cross (x)
+                               13 - asterisk (*)
+
+If Symbol_ID2 is specified, odd-numbered data points are drawn with the symbol
+Symbol_ID, while even-numbered data points are drawn with the symbol
+Symbol_ID2, i.e., alternating symbols are used.
+
+Symbol_Size is the size of the symbols in "figure units".
+
+Join_Flag is can be either 0 or 1; a value of 1 will cause the data points to
+be joined ny straight line, whereas a value of 0 will not.
+
+Color specifes an optional color index for the symbols and lines representing
+the data set. The default value is 1 (black).
+
+Column_X, Column_DX, Column_Y and Column_DY are integers, specifying columns
+of data numbers to be used as the source of data values X, Delta-X, Y and
+Delta-Y, respectively. For example, if you had a file with data points listed
+as Y, DY, X, you would use 3, 0, 1 and 2 for the column specifiers,
+respecively. A value of zero for Column_DX or Column_DY indicates that X- or
+Y-error bars are not to de drawn on the data points.
+
+The data values can either be included directly in the .PDC file (as shown by
+the data1, data2, ... lines) or taken from another file. In the latter case,
+the name of the source file must be provided following the Column_DY field.
+Such data files may contain many data sets separated by blank lines.
+Data_Set_Number specifies which data set should be used; it must be in integer
+greater than zero.
+
+All data sets, whether included in the .pdc file or in a separate file, must
+end in a blank line. Lines beginning with asterisks are treated as comments
+and are ingnored; this is useful for labelling the different data sets and/or
+temporarily removing data points from the set.
+
+The default filename extension for Data_File_Name is .dat.
+
+2.5) AXES
+
+Lines beginning with "X" (or "x") cause an X-axis to be drawn for the
+most-recently defined data or spectrum window. A simple "X" is equivalent to 
+"XB", and generates the axis at the bottom of the window. "XT" generates the
+axis at the top of the window.
+
+These lines have the following format:
+-------------------------------------
+X[T] "Axis_Label", Axis_Flag[, Axis_Scale, Axis_Offset]
+-------------------------------------
+Here square brackets indicate optional data fields.
+
+Following the "X"/"XB"/"XT", and on the same line, at least two data fields
+are required. The first is the title or label for the axis, and must be
+enclosed in double quotes as shown in the figure. If no label is wanted, put a
+pair of double quotes enclosing a null string. The second field is a flag
+containing the value 0, 1 or 2, which specifies whether or not ticks and/or
+numbers are required on the axis. A "0" generates a simple axis with no ticks
+or numbers, a "1" generates an axis with ticks but no numbers, and a "2"
+generates an axis with both ticks and numbers.
+
+Following the axis flag you may optionally enter linear transformation
+coefficients for the data, Axis_Scale and Axis_Offset. If these are present,
+the axis units will be set to the data x-value or spectrum channel number 
+multiplied by Axis_Scale and added to Axis_Offset, i.e.
+   Axis_Units = Data_X * Axis_Scale + Axis_Offset.
+
+Lines beginning with "Y" (or "y") cause a Y-axis to be drawn for the
+most-recently defined data or spectrum display. A simple "Y" is equivalent to 
+"YL", and generates the axis to the left of the data display. "YR" generates 
+the axis to the right of the display.
+
+These lines have the same format as the X-axis lines above, i.e.
+-------------------------------------
+Y[R] "Axis_Label", Axis_Flag[, Axis_Scale, Axis_Offset]
+-------------------------------------
+
+The data fields have exactly the same meanings and functions as for the X-axis
+above.
+If Axis_Scale and Axis_Offset are present, the axis units will be set to the
+data y-value multiplied by Axis_Scale and added to Axis_Offset, i.e.
+   Axis_Units = Data_Y * Axis_Scale + Axis_Offset.
+
+
+2.6) LINE WIDTH SPECIFICATIONS
+
+Lines beginning with "LW" (or "lw") change the line-widths for the postscript
+output, for drawing the lines joining the data points and/or the axes, symbols
+and vectors.
+
+These lines have the following format:
+-------------------------------------
+LW line-width-1[, line-width-2]
+-------------------------------------
+Here square brackets indicate optional data fields. A value of zero specifies
+the use of the default linewidth. Line-width-1 is used for drawing spectra and 
+for the lines joining data points, while line-width-2 is used for the axes and
+symbols, and for vectors added by pedit.
+
+
+2.7) LINE STYLE SPECIFICATIONS
+
+Lines beginning with "LS" (or "ls") change the line-style to be used for
+drawing the lines joining the data points.
+
+These lines have the following format:
+-------------------------------------
+LS d1[, d2[,d3, d4]]
+-------------------------------------
+Here square brackets indicate optional data fields. Non-specified values 
+default to a value of zero. 
+
+If d1 is zero, a normal, continuous line is drawn. Otherwise, a dashed line is
+drawn, present for a distance of d1 units, absent for a distance of d2 units,
+present again for d3 units and absent again for d4 units. This pattern is then
+repeated to cover the entire length of the line. For example, the values "ls 4
+4" would give a dashed line, while "ls 4 2 0.1 2" gives a dash-dotted line.
+
+
+3) SPECIAL CHARACTERS IN LABELS
+
+The font used to draw labels and character strings in the figure allows
+superscripts, subscripts, greek characters, special symbols, italics and
+overstriking of characters. These functions are produced by commands of the
+form "{c...}" embedded in the label or character string. The character "c"
+here is a command character, and can be any one of:
+   u - superscripts,
+   d - subscripts,
+   g - greek characters,
+   s - script uppercase / special symbols,
+   i - italics or slant, and
+   o - overstrike.
+Additional characters enclosed by the brackets are acted upon by the command.
+Commands may be nested, so that, for example, greek characters and symbols may
+be superscripted, subscripted, italicised and overstruck.
+
+To see which characters and symbols are generated by the {g...} and {s...}
+commands, view or print the file doc/demo_drawstr.ps
+
+
+4) PEDIT - AN INTERACTIVE GRAPHICS EDITOR FOR DATA AND SPECTRUM PLOTS
+
+Once you have generated a .pdg or a .psg file with plot, you can preview 
+and/or edit it using the program pedit. You will be prompted for the name 
+of the .pdg or .psg file, and then provided with a menu:
+
+ Vectors
+ Labels
+ Label Peaks w/Cursor
+ Find & Label Peaks
+ Zoom/Expand Display
+ Unzoom Display
+ Exit Program
+
+Vectors are lines such as axes and axis ticks or other lines drawn on the
+figure; Labels can be numbers on the axes, peak labels, data titles, etc.
+Vectors and labels can be added, deleted and moved.  Peaks in displayed 
+spectra can be labelled one at a time with the "Label Peaks w/Cursor" option, 
+or the "Find & Label Peaks" option can label many peaks in a spectrum using 
+a peak find routine. 
+
+pedit does not attempt to reproduce the correct aspect ratio of the figure in
+its display. For this reason, the characters in labels etc may appear to be
+very distorted. However, when the figure is used to create a PostScript file,
+the proper aspect ratio will be used.
+
+When you exit from the program, a new version of the .pdg or .psg file will 
+be created, which includes all of your modifications.
+
+demo/demo_plotdata.pdg and demo/demo_plotspec.psg are demonstration files 
+that can be used to familiarise yourself with pedit; please make your own 
+copy of these files so that the originals are not changed.
+
+
+5) PLOT2PS - POSTSCRIPT FILES OF DATA AND SPECTRUM PLOTS
+
+After you have edited your figure and wish to generate a PostScript file for
+printing etc, you may run the program plot2ps. All of the figure may be
+included, and/or selected portions of it may be enlarged to fill the page.

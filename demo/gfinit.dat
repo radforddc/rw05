@@ -1,0 +1,9 @@
+0.0,0.0,0.0,0.0,0.0          ; <--  A,B,C,D,E for gf3 initialization.
+0,0,0              ; <--  0/1 for R,BETA,STEP fixed/free.
+3.0,2.0,0.0        ; <--  F,G,H for gf3 initialization (starting widths).
+1,0                ; <--  0/1 for absolute widths, relative widths fixed/free.
+;   File gfinit.dat to initialize program gf3.
+;   This version will set the initial estimates to fit non-skew gaussians
+;    only.  The parameter STEP is also by default fixed to zero.
+;        For gf3, and gf2 versions 6.1 and above.
+;        D.C. Radford   June 1989.
