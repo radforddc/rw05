@@ -13,6 +13,8 @@ GTK = gtkgls gtkesc gtklev gtk4dg
 XM =  xmgf3 xmgls xm4dg xmesc xmlev
 
 all: $(EXE)
+gtk: $(GTK)
+xm:  $(XM)
 
 caskx.o: libs/util/cask.c
 	$(CC) $(CFLAGS) -DXWIN -c -o $@ libs/util/cask.c
@@ -255,19 +257,19 @@ gtkgls: gtkgls.c gtkgls_utils.o drawstring.o drawstr_ps.o gls.a util.a mingtk.a
 	$(CC) $(CFLAGS) $(C2FLAGS) -o $@ gtkgls.c gtkgls_utils.o drawstring.o \
          drawstr_ps.o gls.a util.a mingtk.a \
          $(LIB_PATHS) $(LIBS) $(GTKLIBS)
-gtkesc: gtkescc.c gtkgls_utils.o gtkminig2.o escl8ra.o esclev.o drawstring.o \
+gtkesc: gtkescc.o gtkgls_utils.o gtkminig2.o escl8ra.o esclev.o drawstring.o \
          drawstr_ps.o gtk_esc_undo.o gls.a util.a mingtk.a
-	$(CC) $(CFLAGS) $(C2FLAGS) -o $@ gtkescc.c gtkgls_utils.o gtkminig2.o escl8ra.o \
+	$(CC) $(CFLAGS) $(C2FLAGS) -o $@ gtkescc.o gtkgls_utils.o gtkminig2.o escl8ra.o \
          esclev.o drawstring.o drawstr_ps.o gtk_esc_undo.o gls.a util.a mingtk.a \
          $(LIB_PATHS) $(LIBS) $(GTKLIBS)
-gtklev: gtklevc.c gtkgls_utils.o gtkminig2.o gate3d.o levit8ra.o esclev.o lev4d.o \
+gtklev: gtklevc.o gtkgls_utils.o gtkminig2.o gate3d.o levit8ra.o esclev.o lev4d.o \
          drawstring.o drawstr_ps.o gtk_lev4d_undo.o gls.a util.a mingtk.a
-	$(CC) $(CFLAGS) $(C2FLAGS) -o $@ gtklevc.c gtkgls_utils.o gate3d.o gtkminig2.o levit8ra.o \
+	$(CC) $(CFLAGS) $(C2FLAGS) -o $@ gtklevc.o gtkgls_utils.o gate3d.o gtkminig2.o levit8ra.o \
          esclev.o lev4d.o drawstring.o drawstr_ps.o gtk_lev4d_undo.o gls.a util.a mingtk.a \
          $(LIB_PATHS) $(LIBS) $(GTKLIBS)
-gtk4dg: gtk4dgc.c gtkgls_utils.o gtkminig2.o 4dg8ra.o gate4d.o gate3d.o esclev.o lev4d.o \
+gtk4dg: gtk4dgc.o gtkgls_utils.o gtkminig2.o 4dg8ra.o gate4d.o gate3d.o esclev.o lev4d.o \
          drawstring.o drawstr_ps.o gtk_lev4d_undo.o gls.a util.a mingtk.a
-	$(CC) $(CFLAGS) $(C2FLAGS) -o $@ gtk4dgc.c gtkgls_utils.o gtkminig2.o 4dg8ra.o gate4d.o gate3d.o \
+	$(CC) $(CFLAGS) $(C2FLAGS) -o $@ gtk4dgc.o gtkgls_utils.o gtkminig2.o 4dg8ra.o gate4d.o gate3d.o \
          esclev.o lev4d.o drawstring.o drawstr_ps.o gtk_lev4d_undo.o gls.a util.a mingtk.a \
          $(LIB_PATHS) $(LIBS) $(GTKLIBS)
 

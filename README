@@ -92,11 +92,11 @@ If you are installing on a mac, read that file too.
 
    GTK versions: If your system has the GTK2 development libraries installed,
    and you wish to use the GTK versions of gls, escl8r, etc., then type:
- 	make GTK
+ 	make gtk
 
    Motif versions If your system has the Motif development libraries installed,
    and you wish to use the Motif versions of gf3, gls, escl8r, etc., then type:
- 	make XM
+ 	make xm
 
 
 4) You can install the executables and data files in a separate directory.

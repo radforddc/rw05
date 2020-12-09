@@ -87,7 +87,7 @@ static struct {
   int       x, y, x1, y1, xnow, ynow, status;
 } move_win; /* data for moving a window w->window to (x,y) */
 
-#define FIXEDFONTNAME "-misc-fixed-medium-r-*-*-13-*-*-*-*-*-*-*"
+// #define FIXEDFONTNAME "-misc-fixed-medium-r-*-*-13-*-*-*-*-*-*-*"
 
 /* ======================================================================= */
 
@@ -2278,7 +2278,7 @@ void tell(const char *fmt, ...)
   GtkAdjustment *adj;
   int           lines;
 
-  if (!fixed_font_id) fixed_font_id = gdk_font_load(FIXEDFONTNAME);
+  // if (!fixed_font_id) fixed_font_id = gdk_font_load(FIXEDFONTNAME);
 
   va_start(ap, fmt);
   ncm = vsnprintf(mesag, 8191, fmt, ap);

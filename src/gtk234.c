@@ -1197,6 +1197,8 @@ int main(int argc, char **argv)
 
   /* Load the font for text writing */
   font_id = gdk_font_load(FONTNAME);
+  if (!font_id) font_id = gdk_font_load("-misc-fixed-medium-r-*-*-13-*-*-*-*-*-*-*");
+  if (!font_id) printf(">>>  Failed to load GDK font\n");
   /* gdk_gc_set_font(gc_id, font_id); */
 
   window = drawing_area_gls->window;

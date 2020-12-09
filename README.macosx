@@ -59,8 +59,8 @@ Then build rw05 with the command
 
 If you have the appropriate GTK2 or Motif packages installed and you
 wish to use the GUI versions of some of the codes, can also
-    make GTK (for GTK versions, and/or)
-    make XM  (for Motif versions)
+    make gtk (for GTK versions, and/or)
+    make xm  (for Motif versions)
 
 
 You can run the programs directly from the rw05/src directory, or

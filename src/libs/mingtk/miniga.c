@@ -9,6 +9,7 @@
 #include <gtk/gtk.h>
 
 #include "minig.h"
+int drawstring(char *ostring, int ncs, char orient, float x, float y, float csx, float csy);
 
 /* global data */
 float fdx, fx0, fdy, fy0;
@@ -590,7 +591,10 @@ int putg(char *text, int nc, int kad)
      kad = 1-3/4-6/7-9 for text to the right/centered/to the left
           of the current graphics cursor position
      kad = 3,6 or 9 for text below the current position */
-  int ix, iy, nchars;
+  int   ix, iy, nchars;
+  float x, y;
+  float sfdx, sfx0, sfdy, sfy0;
+  int   sidx, six0, sidy, siy0, syflag, shclog;
 
   nchars = abs(nc);
   if (nchars == 0) return 0;
@@ -605,12 +609,26 @@ int putg(char *text, int nc, int kad)
   }
   if (ix < 0) ix = 0;
   if (iy < 0) iy = 0;
-  gdk_draw_text(win_id, font_id, gc_id, ix, iy, text, nchars);
+  if (font_id) {
+    gdk_draw_text(win_id, font_id, gc_id, ix, iy, text, nchars);
+  } else {  // if font was not loaded successfully, resort to using drawstring
+    sfdx = fdx; sfx0 = fx0; sfdy = fdy; sfy0 = fy0;  // save settings
+    sidx = idx; six0 = ix0; sidy = idy, siy0 = iy0; syflag = yflag;
+    fx0 = ix0 = 0;
+    fdx = idx = win_width;
+    fy0 = iy0 = 20;
+    fdy = idy = win_height - 20;
+    x = ix; y = win_height-iy;
+    shclog = hclog; hclog = 0;
+    drawstring(text, nchars, 'L', x, y, 6.0, 8.0);
+    fdx = sfdx; fx0 = sfx0; fdy = sfdy; fy0 = sfy0;  // restore settings
+    idx = sidx; ix0 = six0; idy = sidy, iy0 = siy0; yflag = syflag;
+    hclog = shclog;
+  }
 
   /* log info to temp file for possible later hardcopy */
-  if (hclog > 0) {
-    HCL("t",1); HCL(&kad,4); HCL(&nchars,4); HCL(text,nchars);
-  }
+  if (hclog > 0) HCL("t",1); HCL(&kad,4); HCL(&nchars,4); HCL(text,nchars);
+
   return 0;
 } /* putg */
 
