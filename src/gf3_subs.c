@@ -6404,6 +6404,15 @@ int wrtsp(char *ans, int nc)
   if (!(file = open_new_file(fn, 0))) return 1;
   strncpy(gf3gd.filnam, fn, 80);
 
+  if (!strcmp(fn+iext, ".dat")) {
+    /* user specified .dat file; use simplified float stream instead of .spe format */
+    fwrite(gf3gd.spec, sizeof(float), gf3gd.maxch + 1, file);
+    fclose(file);
+    return 0;
+  }
+
+  /* else use .spe format */
+  
   /* ask for spectrum name */
   nc = cask("Spectrum name = ? (rtn for same as file name)", ans, 80);
   if (nc > 0) {

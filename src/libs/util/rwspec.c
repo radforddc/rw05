@@ -114,15 +114,23 @@ int wspec(char *filnam, float *spec, int idim)
      spec = spectrum of length idim */
 
   char buf[32];
-  int  j, c1 = 1, rl = 0;
+  int  ext, c1 = 1, rl = 0;
   char namesp[8];
   FILE *file;
 
-  j = setext(filnam, ".spe", 80);
+  ext= setext(filnam, ".spe", 80);
   if (!(file = open_new_file(filnam, 0))) return 1;
-  strncpy(namesp, filnam, 8);
-  if (j < 8) memset(&namesp[j], ' ', 8-j);
 
+  if (!strcmp(&filnam[ext], ".dat")) {
+    /* user specified .dat file; use simplified float stream instead of .spe format */
+    fwrite(spec, sizeof(float), idim, file);
+    fclose(file);
+    return 0;
+  }
+
+  /* use .spe format */
+  strncpy(namesp, filnam, 8);
+  if (ext< 8) memset(&namesp[ext], ' ', 8-ext);
   /* WRITE(1) NAMESP,IDIM,1,1,1 */
   /* WRITE(1) SPEC */
 #define W(a,b) { memcpy(buf + rl, a, b); rl += b; }
