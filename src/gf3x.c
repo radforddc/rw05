@@ -64,13 +64,14 @@ extern Window        root_win_id;
 Window               jroot, jchild, menu_win_id[D_NUM_MENUS];
 XSizeHints           win_position;
 XSetWindowAttributes setwinattr;
-XEvent               event;
+extern XEvent               event;
 XGCValues            xgcvl;
 XPoint               mpoints[5];
 GC                   mgc_id[D_NUM_MENUS], mgc_comp_id[D_NUM_MENUS];
 unsigned int         jmask;
 unsigned long        valuemask;
-int                  ixp, iyp, bstat;
+extern int           ixp, iyp;
+int                  bstat;
 int                  menu_width[D_NUM_MENUS], menu_height[D_NUM_MENUS];
 
 /* Data to allow specification of location of viewport. */

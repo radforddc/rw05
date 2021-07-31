@@ -55,7 +55,6 @@ Widget       menubarBtn[MAX_MENU], pulldowns[MAX_MENU];
 Widget       pdmenuBtn[MAX_MENU][MAX_OPT];
 Pixmap       pixmap;
 Window       window1, window2, root_id;
-Display      *disp_id;
 GC           xmgc;
 Cursor       watchCursor;
 Arg          args [10];

@@ -4,7 +4,7 @@
 #include "esclev.h"
 
 /* Common Block Declarations */
-struct {
+typedef struct {
   int   numchs;
   float spec[6][MAXCHS], old_spec[6][MAXCHS], bspec[6][MAXCHS];
   float v_depth[MAXCHS], v_width;
@@ -25,50 +25,51 @@ struct {
   float  pk_shape[MAXGAM][40];
   float  pk_deriv[MAXGAM][40];
   float  w_deriv [MAXGAM][40];
-} xxgd;
+} Xxgd;
+extern Xxgd xxgd;
 
-int energy_sum(void);
-int e_gls_exec(char *ans, int nc);
-int escl8r_exec(char *ans, int nc);
-int escl8r_help(void);
-int e_gls_init(int argc, char **argv);
-int calc_peaks(void);
-int chk_fit_igam(int i, int *igam, int *npars, float *saveint, float *saveerr);
-int chk_fit_egam(int i, int *igam, int *npars, float *saveegam, float *saveerr);
-int combine(char *ans, int nc); /* returns 1 on error */
-int curse(void);
-int cur_gate(void); /* returns 1 on error */
-int disp_dat(int iflag);
-int disp_many_sp(void);
-int energy(float x, float dx, float *eg, float *deg);
-int eval0(int iy, int ix, float *fit);
-int eval_fdb(int iy, int ix, float *fit, float *derivs);
-int eval_fde(int iy, int ix, float *fit, float *derivs);
-int eval_fdi(int iy, int ix, float *fit, float *derivs);
-int eval_fwp(int ix, float *fit, float *derivs, int mode);
-int examine(char *ans, int nc); /* returns 1 on error */
-int findpks(float spec[6][MAXCHS]);
-int fitterwp(int npars, int maxits); /* returns 1 on error */
-int fit_both(void);
-int fit_egam(void);
-int fit_igam(void);
-int fit_width_pars(void);
-int gate_sum_list(char *ans); /* returns 1 on error */
-int get_bkgnd(void);
-int get_cal(void);
-int get_gate(int ilo, int ihi);
-int get_list_of_gates(char *ans, int nc, int *outnum, float *outlist,
-		      float *wfact); /* returns 1 on error */
-int get_shapes(void);
-int multiply(char *ans, int nc); /* returns 1 on error */
-int num_gate(char *ans, int nc); /* returns 1 on error */
-int pfind(float *chanx, float *psize, int n1, int n2, int ifwhm,
-	  float sigma, int maxpk, int *npk, float spec[6][MAXCHS]);
-int prep(void);
-int project(void);
-int sum_chs(int ilo, int ihi);
-int sum_cur(void);
-int write_sp(char *ans, int nc);
-int wspec2(float *spec, char *filnam, char sp_nam_mod, int expand);
-float channo(float egamma);
-float effic(float eg);
+extern int energy_sum(void);
+extern int e_gls_exec(char *ans, int nc);
+extern int escl8r_exec(char *ans, int nc);
+extern int escl8r_help(void);
+extern int e_gls_init(int argc, char **argv);
+extern int calc_peaks(void);
+extern int chk_fit_igam(int i, int *igam, int *npars, float *saveint, float *saveerr);
+extern int chk_fit_egam(int i, int *igam, int *npars, float *saveegam, float *saveerr);
+extern int combine(char *ans, int nc); /* returns 1 on error */
+extern int curse(void);
+extern int cur_gate(void); /* returns 1 on error */
+extern int disp_dat(int iflag);
+extern int disp_many_sp(void);
+extern int energy(float x, float dx, float *eg, float *deg);
+extern int eval0(int iy, int ix, float *fit);
+extern int eval_fdb(int iy, int ix, float *fit, float *derivs);
+extern int eval_fde(int iy, int ix, float *fit, float *derivs);
+extern int eval_fdi(int iy, int ix, float *fit, float *derivs);
+extern int eval_fwp(int ix, float *fit, float *derivs, int mode);
+extern int examine(char *ans, int nc); /* returns 1 on error */
+extern int findpks(float spec[6][MAXCHS]);
+extern int fitterwp(int npars, int maxits); /* returns 1 on error */
+extern int fit_both(void);
+extern int fit_egam(void);
+extern int fit_igam(void);
+extern int fit_width_pars(void);
+extern int gate_sum_list(char *ans); /* returns 1 on error */
+extern int get_bkgnd(void);
+extern int get_cal(void);
+extern int get_gate(int ilo, int ihi);
+extern int get_list_of_gates(char *ans, int nc, int *outnum, float *outlist,
+                             float *wfact); /* returns 1 on error */
+extern int get_shapes(void);
+extern int multiply(char *ans, int nc); /* returns 1 on error */
+extern int num_gate(char *ans, int nc); /* returns 1 on error */
+extern int pfind(float *chanx, float *psize, int n1, int n2, int ifwhm,
+                 float sigma, int maxpk, int *npk, float spec[6][MAXCHS]);
+extern int prep(void);
+extern int project(void);
+extern int sum_chs(int ilo, int ihi);
+extern int sum_cur(void);
+extern int write_sp(char *ans, int nc);
+extern int wspec2(float *spec, char *filnam, char sp_nam_mod, int expand);
+extern float channo(float egamma);
+extern float effic(float eg);

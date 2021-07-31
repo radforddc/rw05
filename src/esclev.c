@@ -8,6 +8,11 @@
 #include "minig.h"
 #include "gls.h"
 #include "esclev.h"
+Elgd elgd;
+int  rlen;
+char lx[120], prfilnam[80];
+FILE *file, *prfile, *filez[40];
+//Fgd  fgd;
 
 extern FILE *infile, *cffile;    /* command file flag and file descriptor*/
 extern int  cflog;               /* command logging flag */
@@ -17,13 +22,13 @@ extern int  cflog;               /* command logging flag */
 /* D.C. Radford            Sept 1999 */
 
 /* function defined in drawstring.c */
-int drawstring(char *, int, char, float, float, float, float);
+extern int drawstring(char *, int, char, float, float, float, float);
 /* functions defined in escl8ra.c or lev4d.c */
-int combine(char *ans, int nc); /* returns 1 on error */
-int disp_dat(int iflag);
-int energy(float x, float dx, float *eg, float *deg);
-int examine(char *ans, int nc); /* returns 1 on error */
-int num_gate(char *ans, int nc); /* returns 1 on error */
+extern int combine(char *ans, int nc); /* returns 1 on error */
+extern int disp_dat(int iflag);
+extern int energy(float x, float dx, float *eg, float *deg);
+extern int examine(char *ans, int nc); /* returns 1 on error */
+extern int num_gate(char *ans, int nc); /* returns 1 on error */
 
 char listnam[55] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[]|";

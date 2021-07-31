@@ -8,9 +8,9 @@
 
 int main(void)
 {
-  float spec[16384], fj=0, fj2=0;
+  float spec[16384], fspec[8], fj=0, fj2=0;
   int   jdum, idim1, idim2, ired1, ired2, compress=1;
-  int   i, j, ispec[8], numch, nc, list;
+  int   i, j, numch, nc, list;
   char  asciifil[80], spe_file[80], lst_fils[80], namesp[8], ans[80] = "";
   char  line[120];
   FILE  *file1, *file2;
@@ -81,6 +81,7 @@ int main(void)
 			   asciifil, 80))) break;
     }
     strcpy(spe_file, asciifil);
+    printf("Converting file %s\n", asciifil);
 
     if (*ans == '1' || *ans == '3') {
       /* convert .spe to .txt or .asc */
@@ -103,13 +104,17 @@ int main(void)
 	/* write out spectrum in eight columns */
 	for (jdum = 0; jdum < numch; jdum += 8) {
 	  for (i = 0; i < 8; ++i) {
-	    fprintf(file2, "%10i", (int) rint(spec[i + jdum]));
+	    fprintf(file2, " %9f", spec[i + jdum]);
 	  }
 	  fprintf(file2, "\n");
 	}
       } else {             /* .asc output file */
 	for (i = 0; i < numch; ++i) {
-	  fprintf(file2, "%10i,%10i\n", i, (int) rint(spec[i]));
+          if (fabs(spec[i]) > 100000) {
+            fprintf(file2, "%10i,%10i\n", i, (int) rint(spec[i]));
+          } else {
+            fprintf(file2, "%10i, %9f\n", i, spec[i]);
+          }
 	}
       }
       fclose(file2);
@@ -152,16 +157,16 @@ int main(void)
 	/* read counts */
 	for (jdum = 0; jdum < numch*compress; jdum += 8) {
 	  if (!fgets(line, 120, file2) ||
-	      sscanf(line, "%i%i%i%i%i%i%i%i",
-		     &ispec[0], &ispec[1], &ispec[2], &ispec[3],
-		     &ispec[4], &ispec[5], &ispec[6], &ispec[7]) != 8) {
+	      sscanf(line, "%f%f%f%f%f%f%f%f",
+		     &fspec[0], &fspec[1], &fspec[2], &fspec[3],
+		     &fspec[4], &fspec[5], &fspec[6], &fspec[7]) != 8) {
 	    file_error("read", asciifil);
 	    if (list) printf("   ...skipping to next file.\n");
 	    fclose(file2);
 	    continue;
 	  }
 	  for (i = 0; i < 8; ++i) {
-	    spec[(i + jdum)/compress] += (float) ispec[i];
+	    spec[(i + jdum)/compress] += fspec[i];
 	  }
 	}
       } else {             /* .asc input file */

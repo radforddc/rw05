@@ -16,10 +16,11 @@
 
 #include "util.h"
 
-struct {
+extern struct {
   double gain[6];                           /* energy calibration */
   int    ical, nterms;
   int    disp, loch, hich, locnt, nchs;     /* spectrum display stuff */
+  int    dxlo, dxnum, no_erase;             /* division of graphics window in x-dir */
   int    ncnts, iyaxis, lox, numx;
   float  finest[5], swpars[3];              /* initial parameter estimates */
   int    infix[3], infixrw, infixw;         /*  and flags */
@@ -42,6 +43,7 @@ struct {
   float  wtsp[16384];                       /* fit weight mode and spectrum */
   int    wtmode;
   char   nwtsp[8];
+  int    display_fit_diff;                  /* flag for whether to plot diff */
 } gf3gd;
 
 extern FILE *scrfilea, *scrfileb;

@@ -9,7 +9,7 @@
 #include "minig.h"
 
 /* global data */
-struct {
+extern struct {
   double gain[6];                           /* energy calibration */
   int    ical, nterms;
   int    disp, loch, hich, locnt, nchs;     /* spectrum display stuff */

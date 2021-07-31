@@ -377,7 +377,7 @@ int main(int argc, char **argv)
 	    if (!fgets(line, 256, file3)) goto ERR2;
 	    if (!strncmp(line, "ENDDATA", 7)) break;
 	    for (i = 0; line[i] == ' '; i++);
-	    if (line[i] == '\n') break;
+	    if (line[i] == '\n' || line[i] == '\r') break;
 	  }
 	}
       }
@@ -407,7 +407,7 @@ int main(int argc, char **argv)
 	}
 	if (!strncmp(line, "ENDDATA", 7)) break;
 	for (i = 0; line[i] == ' '; i++);
-	if (line[i] == '\n') break;
+	if (line[i] == '\n' || line[i] == '\r') break;
 	/* lines not beginning with ',' through '9', or with ' ',
 	   are considered to be comments; ignore them */
 	if (*line != ' ' && (*line < ',' || *line > '9')) continue;

@@ -231,12 +231,12 @@ xm4dg: xm4dgc.o caskx.o xmminig2.o 4dg8ra.o gate4d.o gate3d.o esclev.o \
 
 ifdef GTK2
          GTKFLAGS = `pkg-config --cflags gtk+-2.0`
-         GTKLIBS  = `pkg-config --cflags --libs gtk+-2.0`
-         C2FLAGS = -DGTK2
+         GTKLIBS  = `pkg-config --cflags --libs gtk+-2.0 gtk+-quartz-2.0` 
+#         C2FLAGS = -DGTK2
 else
          GTKFLAGS = `gtk-config --cflags`
          GTKLIBS  = `gtk-config --cflags --libs`
-         C2FLAGS = 
+#         C2FLAGS = 
 endif
 
 gtkgls_utils.o: gtkgls_utils.c util.h gls.h mingtk.h
@@ -254,20 +254,24 @@ gtklevc.o: gtk234.c util.h gls.h mingtk.h
 gtk4dgc.o: gtk234.c util.h gls.h mingtk.h
 	$(CC) -DGTK4D $(CFLAGS) $(C2FLAGS) -c -o $@ gtk234.c $(GTKFLAGS)
 gtkgls: gtkgls.c gtkgls_utils.o drawstring.o drawstr_ps.o gls.a util.a mingtk.a
+	export PKG_CONFIG_PATH='/Users/fy2/gtk/inst/lib/pkgconfig/'; \
 	$(CC) $(CFLAGS) $(C2FLAGS) -o $@ gtkgls.c gtkgls_utils.o drawstring.o \
          drawstr_ps.o gls.a util.a mingtk.a \
          $(LIB_PATHS) $(LIBS) $(GTKLIBS)
 gtkesc: gtkescc.o gtkgls_utils.o gtkminig2.o escl8ra.o esclev.o drawstring.o \
+	export PKG_CONFIG_PATH='/Users/fy2/gtk/inst/lib/pkgconfig/'; \
          drawstr_ps.o gtk_esc_undo.o gls.a util.a mingtk.a
 	$(CC) $(CFLAGS) $(C2FLAGS) -o $@ gtkescc.o gtkgls_utils.o gtkminig2.o escl8ra.o \
          esclev.o drawstring.o drawstr_ps.o gtk_esc_undo.o gls.a util.a mingtk.a \
          $(LIB_PATHS) $(LIBS) $(GTKLIBS)
 gtklev: gtklevc.o gtkgls_utils.o gtkminig2.o gate3d.o levit8ra.o esclev.o lev4d.o \
+	export PKG_CONFIG_PATH='/Users/fy2/gtk/inst/lib/pkgconfig/'; \
          drawstring.o drawstr_ps.o gtk_lev4d_undo.o gls.a util.a mingtk.a
 	$(CC) $(CFLAGS) $(C2FLAGS) -o $@ gtklevc.o gtkgls_utils.o gate3d.o gtkminig2.o levit8ra.o \
          esclev.o lev4d.o drawstring.o drawstr_ps.o gtk_lev4d_undo.o gls.a util.a mingtk.a \
          $(LIB_PATHS) $(LIBS) $(GTKLIBS)
 gtk4dg: gtk4dgc.o gtkgls_utils.o gtkminig2.o 4dg8ra.o gate4d.o gate3d.o esclev.o lev4d.o \
+	export PKG_CONFIG_PATH='/Users/fy2/gtk/inst/lib/pkgconfig/'; \
          drawstring.o drawstr_ps.o gtk_lev4d_undo.o gls.a util.a mingtk.a
 	$(CC) $(CFLAGS) $(C2FLAGS) -o $@ gtk4dgc.o gtkgls_utils.o gtkminig2.o 4dg8ra.o gate4d.o gate3d.o \
          esclev.o lev4d.o drawstring.o drawstr_ps.o gtk_lev4d_undo.o gls.a util.a mingtk.a \

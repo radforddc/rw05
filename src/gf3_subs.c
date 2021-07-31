@@ -170,7 +170,7 @@ int wrtsp(char *ans, int nc);
 /* ======================================================================= */
 int adddelpk(int mode, int npeak)
 {
-  float x0, rj1, rj2, s, x, y;
+  float x0, rj1, rj2, s, x=0, y;
   int   i, j, k, l, n;
   int   ilo, ipp, j2, nc, js, ihi;
   char  ans[80];
@@ -407,7 +407,7 @@ int addwin(void)
      winmod = 1 : look-up file mode
      winmod = 2 : slice file mode */
 
-  float area, cent, x, y, y1, y2, dc = 0.0f, eg, deg, fnc, cou, sum;
+  float area, cent, x=0, y, y1, y2, dc = 0.0f, eg, deg, fnc, cou, sum;
   int   i, isave, j1, j2, nc, nx, ny, ihi, ilo, luv;
   char  ans[80];
 
@@ -700,7 +700,7 @@ int autobkgnd(int *maxspec)
 int autocal(void)
 {
   double d1, chisqr, save_gain[6], pfa[6], pfx[50], pfy[50], pfdy[50];
-  float area, diff, cent, fmax, fwhm, pmax, darea, x, y;
+  float area, diff, cent, fmax, fwhm, pmax, darea, x=0, y=0;
   float dcent, resid, x1, x2, eg, deg, ref, fit, dx, dy, rsigma, r1, r2, r3;
   float fx[100], fy[100], fde[100], fdx[100], fdy[100], chanx[100], psize[100];
   float sto[100][6], sou[100][8];
@@ -1265,7 +1265,7 @@ int autocal3(void)
 /* ======================================================================= */
 int autocal4(void)
 {
-  float area, darea, cent[2], dcent[2], fwhm, fwhm0, a, b, x, y, r1;
+  float area, darea, cent[2], dcent[2], fwhm, fwhm0, a, b, x=0, y, r1;
   float eg[2], fj1, fj2, sou[52];
   int   peak, i, w2, hi, nc, lo, nl = 0;
   char  fullname[120], ans[80], q[256];
@@ -1367,7 +1367,7 @@ int autocal4(void)
 int autofit(float *sens, int lo_ch, int hi_ch)
 {
   float save[16384], pmax, fwhm0, s, w, x, y, chanx[100];
-  float psize[100], x1, x2, rsigma, ref, fj;
+  float psize[100], x1=0, x2=0, rsigma, ref, fj;
   int   i, j, fitter_rtn, jfwhm, maxpk, first;
   int   quit_next, maxits, ipk, npk, nc, j1, j2;
   char  ans[80];
@@ -1563,8 +1563,8 @@ int autofit(float *sens, int lo_ch, int hi_ch)
 /* ======================================================================= */
 int autopeak(char *command)
 {
-  float area, cent = 0.0f, dcent = 0.0f, fwhm, fwhm0, darea, x, y, eg, deg, r1;
-  float a2=0, da2, da3, r, dr, dr2;
+  float area, cent = 0.0f, dcent = 0.0f, fwhm, fwhm0, darea, x=0, y, eg, deg, r1;
+  float a2=0, da2=0, da3, r, dr, dr2;
   int   i, cmd = 0, in[3]={0}, w2, hi, lo;
   char  ans[80], l[120];
 
@@ -1978,7 +1978,7 @@ int contract(int *cfact)
 /* ======================================================================= */
 int curse(int *chnum)
 {
-  float dx = 0.0f, x, y, eg, deg, r1;
+  float dx = 0.0f, x=0, y=0, eg, deg, r1;
   int   isave, j1, j2, nc;
   char  ans[80];
 
@@ -2383,7 +2383,7 @@ int dspsp(int in1, int in2, int in3)
 {
   static float hicnt = 0.f;
   float fncc, x, y, x0, y0, dx, dy;
-  int   i1, icol, i, nx0, nx, ny, ncc, ich, loy;
+  int   i1, icol, i, nx0, nx=0, ny=0, ncc, ich, loy;
   char  heading[28];
   int ktras(int ix, int iy, int mode);
 
@@ -2495,7 +2495,7 @@ int dspsp2(int in1, int in2, int in3, int in4)
 {
   static float hicnt = 0.f;
   float x, x0, y0, dx, dy;
-  int   i, lowx, nx0, nx, ny, loy;
+  int   i, lowx, nx0, nx=0, ny=0, loy;
   int ktras(int ix, int iy, int mode);
 
   loy = 0;
@@ -3804,7 +3804,7 @@ int gfexec(char *ans, int nc)
 {
   /* this subroutine decodes and executes the commands */
 
-  float sens, x, y, x1, x2, e1, e2, save[16384];
+  float sens, x=0, y=0, x1=0, x2=0, e1, e2, save[16384];
   float fj1, fj2, oldch1, oldch2, newch1, newch2;
   int   mode, imap, nspx, nspy, i, j, k, numch, j1, j2;
   int   in, lo, in2, hi, nnx, nny, numspec, idata = 0;
@@ -4160,7 +4160,7 @@ int gfexec(char *ans, int nc)
     char cmd[80], next[80], *c;
     int j;
     for (i = 0; next_history() != NULL; i++) ;             // find history length
-    for (j=0; j<i; j++) c = previous_history()->line;  // rewind
+    for (j=0; j<i; j++) c = (char *) previous_history()->line;  // rewind
     for (j=0; j<i; j++) {
       strncpy(cmd, next_history()->line, 80);
       if (!strncmp(cmd, ans+1, nc-1)) break;
@@ -5094,7 +5094,7 @@ int gfinit(int argc, char **argv)
 /* ======================================================================= */
 int gfset(void)
 {
-  float x, y, ch, rj1, rj2;
+  float x=0, y, ch, rj1, rj2;
   int   i, k, n, nc, lo;
   char  ans[80];
 
@@ -5289,7 +5289,7 @@ int matread(char *fn, float *sp, char *namesp, int *numch, int idimsp,
   int i4spn [8192];
 #define i2mat ((short *) i4spn)
 
-  float x, y;
+  float x=0, y;
   int   i4sum[8192], i, j, k, jrecl;
   int   in3, ilo, ihi, nc, iy, nch;
   char  ans[80], q[256];
@@ -5759,7 +5759,7 @@ int polfit(double *x, double *y, double *sigmay, int npts,
 /* ======================================================================= */
 int setcts(void)
 {
-  float x, y, y1=0.0f, y2=0.0f, rj1, rj2, fnc;
+  float x=0, y, y1=0.0f, y2=0.0f, rj1, rj2, fnc;
   int   i, k, isave, j2, nx, ny, ihi, ilo;
   char  ans[80];
 
@@ -5977,7 +5977,7 @@ int sumcts(int mode, int loch, int hich)
   /* mode=0: sum without background subtraction
      mode=1: sum with    background subtraction */
 
-  float area, cent, x, y, y1=0.0f, y2=0.0f;
+  float area, cent, x=0, y, y1=0.0f, y2=0.0f;
   float dc, eg, deg, fnc, cou, cts, sum, r1;
   int   isav, i, isave, j2, nc, nx, ny, repeat=0;
   char  ans[80], l[120];
@@ -6115,7 +6115,7 @@ int sumcts(int mode, int loch, int hich)
 /* ======================================================================= */
 int sumcts_jch(void)
 {
-  float area, area1, area2, cent, x, y, b[111], save[16384];
+  float area, area1, area2, cent, x=0, y, b[111], save[16384];
   float dc, eg, deg, fnc, cou, cts, sum, r1;
   int   isav, i, j, isave, j2, nc, lo, hi, loch, hich;
   int   npks2;
@@ -6440,7 +6440,7 @@ int wrtsp(char *ans, int nc)
 /* ======================================================================= */
 int report_curs(int ix, int iy)
 {
-  float  x, y, e, de;
+  float  x=0, y=0, e, de;
 
   cvxy(&x, &y, &ix, &iy, 2);
   if (energy(x, 0.0, &e, &de)) {

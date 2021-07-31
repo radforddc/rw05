@@ -8,7 +8,7 @@
 #include "util.h"
 #include "minig.h"
 #include "escl8r.h"
-
+Xxgd xxgd;
 
 /* DCR 2011-4-2 added command NY+, NY- */
 

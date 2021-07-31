@@ -29,14 +29,15 @@ extern int ds_set_lwfact(float);
 
 float xzero, hix, yzero, hiy, xmin, xmax, ymin, ymax, spec[16384];
 float window[4], lox, numx, loy, numy;
-int   menu_mode, numch, logscale, nrec;
+int   numch, logscale, nrec;
 FILE  *file1, *file2, *file3, *specfile;
 
 char  saved_lines[100][256];
 int   saved_recs[100], nsaved = 0;
 
 int g_disp_id, g_screen_id, g_root_win_id, g_win_id, g_gc_id, g_win_width;
-int g_win_height, g_color[16], nowatx, nowaty;
+int g_win_height, g_color[16];
+extern int nowatx, nowaty, menu_mode;
 
 int drawplot(void);
 int peaks(void);
@@ -470,7 +471,7 @@ int drawplot(void)
 	    if (!fgets(line, 256, file3)) goto ERR2;
 	    if (!strncmp(line, "ENDDATA", 7)) break;
 	    for (i = 0; line[i] == ' '; i++);
-	    if (line[i] == '\n') break;
+	    if (line[i] == '\n' || line[i] == '\r') break;
 	  }
 	}
       }
@@ -505,7 +506,7 @@ int drawplot(void)
 	}
 	if (!strncmp(line, "ENDDATA", 7)) break;
 	for (i = 0; line[i] == ' '; i++);
-	if (line[i] == '\n') break;
+	if (line[i] == '\n' || line[i] == '\r') break;
 	/* lines not beginning with ',' through '9', or with ' ',
 	   are considered to be comments; ignore them */
 	if (*line != ' ' && (*line < ',' || *line > '9')) continue;

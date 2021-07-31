@@ -8,19 +8,20 @@
 #define D_NUM_MENUS 20
 #define FONTNAME "-ADOBE-HELVETICA-MEDIUM-R-NORMAL--*-100-*-*-P-*"
 
-Display              *disp_id;
-Screen               *screen_id;
-Window               root_win_id;
 XSetWindowAttributes setwinattr;
 XGCValues            xgcvl;
 int                  bstat;
-XEvent               event;
 Window               menu_win_id[D_NUM_MENUS];
 int                  menu_width[D_NUM_MENUS], menu_height[D_NUM_MENUS];
 GC                   mgc_id[D_NUM_MENUS], mgc_comp_id[D_NUM_MENUS];
 Window               jroot, jchild;
 unsigned int         jmask;
-int                  ix_root, iy_root, ix, iy, ixp, iyp;
+int                  ix_root, iy_root, ix, iy;
+extern Display       *disp_id;
+extern Screen        *screen_id;
+extern Window        root_win_id;
+extern XEvent        event;
+extern int           ixp, iyp;
 
 /*--------------------------------------------------------*/
 void init_menu(int nmenu, int nchars, int nlines, char *choices,

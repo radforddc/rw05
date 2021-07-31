@@ -27,6 +27,11 @@ extern int wstroke(void);
 extern int hsicc(int, float *, int, float *);
 int rename_input_file_with_tilde = 0;
 
+Glsgd   glsgd;
+Levemit levemit;
+Glsundo glsundo;
+
+
 /* all figure distance units are in keV */
 /* gamma arrow widths = intensity * aspect_ratio (in keV units) */
 

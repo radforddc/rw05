@@ -8,6 +8,7 @@
 #include "util.h"
 #include "minig.h"
 #include "levit8r.h"
+Xxgd xxgd;
 
 /* declared in esclev.c */
 extern char listnam[55];

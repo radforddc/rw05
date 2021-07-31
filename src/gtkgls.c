@@ -833,6 +833,16 @@ int initg2(int *nx, int *ny)
 } /* initg2 */
 
 /* ======================================================================= */
+int initg(int *nx, int *ny)
+{
+  win_width  = drawing_area->allocation.width;
+  win_height = drawing_area->allocation.height;
+  *nx = win_width  - 5;
+  *ny = win_height - 25;
+  return 0;
+} /* initg */
+
+/* ======================================================================= */
 int finig(void)
 {
   /* empty buffer of stored x,y values */

@@ -9,7 +9,7 @@
 
 /* global data */
 
-struct {
+extern struct {
   double gain[6];                           /* energy calibration */
   int    ical, nterms;
   int    disp, loch, hich, locnt, nchs;     /* spectrum display stuff */
@@ -164,7 +164,9 @@ int ufexec(char *ans, int nc)
 	gf3gd.spec[i] = 0.f;
       }
       calres(&ppch, 1e4f);
-      sprintf(gf3gd.namesp, "RE%6.0f", ppch);
+      char namesp[16];
+      sprintf(namesp, "RE%6.0f", ppch);
+      strncpy(gf3gd.namesp, namesp, 8);
       gf3gd.disp = 0;
     } else {
       printf("CANNOT -  not enough response functions.\n");
