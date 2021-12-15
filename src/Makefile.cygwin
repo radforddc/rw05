@@ -35,8 +35,8 @@
          RM_CMD = $(RM) *.o core *[~%] *.trace
 
            LIBS = -lX11 -lm -lreadline -lncurses
-     MOTIF_LIBS = -lXm -lMrm -lXt -lXext -lXp
-   STATIC_MOTIF = -lXm -lMrm -lXpm -lXt -lSM -lICE -lXext -lXp
+     MOTIF_LIBS = -lXm -lMrm -lXt -lXext
+   STATIC_MOTIF = -lXm -lMrm -lXpm -lXt -lSM -lICE -lXext
 
 # -----------------------------------------------------------------------
 #  UNCOMMENT and CHANGE (if necessary)  the line defining HISLIBS
