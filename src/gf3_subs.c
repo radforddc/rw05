@@ -2646,8 +2646,6 @@ int dump(char *filnam, int nc, int mode)
       R(700, gf3gd.stoda[0], 4);
       R(700, gf3gd.stoe[0], 4);
       R(700, gf3gd.stode[0], 4);
-      R(700, gf3gd.stow[0], 4);
-      R(700, gf3gd.stodw[0], 4);
       R(20, gf3gd.isto, 4);
       R(20, gf3gd.namsto, 28);
     }
@@ -2693,8 +2691,6 @@ int dump(char *filnam, int nc, int mode)
       R(300, gf3gd.stoda[0], 4);
       R(300, gf3gd.stoe[0], 4);
       R(300, gf3gd.stode[0], 4);
-      R(300, gf3gd.stow[0], 4);
-      R(300, gf3gd.stodw[0], 4);
       R(20, gf3gd.isto, 4);
       R(20, gf3gd.namsto, 28);
     }
@@ -2776,8 +2772,6 @@ int dump(char *filnam, int nc, int mode)
   W(700, gf3gd.stoda[0], 4);
   W(700, gf3gd.stoe[0], 4);
   W(700, gf3gd.stode[0], 4);
-  W(700, gf3gd.stow[0], 4);
-  W(700, gf3gd.stodw[0], 4);
   W(20, gf3gd.isto, 4);
   W(20, gf3gd.namsto, 28);
   if (put_file_rec(file1, buf, rl)) {
