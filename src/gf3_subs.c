@@ -71,7 +71,7 @@ struct {
   char   namesp[8], filnam[80];
   float  spec[16384];
   float  stoc[20][35], stodc[20][35];       /* stored areas and centroids */
-  float  stoa[20][35], stoda[20][35], stoe[20][35], stode[20][35];
+  float  stoa[20][35], stoda[20][35], stoe[20][35], stode[20][35],  stow[20][35], stodw[20][35];
   int    isto[20];
   char   namsto[560];
   float  wtsp[16384];                       /* fit weight mode and spectrum */
@@ -1381,27 +1381,8 @@ int autofit(float *sens, int lo_ch, int hi_ch)
 	
   first = 1;
   quit_next = 0;
-  if (lo_ch > 0 && hi_ch - lo_ch > 20) {
-    x1 = gf3gd.mch[0] = lo_ch;
-    x2 = gf3gd.mch[1] = hi_ch;
-  } else {
-    printf("If the results of this routine are unsatisfactory,\n"
-	   "  try playing with the starting width parameters,\n"
-	   "  or the initial estimates of the other parameters.\n\n"
-	   "Use cursor to limits of fitted region, X to exit...\n");
-    retic(&x1, &y, ans);
-    if (ans[0] == 'X' || ans[0] == 'x') return 0;
-    retic(&x2, &y, ans);
-    if (ans[0] == 'X' || ans[0] == 'x') return 0;
-    ready = 0;
-    if (x1 > x2) {
-      gf3gd.mch[1] = rint(x1);
-      gf3gd.mch[0] = rint(x2);
-    } else {
-      gf3gd.mch[0] = rint(x1);
-      gf3gd.mch[1] = rint(x2);
-    }
-  }
+  x1 = gf3gd.mch[0] = 200;
+  x2 = gf3gd.mch[1] = 8000;
   /* do peak search */
   x = (x1 + x2) / 2.f;
   fwhm0 = sqrt(gf3gd.swpars[0] + gf3gd.swpars[1] * x + gf3gd.swpars[2]
@@ -3830,15 +3811,11 @@ int gfexec(char *ans, int nc)
     gf3gd.disp = 0;
   } else if (!strncmp(ans, "AF", 2)) {
     /* autofit spectrum */
-    if (gf3gd.disp) {
-      lo = hi = 0;
-      if (ffin(ans + 2, nc-2, &sens, &fj1, &fj2)) goto BADCMD;
-      lo = fj1 + 0.5f;
-      hi = fj2 + 0.5f;
-      autofit(&sens, lo, hi);
-    } else {
-      printf("Bad command: Spectrum not yet displayed...\n");
-    }
+    lo = hi = 0;
+    if (ffin(ans + 2, nc-2, &sens, &fj1, &fj2)) goto BADCMD;
+    lo = 200;
+    hi = 8000;
+    autofit(&sens, lo, hi);
   } else if (!strncmp(ans, "AG", 2)) {
     /* adjust gain of spectrum */
     numch = gf3gd.maxch + 1;
@@ -5867,7 +5844,6 @@ int slice(char *ans, int nc)
   if (!(winfile = open_new_file(ans, 0))) winmod = 0;
   return 0;
 } /* slice */
-
 /* ======================================================================= */
 int startwid(char *ans, int nc)
 {
@@ -5900,7 +5876,7 @@ int startwid(char *ans, int nc)
   gf3gd.infixrw = 1 - caskyn("Do you want the relative widths to be fixed by default? (Y/N)");
   return 0;
 } /* startwid */
-
+/* list_params */
 /* ======================================================================= */
 int storac(int in)
 {
@@ -5925,12 +5901,15 @@ int storac(int in)
     }
     gf3gd.isto[idata - 1] = gf3gd.npks;
     for (i = 0; i < gf3gd.npks; ++i) {
+      k = i*3 + 6;
       gf3gd.stoc [idata-1][i] = gf3gd.cents [i];
       gf3gd.stodc[idata-1][i] = gf3gd.dcents[i];
       gf3gd.stoa [idata-1][i] = gf3gd.areas [i];
       gf3gd.stoda[idata-1][i] = gf3gd.dareas[i];
-      gf3gd.stoe [idata-1][i] = 0.f;
-      gf3gd.stode[idata-1][i] = 0.f;
+      gf3gd.stoa [idata-1][i] = gf3gd.areas [i];
+      gf3gd.stoda[idata-1][i] = gf3gd.dareas[i];
+      gf3gd.stow [idata-1][i] = gf3gd.pars[k+1];
+      gf3gd.stodw[idata-1][i] = gf3gd.errs[k+1];
       energy(gf3gd.cents[i], gf3gd.dcents[i], 
 	     &gf3gd.stoe [idata-1][i],
 	     &gf3gd.stode[idata-1][i]);
@@ -5951,15 +5930,15 @@ int storac(int in)
   if (!(file2 = fopen(outfn, "a+"))) file2 = open_new_file(outfn, 0);
   if (!file2) return 1;
   fprintf(file2, " No.  Centroid +- error      Area +- error  "
-	         "    Energy +- error    Sp.name      Date     Time\n");
+	         "    Width +- error    Sp.name      Date     Time\n");
   for (i = 0; i < 35; ++i) {
     for (j = 0; j < 20; ++j) {
       if (gf3gd.isto[j] > i) {
 	fprintf(file2,
-		"%3d%11.4f%9.4f%11.0f%9.0f%11.4f%9.4f    %.8s  %s\n", j+1,
-		gf3gd.stoc[j][i], gf3gd.stodc[j][i],
-		gf3gd.stoa[j][i], gf3gd.stoda[j][i],
-		gf3gd.stoe[j][i], gf3gd.stode[j][i],
+		"%3d %11.4f %9.4f %11.0f %9.0f %11.4f %9.4f    %.8s  %s\n", j+1,
+		gf3gd.stoc[j][i] ,gf3gd.stodc[j][i],
+		gf3gd.stoa[j][i] ,gf3gd.stoda[j][i], 
+		gf3gd.stow[j][i] ,gf3gd.stodw[j][i], 
 		gf3gd.namsto + j* 28, gf3gd.namsto + j* 28 + 8);
       }
     }
