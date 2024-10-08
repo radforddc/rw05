@@ -42,8 +42,12 @@ extern int         nstored;
 extern int         win_width, win_height;
 extern int         hcopy_use_preset_values, hcopy_use_color, hcopy_print_now;
 extern char        hcopy_filename[80], hcopy_print_cmd[80];
+/* external variables defined in gtkgls_utils.c */
+extern GtkWidget *label;
 
-extern int     glsundo_ready;
+extern int         glsundo_ready;
+extern GtkWidget   *toplevel;
+extern GdkPixmap   *pixmap;
 
 /* function defined in gtkgls_utils.c */
 extern void move_win_to(GtkWidget *w, int x, int y);
@@ -53,14 +57,13 @@ extern int select_gw(int);
 
 GtkTextBuffer *output_text_buffer;
 GtkWidget     *output_text_view, *text_scrolled;
-GtkWidget     *toplevel, *menubar, *drawing_area_gls, *drawing_area_sp;
-GtkWidget     *toolbar, *pos_text, *label, *gls_scrolled, *sp_scrolled, *command_entry;
+GtkWidget     *menubar, *drawing_area_gls, *drawing_area_sp;
+GtkWidget     *toolbar, *pos_text, *gls_scrolled, *sp_scrolled, *command_entry;
 GtkWidget     *undo_button, *redo_button, *save_button, *zin_button, *zout_button;
 GtkWidget     *undo_menu_item, *redo_menu_item, *save_menu_item, *zout_menu_item;
 GtkWidget     *backg_button, *fwdg_button;
 GtkWidget     *backg_menu_item, *fwdg_menu_item;
 GtkTooltips   *tooltips;
-GdkPixmap     *pixmap;
 /* winpix = gls pixmap for zoom < 8; otherwise winpix = gls window */
 GdkWindow     *window, *winpix;
 Cursor    watchCursor;

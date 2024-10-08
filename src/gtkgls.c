@@ -25,17 +25,19 @@ extern GdkFont     *font_id;
 extern GdkPoint    points[512];
 extern GdkColor    color_id[20];
 extern int         nstored, win_width, win_height, glsundo_ready;
+extern GtkWidget   *toplevel, *drawing_area;
+extern GdkPixmap   *pixmap;
+
 
 /* function defined in gtkgls_utils.c */
 extern void move_win_to(GtkWidget *w, int x, int y);
 
 GtkTextBuffer *output_text_buffer;
 GtkWidget     *output_text_view, *text_scrolled;
-GtkWidget     *toplevel, *menubar, *drawing_area, *toolbar, *scrolled, *pos_text;
+GtkWidget     *menubar, *toolbar, *scrolled, *pos_text;
 GtkWidget     *undo_button, *redo_button, *save_button, *zin_button, *zout_button;
 GtkWidget     *undo_menu_item, *redo_menu_item, *save_menu_item, *zout_menu_item;
 GtkTooltips   *tooltips;
-GdkPixmap     *pixmap;
 GdkWindow     *window;
 int       ww = 600, hh = 500, width = 600, height = 500;
 int       zoom = 1, scr_width, scr_height;

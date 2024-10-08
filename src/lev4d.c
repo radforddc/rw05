@@ -3330,7 +3330,7 @@ int trip_gate(char *ans, int nc)
   float r1, x, listx[40], listy[40], wfact1, wfact2, dx;
   float ms_err, ehi1, ehi2, elo1, elo2;
   int   nsum, numx, numy, i, j, ix, iy, iz, jnc, jjj;
-  char  save_name[80], *c1;
+  char  save_name[80], *c1, *c2;
 
   /* calculate gate channels ilo, ihi from specified Egamma
      and width_factor * parameterized_FWHM */
@@ -3344,10 +3344,11 @@ int trip_gate(char *ans, int nc)
     strcpy(save_name + 9, ans);
   } else {
     *c1 = '\0';
-    jnc = strlen(ans) - 1;
-    if (get_list_of_gates(ans + 1, jnc, &numx, listx, &wfact1)) return 1;
-    strcpy(save_name, ans + 1);
-    while (*save_name == ' ') memmove(save_name, save_name+1, strlen(save_name));
+    c2 = ans+1;
+    while (*c2 == ' ') c2++;
+    jnc = strlen(c2);
+    if (get_list_of_gates(c2, jnc, &numx, listx, &wfact1)) return 1;
+    strcpy(save_name, c2);
 
     c1++;
     jnc = strlen(c1);
