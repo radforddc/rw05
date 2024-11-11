@@ -45,11 +45,7 @@ extern char        hcopy_filename[80], hcopy_print_cmd[80];
 /* external variables defined in gtkgls_utils.c */
 extern GtkWidget *label;
 
-<<<<<<< HEAD
 extern int         glsundo_ready;
-=======
-extern int     glsundo_ready;
->>>>>>> 7844686486f847d894a311c6890a60dedf717514
 extern GtkWidget   *toplevel;
 extern GdkPixmap   *pixmap;
 
