@@ -27,10 +27,6 @@ extern GdkColor    color_id[20];
 extern int         nstored, win_width, win_height, glsundo_ready;
 extern GtkWidget   *toplevel, *drawing_area;
 extern GdkPixmap   *pixmap;
-<<<<<<< HEAD
-
-=======
->>>>>>> 7844686486f847d894a311c6890a60dedf717514
 
 /* function defined in gtkgls_utils.c */
 extern void move_win_to(GtkWidget *w, int x, int y);
