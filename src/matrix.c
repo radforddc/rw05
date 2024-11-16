@@ -79,7 +79,7 @@ void setup_replay(void)
       continue;\
     }\
     a[strlen(a)-1] = 0; /* remove trailing \n */ \
-    while (a[0] == ' ') memmove(a, a+1, strlen(a)); /* remove leading spaces */ \
+    while (a[0] == ' ') for (c=a; *c!=0; c++) *c = *(c+1); /* remove leading spaces */ \
     for (c=a+strlen(a)-1; *c==' '; c--) *c=0; /* remove trailing spaces */
 
     GETDATA(title,"title");

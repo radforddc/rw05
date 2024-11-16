@@ -304,7 +304,7 @@ int open4dfile(char *name, int *numchs_ret)
 
     /* remove trailing \n and leading and trailing spaces */
     c = gd.CubeFileName[fnum];
-    while (*c == ' ') memmove(c, c+1, strlen(c));
+    while (*c == ' ') for (i=0; *(c+i)!=0; i++) *(c+i) = *(c+i+1);
     for (c += strlen(c) - 1; *c == ' ' || *c == '\n'; c--) *c = 0;
     if (gd.CubeFileName[fnum][0] == 0)
       break;

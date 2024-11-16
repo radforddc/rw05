@@ -19,10 +19,10 @@ char *datim (void)
 *************************************************************/
 char *setfnamext (char *fn, char *extIn, int force)
 {
-  char *extOut, *tmp;
+  char *extOut, *tmp, *c;
 
   /* remove leading spaces */
-  while (fn[0] == ' ') memmove(fn, fn+1, strlen(fn));
+  while (fn[0] == ' ') for (c=fn; *c!=0; c++) *c = *(c+1);
   /* check for an extension */
   if ((tmp = strrchr(fn,'/')) ||
       (tmp = strrchr(fn,']')) ||

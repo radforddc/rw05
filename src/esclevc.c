@@ -1001,16 +1001,18 @@ int get_list_of_gates(char *ans, int nc, int *outnum, float *outlist,
      char listnam[55] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[]|" */
   float eg, fj1, fj2, tmp, elo, ehi;
   int   i, j, k, nl;
+  char  *c;
 
   /* read Egamma / list_name and width factor from ANS */
   /* return list of energies OUTLIST with OUTNUM energies */
 
   *outnum = 0;
-  if (*ans == ' ') {
-    memmove(ans, ans + 1, nc);
-    nc--;
-  }
   if (nc < 1) return 0;
+  c = ans;
+  while (*c == ' ') {
+    c++;
+    if (--nc == 0) return 0;
+  }
 
 #ifdef ESCL8R
   energy(0.0, 1.0f, &elo, &tmp);
@@ -1021,12 +1023,12 @@ int get_list_of_gates(char *ans, int nc, int *outnum, float *outlist,
 #endif
 
   for (i = 0; i < 55; ++i) {
-    if (*ans == listnam[i]) {
+    if (*c == listnam[i]) {
       /* list name found */
       nl = i;
       *wfact = 1.0f;
       if (nc >= 3 &&
-	  ffin(ans + 2, nc - 2, wfact, &fj1, &fj2)) return 1;
+	  ffin(c + 2, nc - 2, wfact, &fj1, &fj2)) return 1;
       if (*wfact <= 0.0f) *wfact = 1.0f;
       for (j = 0; j < elgd.nlist[nl]; ++j) {
 	eg = elgd.list[nl][j];
@@ -1050,7 +1052,7 @@ int get_list_of_gates(char *ans, int nc, int *outnum, float *outlist,
   }
 
   /* list name not found */
-  if (ffin(ans, nc, &eg, wfact, &fj2) || eg < elo || eg > ehi) return 1;
+  if (ffin(c, nc, &eg, wfact, &fj2) || eg < elo || eg > ehi) return 1;
   if (*wfact <= 0.0f) *wfact = 1.0f;
   *outnum = 1;
   outlist[0] = eg;

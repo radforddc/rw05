@@ -579,11 +579,11 @@ int check_band(char *ans, int nc)
     if (nc == 0) return 0;
   } else {
     nc -= 2;
-    memmove(ans, ans + 2, nc);
+    for (i=0; i<=nc; i++) ans[i] = ans[i+2];
   }
   while (*ans == ' ') {
-    memmove(ans, ans + 1, nc--);
-    if (nc == 0) return 0;
+    for (i=0; i<=nc; i++) ans[i] = ans[i+1];
+    if (--nc == 0) return 0;
   }
   nl = -1;
   for (i = 0; i < 55; ++i) {
@@ -2964,24 +2964,25 @@ int get_list_of_gates(char *ans, int nc, int *outnum, float *outlist,
      char listnam[55] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[]|" */
   float eg, fj1, fj2, tmp;
   int   i, j, k, nl;
+  char  *c;
 
   /* read Egamma / list_name and width factor from ANS */
   /* return list of energies OUTLIST with OUTNUM energies */
 
   *outnum = 0;
   if (nc == 0) return 0;
-  while (*ans == ' ') {
-    memmove(ans, ans + 1, nc--);
-    ans[nc]=' ';
-    if (nc == 0) return 0;
+  c = ans;
+  while (*c == ' ') {
+    c++;
+    if (--nc == 0) return 0;
   }
   for (i = 0; i < 55; ++i) {
-    if (*ans == listnam[i]) {
+    if (*c == listnam[i]) {
       /* list name found */
       nl = i;
       *wfact = 1.0f;
       if (nc >= 3 &&
-	  ffin(ans + 2, nc - 2, wfact, &fj1, &fj2)) return 1;
+	  ffin(c + 2, nc - 2, wfact, &fj1, &fj2)) return 1;
       if (*wfact <= 0.0f) *wfact = 1.0f;
       for (j = 0; j < elgd.nlist[nl]; ++j) {
 	eg = elgd.list[nl][j];
@@ -3004,7 +3005,7 @@ int get_list_of_gates(char *ans, int nc, int *outnum, float *outlist,
       return 0;
     }
   }
-  if (ffin(ans, nc, &eg, wfact, &fj2) ||
+  if (ffin(c, nc, &eg, wfact, &fj2) ||
       eg < xxgd.energy_sp[0] ||
       eg > xxgd.energy_sp[xxgd.numchs - 1]) return 1;
   if (*wfact <= 0.0f) *wfact = 1.0f;

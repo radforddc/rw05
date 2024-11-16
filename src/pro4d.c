@@ -312,7 +312,8 @@ open_4cube (char *name)
 
     /* remove trailing \n and leading and trailing spaces */
     c = gd.CubeFileName[fnum];
-    while (*c == ' ') memmove(c, c+1, strlen(c));
+    while (gd.CubeFileName[fnum][0] == ' ')
+      for (c = gd.CubeFileName[fnum]; *c!=0; c++) *c = *(c+1); 
     for (c += strlen(c) - 1; *c == ' ' || *c == '\n'; c--) *c = 0;
     if (gd.CubeFileName[fnum][0] == 0) break;
 

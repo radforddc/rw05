@@ -3572,7 +3572,7 @@ int fix_para(int param, int fix_flag)
   /* called by fixorfree */
 
   float rj1, rj2, val;
-  int   nc;
+  int   i, j=0, nc;
   char  ans[80];
 
   if (fix_flag) {
@@ -3586,6 +3586,24 @@ int fix_para(int param, int fix_flag)
     } else if (param == 1002) {
       gf3gd.irelw = 0;
       printf("Relative widths fixed.\n");
+    } else if (param == 1003) {
+      for (i=0; i<gf3gd.npks; i++) j += gf3gd.freepars[i*3+6];
+      if (gf3gd.nfp + j >= gf3gd.npars - 1) {
+        printf("  Cannot - too many fixed pars.\n");
+        return 0;
+      }
+      gf3gd.nfp += j;
+      for (i=0; i<gf3gd.npks; i++) gf3gd.freepars[3*i + 6] = 0;
+      printf("All peak positions fixed at current values.\n");
+    } else if (param == 1004) {
+      for (i=0; i<gf3gd.npks; i++) j += gf3gd.freepars[i*3+7];
+      if (gf3gd.nfp + j >= gf3gd.npars - 1) {
+        printf("  Cannot - too many fixed pars.\n");
+        return 0;
+      }
+      gf3gd.nfp += j;
+      for (i=0; i<gf3gd.npks; i++) gf3gd.freepars[3*i + 7] = 0;
+      printf("All widths fixed at current values.\n");
     } else if (param > gf3gd.npars) {
       printf("Parameter number too large, try again.\n");
     } else if (gf3gd.nfp + gf3gd.freepars[param-1] == gf3gd.npars - 1) {
@@ -3627,10 +3645,22 @@ int fix_para(int param, int fix_flag)
       } else if (param == 1002) {
 	gf3gd.irelw = 1;
 	printf("Relative widths free to vary.\n");
+      } else if (param == 1003) {
+        for (i=0; i<gf3gd.npks; i++) {
+          gf3gd.nfp += gf3gd.freepars[3*i + 6] - 1;
+          gf3gd.freepars[3*i + 6] = 1;
+        }
+        printf("All peak positions freed.\n");
+      } else if (param == 1004) {
+        for (i=0; i<gf3gd.npks; i++) {
+          gf3gd.nfp += gf3gd.freepars[3*i + 7] - 1;
+          gf3gd.freepars[3*i + 7] = 1;
+        }
+        printf("All widths freed.\n");
       } else if (param > gf3gd.npars) {
 	printf("Parameter number too large, try again.\n");
       } else {
-	gf3gd.nfp = gf3gd.freepars[param-1] + gf3gd.nfp - 1;
+	gf3gd.nfp += gf3gd.freepars[param-1] - 1;
 	gf3gd.freepars[param-1] = 1;
       }
     }
@@ -3646,8 +3676,8 @@ int fixorfree(char *command, int nc)
      command = FT  FX  FR */
 
   int i, lo, fix, param, j1, j2;
-  char fixtag[113][4], ans[80];
-  static char parc[113][4] = {
+  char fixtag[115][4], ans[80];
+  static char parc[115][4] = {
     " A "," B "," C "," R ","BTA","STP","P1 ","W1 ","H1 ","P2 ","W2 ","H2 ",
     "P3 ","W3 ","H3 ","P4 ","W4 ","H4 ","P5 ","W5 ","H5 ","P6 ","W6 ","H6 ",
     "P7 ","W7 ","H7 ","P8 ","W8 ","H8 ","P9 ","W9 ","H9 ","PA ","WA ","HA ",
@@ -3657,7 +3687,9 @@ int fixorfree(char *command, int nc)
     "PN ","WN ","HN ","PO ","WO ","HO ","PP ","WP ","HP ","PQ ","WQ ","HQ ",
     "PR ","WR ","HR ","PS ","WS ","HS ","PT ","WT ","HT ","PU ","WU ","HU ",
     "PV ","WV ","HV ","PW ","WW ","HW ","PX ","WX ","HX ","PY ","WY ","HY ",
-    "PZ ","WZ ","HZ ","RW ","RP "};
+    "PZ ","WZ ","HZ ","RW ","RP ","AP ","AW "};
+
+  // DCR) March 2022 added AW (all widths) and AP (all positions) March 2022
 
   if (!strncmp(command, "FT", 2)) {
     /* asking for fixed parameter(s) to set up a fit */
@@ -3802,7 +3834,10 @@ int getsp(char *filnam, int nc)
 /* ======================================================================= */
 int gfexec(char *ans, int nc)
 {
-  /* this subroutine decodes and executes the commands */
+  /* this subroutine decodes and executes the commands
+     NOTE: use this grep command to find a list of the gf3 commands:
+     grep "\!strncmp(ans," gf3_subs.c 
+   */
 
   float sens, x=0, y=0, x1=0, x2=0, e1, e2, save[16384];
   float fj1, fj2, oldch1, oldch2, newch1, newch2;
@@ -3823,13 +3858,13 @@ int gfexec(char *ans, int nc)
     ans[1] = toupper(ans[1]);
   }
   idata = 0;
-  if (!strncmp(ans, "AC", 2) || !strncmp(ans, "AS", 2) || 
-      !strncmp(ans, "MS", 2) || !strncmp(ans, "DV", 2)) {
-    /* add spectrum / add counts / multiply/divide spectrum */
+  if (!strncmp(ans, "AC", 2) ||           // add spectrum
+      !strncmp(ans, "AS", 2) ||           // add counts to spectrum
+      !strncmp(ans, "MS", 2) ||           // multiply spectrum
+      !strncmp(ans, "DV", 2)) {           // divide spectrum
     addspec(ans, nc);
     gf3gd.disp = 0;
-  } else if (!strncmp(ans, "AF", 2)) {
-    /* autofit spectrum */
+  } else if (!strncmp(ans, "AF", 2)) {    // autofit spectrum
     if (gf3gd.disp) {
       lo = hi = 0;
       if (ffin(ans + 2, nc-2, &sens, &fj1, &fj2)) goto BADCMD;
@@ -3839,8 +3874,7 @@ int gfexec(char *ans, int nc)
     } else {
       printf("Bad command: Spectrum not yet displayed...\n");
     }
-  } else if (!strncmp(ans, "AG", 2)) {
-    /* adjust gain of spectrum */
+  } else if (!strncmp(ans, "AG", 2)) {    // adjust spectrum gain
     numch = gf3gd.maxch + 1;
     for (i = 0; i < numch; ++i) {
       save[i] = gf3gd.spec[i];
@@ -3862,15 +3896,13 @@ int gfexec(char *ans, int nc)
 	    numch, numch, 1.f);
     strncpy(gf3gd.namesp + 4, ".MOD", 4);
     gf3gd.disp = 0;
-  } else if (!strncmp(ans, "AP", 2)) {
-    /* AP; add peak to fit */
+  } else if (!strncmp(ans, "AP", 2)) {    // add peak to fit
     mode = 1;
     adddelpk(mode, idata);
-  } else if (!strncmp(ans, "BG", 2)) {
+  } else if (!strncmp(ans, "BG", 2)) {    // define spectrum background
     autobkgnd(&j);
     maxspec = j;
-  } else if (!strncmp(ans, "CA", 2)) {
-    /* autocalibrate spectrum */
+  } else if (!strncmp(ans, "CA", 2)) {    // autocalibrate spectrum
     if (!strncmp(ans, "CA3", 3)) {
       autocal3();
     } else if (!strncmp(ans, "CA4", 3)) {
@@ -3878,15 +3910,12 @@ int gfexec(char *ans, int nc)
     } else {
       autocal();
     }
-  } else if (!strncmp(ans, "CD", 2)) {
-    /* change working directory */
+  } else if (!strncmp(ans, "CD", 2)) {    // change working directory
     for (i=2; i<nc && ans[i] == ' '; i++) ;
     chdir(ans + i);
-  } else if (!strncmp(ans, "CF", 2)) {
-    /* open command file for input on lu IR */
+  } else if (!strncmp(ans, "CF", 2)) {    // open command file for input
     comfil(ans, nc);
-  } else if (!strncmp(ans, "CO", 2)) {
-    /* change color map */
+  } else if (!strncmp(ans, "CO", 2)) {    // change color map forspectrum display
     if (nc < 3) {
       printf("Present color map =");
       for (i = 1; i < 15; ++i) {
@@ -3913,8 +3942,7 @@ int gfexec(char *ans, int nc)
       colormap[imap] = (idata % 15) + 1;
       lo = hi + 1;
     }
-  } else if (!strncmp(ans, "CR", 2)) {
-    /* call or dislay cursor */
+  } else if (!strncmp(ans, "CR", 2)) {    // call or dislay cursor
     if (inin(ans + 2, nc - 2, &idata, &in, &in2)) goto BADCMD;
     if (!gf3gd.disp) {
       printf("Bad command: New spectrum not yet displayed...\n");
@@ -3923,21 +3951,17 @@ int gfexec(char *ans, int nc)
     } else {
       curse(&idata);
     }
-  } else if (!strncmp(ans, "CT", 2)) {
-    /* contract spectrum by factor idata */
+  } else if (!strncmp(ans, "CT", 2)) {    // contract spectrum (by integer length factor)
     if (inin(ans + 2, nc - 2, &idata, &in, &in2)) goto BADCMD;
     contract(&idata);
     if (idata > 1) gf3gd.disp = 0;
-  } else if (!strncmp(ans, "DD", 2)) {
-    /* DD ; toggle display of difference (data-fit) when plotting fits */
+  } else if (!strncmp(ans, "DD", 2)) {    // toggle display of difference (data-fit) when fitting
     gf3gd.display_fit_diff = 1 - gf3gd.display_fit_diff;
     printf("display_fit_diff = %d\n", gf3gd.display_fit_diff);
-  } else if (!strncmp(ans, "DE", 2)) {
-    /* DE ; divide the spectrum by the detector efficiency */
+  } else if (!strncmp(ans, "DE", 2)) {    // divide the spectrum by the detector efficiency
     diveff(ans, nc);
     gf3gd.disp = 0;
-  } else if (!strncmp(ans, "DF", 2)) {
-    /* display fit */
+  } else if (!strncmp(ans, "DF", 2)) {    // display fit
     if (!ready) {
       printf("Bad command: No fit defined...\n");
     } else if (!gf3gd.disp) {
@@ -3945,8 +3969,7 @@ int gfexec(char *ans, int nc)
     } else {
       dspfit();
     }
-  } else if (!strncmp(ans, "DL", 2)) {
-    /* modify X0,NX */
+  } else if (!strncmp(ans, "DL", 2)) {    // modify spectrum display limits X0,NX
     if (inin(ans + 2, nc - 2, &j1, &j2, &j)) goto BADCMD;
     if (j1 + 2 > gf3gd.maxch ||
 	j1 < 0 ||
@@ -3954,8 +3977,7 @@ int gfexec(char *ans, int nc)
     gf3gd.lox = j1;
     gf3gd.numx = j2 - j1 + 1;
     if (j1 == 0 && j2 == 0) gf3gd.numx = 0;
-  } else if (!strncmp(ans, "DM", 2)) {
-    /* display markers */
+  } else if (!strncmp(ans, "DM", 2)) {    // display fit markers
     if (!ready) {
       printf("Bad command: No fit defined...\n");
     } else if (!gf3gd.disp) {
@@ -3963,15 +3985,14 @@ int gfexec(char *ans, int nc)
     } else {
       dspmkr(99);
     }
-  } else if (!strncmp(ans, "DP", 2)) {
-    /* DP; delete peak from fit */
+  } else if (!strncmp(ans, "DP", 2)) {    // delete peak from fit
     if (inin(ans + 2, nc - 2, &idata, &in, &in2)) goto BADCMD;
     mode = 2;
     adddelpk(mode, idata);
-  } else if (!strncmp(ans, "DS", 2) || !strncmp(ans, "OV", 2)) {
-    /* display or overlay-display spectrum */
+  } else if (!strncmp(ans, "DS", 2) ||    // display spectrum
+             !strncmp(ans, "OV", 2)) {    //  overlay-display spectrum
     if (inin(ans + 2, nc - 2, &idata, &in, &in2)) goto BADCMD;
-    if (!strncmp(ans, "DS", 2)) {
+    if (!strncmp(ans, "DS", 2)) {         // display  spectrum
       /* clear graphics screen and display spectrum */
       erase();
       rewind(scrfilea);
@@ -3994,14 +4015,11 @@ int gfexec(char *ans, int nc)
 #undef W
       ++maxspec;
     }
-  } else if (!strncmp(ans, "DU", 2)) {
-    /* dump parameters,markers,areas,wtmode etc */
+  } else if (!strncmp(ans, "DU", 2)) {    // dump parameters,markers,areas,wtmode etc
     dump(ans, nc, 0);
-  } else if (!strncmp(ans, "DW", 2)) {
-    /* DW ; display windows as they are presently defined */
+  } else if (!strncmp(ans, "DW", 2)) {    // display gate windows as presently defined
     dispwin();
-  } else if (!strncmp(ans, "DX", 2)) {
-    /* DX ; divide display window into ranges in x-direction */
+  } else if (!strncmp(ans, "DX", 2)) {    // divide display window into ranges in x-direction
     if (inin(ans + 2, nc - 2, &idata, &in, &in2)) goto BADCMD;
     if (in < 1 || idata > in) {
       gf3gd.dxlo  = 0;
@@ -4011,11 +4029,9 @@ int gfexec(char *ans, int nc)
       gf3gd.dxlo  = idata-1;
       gf3gd.dxnum = in;
     }
-  } else if (!strncmp(ans, "EC", 2)) {
-    /* define/change/delete energy calibration */
+  } else if (!strncmp(ans, "EC", 2)) {    // define/change/delete energy calibration
     encal(ans, nc);
-  } else if (!strncmp(ans, "EX", 2)) {
-    /* expand spectrum display using cursor */
+  } else if (!strncmp(ans, "EX", 2)) {    // expand spectrum display using cursor
     if (gf3gd.disp) {
       retic(&x1, &y, ans);
       retic(&x2, &y, ans);
@@ -4025,8 +4041,7 @@ int gfexec(char *ans, int nc)
       goto SHRDSP;
     }
     printf("Bad command: New spectrum not yet displayed...\n");
-  } else if (!strncmp(ans, "FC", 2)) {
-    /* extract actual FWHM of a peak w/o fit or bkgnd subtraction */
+  } else if (!strncmp(ans, "FC", 2)) {    // extract actual FWHM of a peak w/o fit or bkgnd subtraction
     if (gf3gd.disp) {
       retic(&x, &y, ans);
       i = x;
@@ -4042,17 +4057,15 @@ int gfexec(char *ans, int nc)
     } else {
       printf("Bad command: New spectrum not yet displayed...\n");
     }
-  } else if (!strncmp(ans, "FR", 2) || !strncmp(ans, "FX", 2)) {
-    /* fix or free parameters */
+  } else if (!strncmp(ans, "FR", 2) ||    // free fit parameters
+             !strncmp(ans, "FX", 2)) {    // fix  fit parameters
     (void) fixorfree(ans, nc);
-  } else if (!strncmp(ans, "FT", 2)) {
-    /* get limits etc. and/or do fit */
+  } else if (!strncmp(ans, "FT", 2)) {    // get fitting limits etc. and/or do fit
     if (inin(ans + 2, nc - 2, &idata, &in, &in2)) goto BADCMD;
     if (idata <= 0 && (!ready || gf3gd.mch[1] > gf3gd.maxch)) goto BADCMD;
     if (idata > 35) goto BADCMD;
     dofit(idata);
-  } else if (!strncmp(ans, "FW", 2)) {
-    /* report actual FWHM of fit with tail etc */
+  } else if (!strncmp(ans, "FW", 2)) {    // report actual FWHM of fit with tail etc
     float y, y1, y2, xlo, xhi, fw, b[111], eg, deg;
     char  l[120];
     if (gf3gd.ical) {
@@ -4143,23 +4156,22 @@ int gfexec(char *ans, int nc)
 #endif
     }
 
-  } else if (!strncmp(ans, "HC", 2)) {
-    /* HC; generate hardcopy of graphics screen */
+  } else if (!strncmp(ans, "HC", 2)) {    // generate hardcopy of graphics screen
     hcopy();
-  } else if (!strncmp(ans, "HE", 2)) {
+  } else if (!strncmp(ans, "HE", 2)) {    // list command "help"
     gfhelp(ans);
 #ifdef HAVE_GNU_READLINE
-  } else if (!strncmp(ans, "HI", 2)) {  // list or clear gnu readline history
+  } else if (!strncmp(ans, "HI", 2)) {    // list or clear command history (gnu readline)
     if (strstr(ans, "-c") || strstr(ans, "-C")) {
       clear_history();
     } else {
       for (i = 0; next_history() != NULL; i++) ;
       for (; i>1; i--) printf("%s\n", previous_history()->line);
     }
-  } else if (!strncmp(ans, "!", 1)) {  // recall command from gnu readline history
+  } else if (!strncmp(ans, "!", 1)) {     // recall command from command history (gnu readline)
     char cmd[80], next[80], *c;
     int j;
-    for (i = 0; next_history() != NULL; i++) ;             // find history length
+    for (i = 0; next_history() != NULL; i++) ;     // find history length
     for (j=0; j<i; j++) c = (char *) previous_history()->line;  // rewind
     for (j=0; j<i; j++) {
       strncpy(cmd, next_history()->line, 80);
@@ -4183,11 +4195,9 @@ int gfexec(char *ans, int nc)
       printf(" <<< %s not found in history\n", ans+1);
     }
 #endif
-  } else if (!strncmp(ans, "IN", 2)) {
-    /* indump parameters,markers,areas,wtmode etc */
+  } else if (!strncmp(ans, "IN", 2)) {    // indump fit parameters,markers,areas,wtmode etc
     dump(ans, nc, 1);
-  } else if (!strncmp(ans, "IS", 2)) {
-    /* integrate spectrum */
+  } else if (!strncmp(ans, "IS", 2)) {    // integrate spectrum
     if (!inin(ans + 2, nc - 2, &idata, &in, &in2) && idata >= 0) {
       if (in <= idata || in > gf3gd.maxch) in = gf3gd.maxch;
       /*  could use this code to select integrated region by cursor
@@ -4212,28 +4222,24 @@ int gfexec(char *ans, int nc)
     for (i=0; i<idata; i++)   gf3gd.spec[i] = 0;
     for (i=idata; i<=in; i++) gf3gd.spec[i] += gf3gd.spec[i-1];
     for (i=in+1; i<=gf3gd.maxch; i++) gf3gd.spec[i] = gf3gd.spec[i-1];
-  } else if (!strncmp(ans, "JH", 2)) {
+  } else if (!strncmp(ans, "JH", 2)) {    // John Hardy's special peak integration
     sumcts_jch();
-  } else if (!strncmp(ans, "LIN", 3) ||
+  } else if (!strncmp(ans, "LIN", 3) ||   // use linear y-axis
 	     !strncmp(ans, "LIn", 3)) {
     gf3gd.iyaxis = -1;
     printf("Linear Y-axis...\n");
-  } else if (!strncmp(ans, "LOG", 3) ||
+  } else if (!strncmp(ans, "LOG", 3) ||   // use log y-axis
 	     !strncmp(ans, "LOg", 3)) {
     gf3gd.iyaxis = -3;
     printf("Logarithmic Y-axis...\n");
-  } else if (!strncmp(ans, "LP", 2)) {
-    /* list pars */
+  } else if (!strncmp(ans, "LP", 2)) {    // list fit parameters
     list_params(1);
-  } else if (!strncmp(ans, "LU", 2)) {
-    /* LU [fn] ; create look-up table file (fn = file name) */
+  } else if (!strncmp(ans, "LU", 2)) {    // create look-up table file
     lookup(ans, nc);
-  } else if (!strncmp(ans, "MA", 2)) {
-    /* change limits or peak positions */
+  } else if (!strncmp(ans, "MA", 2)) {    // change fit limits or peak positions
     if (inin(ans + 2, nc - 2, &idata, &in, &in2)) goto BADCMD;
     chngmark(idata);
-  } else if (!strncmp(ans, "MD", 2)) {
-    /* shift display using cursor */
+  } else if (!strncmp(ans, "MD", 2)) {    // shift display down in sp. using cursor
     if (gf3gd.disp) {
       printf("    Upper channel limit = ?\n");
       retic(&x, &y, ans);
@@ -4242,11 +4248,9 @@ int gfexec(char *ans, int nc)
       goto SHRDSP;
     }
     printf("Bad command: New spectrum not yet displayed...\n");
-  } else if (!strncmp(ans, "ME", 2)) {
-    /* ME ; go to menu mode */
+  } else if (!strncmp(ans, "ME", 2)) {    // go to menu mode
     return 0;
-  } else if (!strncmp(ans, "MU", 2)) {
-    /* shift display using cursor */
+  } else if (!strncmp(ans, "MU", 2)) {    // shift display up in sp. using cursor
     if (gf3gd.disp) {
       printf("    Lower channel limit = ?\n");
      retic(&x, &y, ans);
@@ -4254,19 +4258,15 @@ int gfexec(char *ans, int nc)
       goto SHRDSP;
     }
     printf("Bad command: New spectrum not yet displayed...\n");
-  } else if (!strncmp(ans, "NE", 2)) {
-    /* NE: toggle no_erase flag for spectrum display OS, SS commands*/
+  } else if (!strncmp(ans, "NE", 2)) {    // toggle no_erase flag for spectrum display OS & SS commands
     gf3gd.no_erase = 1 - gf3gd.no_erase;
-  } else if (!strncmp(ans, "NF", 2)) {
-    /* NF: define new fit; use X with cursor to exit */
+  } else if (!strncmp(ans, "NF", 2)) {    // define new fit; use X with cursor to exit
     idata = 99;
     dofit(idata);
-  } else if (!strncmp(ans, "NX", 2)) {
-    /* change NX for sp. display */
+  } else if (!strncmp(ans, "NX", 2)) {    // change number of bins to show for sp. display
     if (inin(ans + 2, nc - 2, &idata, &in, &in2)) goto BADCMD;
     gf3gd.numx = idata;
-  } else if (!strncmp(ans, "NY", 2)) {
-    /* change NY or y-axis scale for sp. display */
+  } else if (!strncmp(ans, "NY", 2)) {    // change y-axis scale for sp. display
     if (inin(ans + 2, nc - 2, &idata, &in, &in2)) goto BADCMD;
     if (idata < -3) {
       if (gf3gd.iyaxis == -1) {
@@ -4281,13 +4281,13 @@ int gfexec(char *ans, int nc)
     } else {
       gf3gd.ncnts = idata;
     }
-  } else if (!strncmp(ans, "ON", 2) || !strncmp(ans, "SN", 2)) {
-    /* no-erase overlay or stack spectra; like NE; SS; NE  */
+  } else if (!strncmp(ans, "ON", 2) ||    // no-erase overlay spectra; like NE; OS; NE
+             !strncmp(ans, "SN", 2)) {    // no-erase  stack  spectra; like NE; SS; NE
     gf3gd.no_erase = 1;
     ans[1] = 'S';
     gfexec(ans, nc);
     gf3gd.no_erase = 0;
-  } else if (!strncmp(ans, "OS", 2)) {
+  } else if (!strncmp(ans, "OS", 2)) {    // overlay-display multiple spectra
     in2 = 0;
     if (nc > 2) {
       if (inin(ans + 2, nc - 2, &isplo, &isphi, &in2)) goto BADCMD;
@@ -4314,8 +4314,7 @@ int gfexec(char *ans, int nc)
     last_snum = i - ispd;
     colormap[1] = j;
     gf3gd.disp = 1;
-  } else if (!strncmp(ans, "PF", 2)) {
-    /* PF; set up peak find on spectrum display */
+  } else if (!strncmp(ans, "PF", 2)) {    // set up peak find on spectrum display
     if (!strcmp(ans, "PF0") || !strcmp(ans, "PF 0")) {
       printf(" Peak find deactivated.\n");
       gf3gd.pkfind = 0;
@@ -4337,18 +4336,37 @@ int gfexec(char *ans, int nc)
     if (in2 >= 0) gf3gd.ipercent = in2;
     printf(" Peak find activated; FWHM, SIGMA, %% = %d %d %d\n",
 	   gf3gd.ifwhm, gf3gd.isigma, gf3gd.ipercent);
-  } else if (!strncmp(ans, "PK", 2)) {
-    /* auto peak information using cursor */
+  } else if (!strncmp(ans, "PK", 2)) {    // auto peak information using cursor
     autopeak(ans);
-  } else if (!strncmp(ans, "RD", 2)) {
-    /* clear and redraw graphics screen with new display limits */
+  } else if (!strncmp(ans, "RA", 2)) {    // calculate ratio of areas using values stored by the SA command
+    if (inin(ans + 2, nc - 2, &idata, &in, &in2)) goto BADCMD;
+    if(idata <= 0 || idata > 20 || gf3gd.isto[idata - 1] <= 0 ||
+       in <= 0 || in > 20 || gf3gd.isto[idata - 1] != gf3gd.isto[in - 1]) {
+      printf("Bad stored data numbers or number of peaks do not match.\n");
+      goto BADCMD;
+    }
+    printf("Energy   ratio    error\n");
+    for (i=0; i<gf3gd.isto[in - 1]; i++) {
+      double s1, s2, e1, e2, e3, e4;
+      s1 = gf3gd.stoa [idata-1][i];
+      e1 = gf3gd.stoda[idata-1][i];
+      s2 = gf3gd.stoa [in-1][i];
+      e2 = gf3gd.stoda[in-1][i];
+      if (s1 < 1 || s2 < 1) continue;
+      // uncertainties include covariance between the two numbers
+      // see "Multi-site event discrimination for the MAJORANA DEMONSTRATOR", S.I. Alvis et al.
+      e1 /= s1; e2 /= s2;
+      e3 = sqrt(e1/s1 + e2/s2 - 2.0*e2/s1) * s2/s1;
+      e4 = sqrt(e1/s1 + e2/s2) * s2/s1;
+      printf("%8.1f  %.5f    %.5f %.5f\n",
+             gf3gd.stoe [idata-1][i], s2/s1, e3, e4);
+    }
+  } else if (!strncmp(ans, "RD", 2)) {    // clear and redraw graphics screen
     if (inin(ans + 2, nc - 2, &idata, &in, &in2)) goto BADCMD;
     goto SHRDSP;
-  } else if (!strncmp(ans, "RF", 2)) {
-    /* reset free parameters */
+  } else if (!strncmp(ans, "RF", 2)) {    // reset free parameters
     parset(0);
-  } else if (!strncmp(ans, "RP", 2)) {
-    /* fix/free relative peak positions */
+  } else if (!strncmp(ans, "RP", 2)) {    // fix or free relative peak positions
     if (inin(ans + 2, nc - 2, &idata, &in, &in2)) goto BADCMD;
     gf3gd.irelpos = idata;
     if (idata < 1) {
@@ -4358,8 +4376,7 @@ int gfexec(char *ans, int nc)
       gf3gd.irelpos = 1;
       printf("Relative peak positions free to vary.\n");
     }
-  } else if (!strncmp(ans, "RS", 2)) {
-    /* remove linear slope from spectrum */
+  } else if (!strncmp(ans, "RS", 2)) {    // remove linear slope from spectrum
     if (inin(ans + 2, nc - 2, &idata, &in, &in2) ||
 	idata < 0 || in <= idata || in > gf3gd.maxch) {
       if (!gf3gd.disp) {
@@ -4381,8 +4398,7 @@ int gfexec(char *ans, int nc)
     y = (gf3gd.spec[in] - gf3gd.spec[idata]) / (float) (in - idata);
     x1 = gf3gd.spec[idata] - (float) idata * y;
     for (i=0; i<=gf3gd.maxch; i++) gf3gd.spec[i] -= x1 + (float) i * y;
-  } else if (!strncmp(ans, "RW", 2)) {
-    /* fix/free relative widths */
+  } else if (!strncmp(ans, "RW", 2)) {    // fix or free relative widths
     if (inin(ans + 2, nc - 2, &idata, &in, &in2)) goto BADCMD;
     if (idata < 1) {
       gf3gd.irelw = 0;
@@ -4391,15 +4407,13 @@ int gfexec(char *ans, int nc)
       gf3gd.irelw = 1;
       printf("Relative widths free to vary.\n");
     }
-  } else if (!strncmp(ans, "SA", 2)) {
-    /* store areas and centroids for later analysis */
+  } else if (!strncmp(ans, "SA", 2)) {    // store areas and centroids for later analysis
     if (inin(ans + 2, nc - 2, &idata, &in, &in2)) goto BADCMD;
     if (storac(idata)) goto BADCMD;
-  } else if (!strncmp(ans, "SB", 2)) {
-    /* sum counts using cursor, subtracting background */
+  } else if (!strncmp(ans, "SB", 2)) {    // sum counts using cursor, subtracting background
     if (inin(ans + 2, nc - 2, &idata, &in, &in2)) goto BADCMD;
     sumcts(1, idata, in);
-  } else if (!strncmp(ans, "SC", 2)) {
+  } else if (!strncmp(ans, "SC", 2)) {    // set spectrum counts using cursor or typed values
     if (!inin(ans + 2, nc - 2, &idata, &in, &in2) &&
         idata >= 0 && in > 0 && in >= idata && in <= gf3gd.maxch) {
       /* set counts using typed input values */
@@ -4413,8 +4427,7 @@ int gfexec(char *ans, int nc)
         setcts();
       }
     }
-  } else if (!strncmp(ans, "SD", 2)) {
-    /* set up automatic Spectrum Display */
+  } else if (!strncmp(ans, "SD", 2)) {    // set up automatic Spectrum Display
     if (inin(ans + 2, nc - 2, &idata, &in, &in2)) goto BADCMD;
     if (auto_disp_max && !idata) {
       printf("Automatic spectrum display disabled.\n");
@@ -4428,7 +4441,7 @@ int gfexec(char *ans, int nc)
       sprintf(cmd, "DS %i %i", auto_disp_num, auto_disp_max);
       gfexec(cmd, strlen(cmd));
     }
-  } else if (!strncmp(ans, "SF", 2)) {   /* subtract fitted peaks from spectrum */
+  } else if (!strncmp(ans, "SF", 2)) {    // subtract fitted peaks from spectrum
     if (gf3gd.npks > 0) {
       eval(gf3gd.pars, 0, &y, gf3gd.npks, -9);
       for (i=gf3gd.mch[0]; i <= gf3gd.mch[1]; i++) {
@@ -4436,15 +4449,14 @@ int gfexec(char *ans, int nc)
 	gf3gd.spec[i] -= y;
       }
     }
-  } else if (!strncmp(ans, "SH", 2)) {
+  } else if (!strncmp(ans, "SH", 2)) {    // execute shell commnd
     if (nc < 3 && !ask(ans+2, 78, "Shell command = ?")) return 0;
     comfil(ans, nc);
-  } else if (!strncmp(ans, "SL", 2)) {
-    /* SL [fn] ; create slice input file  (fn = file name) */
+  } else if (!strncmp(ans, "SL", 2)) {    // create slice input file
     slice(ans, nc);
-  } else if (!strncmp(ans, "SP", 2) ||
-	     !strncmp(ans, "S+", 2) ||
-	     !strncmp(ans, "S-", 2)) {
+  } else if (!strncmp(ans, "SP", 2) ||    // read new spectrum (file or ID)
+	     !strncmp(ans, "S+", 2) ||    // read next spectrum (in multi-sp file)
+	     !strncmp(ans, "S-", 2)) {    // read previous spectrum (in multi-sp file)
     if (!strncmp(ans, "S+", 2)) {
       if ((j=atoi(ans+2)) < 1) j = 1;  // optional increment, default = 1
       sprintf(ans, "SP %d", last_snum + j);
@@ -4478,7 +4490,7 @@ int gfexec(char *ans, int nc)
       if (!caskyn("Get new weighting spectrum? (Y/N)")) return 0;
       weight(3);
     }
-  } else if (!strncmp(ans, "SS", 2)) {
+  } else if (!strncmp(ans, "SS", 2)) {    // stacked display of multiple spetra
     if (nc > 2 && (ispd=1) &&
 	inin(ans + 2, nc - 2, &isplo, &isphi, &ispd)) {
       if (ans[2] == 'd' || ans[2] == 'D') {        // SSD to set a list of disabled detector channels (0-99)
@@ -4528,7 +4540,7 @@ int gfexec(char *ans, int nc)
     }
     last_snum = i - ispd;
     gf3gd.disp = 0;
-  } else if (!strncmp(ans, "ST", 2)) {
+  } else if (!strncmp(ans, "ST", 2)) {    // stop (exit gf3)
 #ifdef HAVE_GNU_READLINE
 #ifndef NOGRAPHICS
     // printf("writing readline history...\n");
@@ -4568,24 +4580,19 @@ int gfexec(char *ans, int nc)
     }
     exit(0);
 
-  } else if (!strncmp(ans, "SU", 2)) {
-    /* sum counts using cursor */
+  } else if (!strncmp(ans, "SU", 2)) {    // sum counts using cursor
     if (inin(ans + 2, nc - 2, &idata, &in, &in2)) goto BADCMD;
     sumcts(0, idata, in);
-  } else if (!strncmp(ans, "SW", 2)) {
-    /* change starting width */
+  } else if (!strncmp(ans, "SW", 2)) {    // change starting width estimate for fits
     startwid(ans, nc);
     if (caskyn("Reset free pars. to initial estimates? (Y/N)")) parset(0);
-  } else if (!strncmp(ans, "SY", 2)) {
-    /* execute system command */
+  } else if (!strncmp(ans, "SY", 2)) {    // execute system command
     system(ans+2);
-  } else if (!strncmp(ans, "X0", 2)) {
-    /* change X0 for sp. display */
+  } else if (!strncmp(ans, "X0", 2)) {    // change X0 for sp. display x-axis
     if (inin(ans + 2, nc - 2, &idata, &in, &in2)) goto BADCMD;
     if (idata + 2 > gf3gd.maxch) goto BADCMD;
     gf3gd.lox = idata;
-  } else if (!strncmp(ans, "XA", 2)) {
-    /* XA: modify X0,NX */
+  } else if (!strncmp(ans, "XA", 2)) {    // modify X0,NX for sp. display x-axis
     sprintf(q, "Old value for X0 = %d\n New value = ? (return for old value)",
 	    gf3gd.lox);
     while ((nc = cask(q, ans, 80)) &&
@@ -4596,15 +4603,13 @@ int gfexec(char *ans, int nc)
     while ((nc = cask(q, ans, 80)) &&
 	   (inin(ans, nc, &idata, &j1, &j2) || idata < 0));
     if (nc) gf3gd.numx = idata;
-  } else if (!strncmp(ans, "XM", 2)) {
+  } else if (!strncmp(ans, "XM", 2)) {    // toggle diplay of x-axis tick marks
     inin(ans + 2, nc - 2, &idata, &in, &in2);
     gf3gd2.x_axis_marks = idata;
-  } else if (!strncmp(ans, "Y0", 2)) {
-    /* change Y0 for sp. display */
+  } else if (!strncmp(ans, "Y0", 2)) {    // change Y0 for sp. display y-axis
     if (inin(ans + 2, nc - 2, &idata, &in, &in2)) goto BADCMD;
     gf3gd.locnt = idata;
-  } else if (!strncmp(ans, "YA", 2)) {
-    /* YA: modify Y0,NY */
+  } else if (!strncmp(ans, "YA", 2)) {    // modify Y0,NY for sp. display y-axis
     sprintf(q, "Old value for Y0 = %d\n New value = ? (return for old value)",
 	    gf3gd.locnt);
     while ((nc = cask(q, ans, 80)) &&
@@ -4615,18 +4620,15 @@ int gfexec(char *ans, int nc)
     while ((nc = cask(q, ans, 80)) &&
 	   (inin(ans, nc, &idata, &j1, &j2) || idata < 0));
     if (nc) gf3gd.ncnts = idata;
-  } else if (!strncmp(ans, "YM", 2)) {
+  } else if (!strncmp(ans, "YM", 2)) {    // toggle diplay of y-axis tick marks
     inin(ans + 2, nc - 2, &idata, &in, &in2);
     gf3gd2.y_axis_marks = idata;
-  } else if (!strncmp(ans, "WI", 2)) {
-    /* WI ; add windows to look-up table or slice file using cursor*/
+  } else if (!strncmp(ans, "WI", 2)) {    // add windows to look-up table or slice file using cursor
     if (addwin()) goto BADCMD;
-  } else if (!strncmp(ans, "WM", 2)) {
-    /* change weighting mode */
+  } else if (!strncmp(ans, "WM", 2)) {    // change weighting mode for fitting
     if (inin(ans + 2, nc - 2, &idata, &in, &in2)) goto BADCMD;
     weight(idata);
-  } else if (!strncmp(ans, "WS", 2)) {
-    /* write spectrum to disk */
+  } else if (!strncmp(ans, "WS", 2)) {    // write spectrum to disk
     wrtsp(ans, nc);
   } else {
     /* command cannot be recognized */
@@ -5446,7 +5448,7 @@ int para2num(char *ans, int *param)
   /* called by fixorfree */
 
   int  i;
-  char tmp_ans[80];
+  char tmp_ans[80], *c;
   static char parc[111][4] = {
     "A","B","C","R","BTA","STP","P1","W1","H1","P2","W2","H2",
     "P3","W3","H3","P4","W4","H4","P5","W5","H5","P6","W6","H6",
@@ -5460,11 +5462,9 @@ int para2num(char *ans, int *param)
     "PZ","WZ","HZ"};
 
   strncpy(tmp_ans, ans, 80);
+  c = tmp_ans;
   /* remove leading spaces */
-  while (*(unsigned char *)tmp_ans == ' ') {
-    memmove(tmp_ans, tmp_ans + 1, 80);
-    tmp_ans[79] = '\0';
-  }
+  while (*c == ' ') for (i=0; *(c+i)!=0; i++) *(c+i) = *(c+i+1);
   /* convert lower case to upper case characters */
   for (i = 0; i < 4; ++i) {
     tmp_ans[i] = toupper(tmp_ans[i]);
@@ -5480,6 +5480,10 @@ int para2num(char *ans, int *param)
     *param = 1001;
   } else if (!strcmp(tmp_ans, "RW")) {
     *param = 1002;
+  } else if (!strcmp(tmp_ans, "AP")) {
+    *param = 1003;
+  } else if (!strcmp(tmp_ans, "AW")) {
+    *param = 1004;
   } else {
     return 1;   /* no match */
   }
@@ -5874,7 +5878,7 @@ int startwid(char *ans, int nc)
   float sw1, sw2, sw3;
   char  q[512];
 
-  if (nc > 2) memmove(ans, ans + 2, 78);
+  for (int i=0; i<78; i++) ans[i] = ans[i+2];
   nc -= 2;
 
   while (1) {

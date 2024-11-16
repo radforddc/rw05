@@ -702,6 +702,7 @@ int check_4d_band(char *ans, int nc)
   float b1sum[6][15], b2sum[15][15], b3sum[15][15][15];
   int   numl = 0, i, j, i3gate, nl, iw, ix, iy, iz, nsteps;
   int   loc[4], hic[4], j1, j2, ich, ispec[MAXCHS];
+  char  *c;
 
   /* check gate list for presence of a rotational band */
 
@@ -716,18 +717,18 @@ int check_4d_band(char *ans, int nc)
   if (nc <= 2) {
     nc = ask(ans, 80, "List = ?");
     if (nc == 0) return 0;
+    c = ans;
   } else {
-    memmove(ans, ans + 2, strlen(ans));
     nc -= 2;
+    c = ans+2;
   }
-  if (*ans == ' ') {
-    memmove(ans, ans + 1, strlen(ans));
-    nc--;
-    if (nc == 0) return 0;
+  while (*c == ' ') {
+    c++;
+    if (--nc == 0) return 0;
   }
   nl = -1;
   for (i = 0; i < 55; ++i) {
-    if (*ans == listnam[i]) {
+    if (*c == listnam[i]) {
       nl = i;
       numl = elgd.nlist[nl];
     }

@@ -214,8 +214,9 @@ int output(void)
 	*(c+1) = '{';
       }
       if ((c = strstr(glsgd.lev[ln[j]].sl, "{g"))) {
-	memmove(c, c+2, strlen(c));
-	if ((c = strstr(glsgd.lev[ln[j]].sl, "}")))  memmove(c, c+1, strlen(c));
+        for (; *(c+1)!=0; c++) *c = *(c+2);
+	if ((c = strstr(glsgd.lev[ln[j]].sl, "}")))
+          for (; *c!=0; c++) *c = *(c+1);
       }
     }
     lb = caskyn("\nList band names in table of levels? (Y/N)");
@@ -292,9 +293,9 @@ int output(void)
       strcpy(l, glsgd.lev[ln[j]].name);
       strcat(l, "  ");
       wrresult(l, glsgd.lev[ln[j]].e, glsgd.lev[ln[j]].de, 26);
-      if ((c = strstr(glsgd.lev[ln[j]].sl, "{u"))) memmove(c, c+2, strlen(c));
-      if ((c = strstr(glsgd.lev[ln[j]].sl, "{g"))) memmove(c, c+2, strlen(c));
-      while ((c = strstr(glsgd.lev[ln[j]].sl, "}"))) memmove(c, c+1, strlen(c));
+      if ((c = strstr(glsgd.lev[ln[j]].sl, "{u"))) for (; *(c+1)!=0; c++) *c = *(c+2);
+      if ((c = strstr(glsgd.lev[ln[j]].sl, "{g"))) for (; *(c+1)!=0; c++) *c = *(c+2);
+      while ((c = strstr(glsgd.lev[ln[j]].sl, "}"))) for (; *c!=0; c++) *c = *(c+1);
       fprintf(outfile, "%s %8s %5.1f\n",
 	      l, glsgd.lev[ln[j]].sl, glsgd.lev[ln[j]].k);
     }

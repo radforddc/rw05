@@ -133,7 +133,7 @@ int main(int argc, char **argv)
       printf("\n Chisqr/D.O.F. = %.3f\n\n", chisqr);
       fprintf(file2, "\n# Chisqr/D.O.F. = %.3f\n\n", chisqr);
 
-      if (0 && caskyn("Do you want to write these values to a file? (Y/N)")) {
+      if (1 && caskyn("Do you want to write these values to a file? (Y/N)")) {
 	/* ask for output file name */
 	cask("Output file name = ? (default .ext = .aca)", nf, 80);
 	setext(nf, ".aca", 80);

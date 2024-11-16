@@ -139,7 +139,7 @@ setup_replay(void)
       continue;\
     }\
     a[strlen(a)-1] = 0; /* remove trailing \n */ \
-    while (a[0] == ' ') memmove(a, a+1, strlen(a)); /* remove leading spaces */ \
+    while (a[0] == ' ') for (c=a; *c!=0; c++) *c = *(c+1); /* remove leading spaces */ \
     for (c=a+strlen(a)-1; *c==' '; c--) *c=0; /* remove trailing spaces */
 
     GETDATA(title,"title");
@@ -379,7 +379,7 @@ open_4cube (char *name, int length, FILE *mesg)
 
     /* remove trailing \n and leading and trailing spaces */
     c = gd.CubeFileName[fnum];
-    while (*c == ' ') memmove(c, c+1, strlen(c));
+    while (*c == ' ') for (i=0; *(c+i)!=0; i++) *(c+i) = *(c+i+1);
     for (c += strlen(c) - 1; *c == ' ' || *c == '\n'; c--) *c = 0;
     if (gd.CubeFileName[fnum][0] == 0) break;
 

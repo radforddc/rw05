@@ -665,7 +665,7 @@ int wrres(char *ans)
 
   FILE *file;
   int  i, write = 0;
-  char fn[80], buf[51404];
+  char fn[256], buf[51404];
   static char head[40] = "RESPONSE FILE VER. 1";
 
   /* write/read response functions to/from disk file */
@@ -677,8 +677,8 @@ int wrres(char *ans)
     if (!cask("Response file name = ? (default .ext = .rsp)", ans, 80))
       return 0;
   }
-  strncpy(fn, ans, 80);
-  (void) setext(fn, ".rsp", 80);
+  strncpy(fn, ans, 128);
+  (void) setext(fn, ".rsp", 128);
   if (write && (file = open_new_file(fn, 0))) {
     /* write response functions to disk */
     datetime(head+20);

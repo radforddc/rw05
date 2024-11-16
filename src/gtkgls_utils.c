@@ -349,7 +349,9 @@ int ask(char *ans, int mca, const char *fmt, ...)
     c2 = strstr(c, "for") + 4;
     strcpy(default_str, c2);
     if ((c2 = strstr(default_str, ")"))) *c2 = (char) 0;
-    if ((c2 = strstr(c, ")"))) memmove(c, c2+1, strlen(c2));
+    if ((c2 = strstr(c, ")")))
+      for (; *c2!=0; c2++) {*c = *(c2+1); c++;}
+    //memmove(c, c2+1, strlen(c2));
   }
 
   dlg_done = 0;
